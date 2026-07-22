@@ -266,7 +266,22 @@
       .nav-item { flex-direction: column; padding: 10px 16px; border-left: none; border-bottom: 3px solid transparent; font-size: 11px; gap: 4px; }
       .nav-item.active { border-bottom-color: var(--gold); background: rgba(212,175,55,0.1); }
       #main { margin-left: 0; margin-bottom: 65px; }
+      #page-studio > div[style*="grid-template-columns"] { grid-template-columns: 1fr !important; }
     }
+    /* ---- STUDIO ---- */
+    .tmpl-thumb { flex-shrink: 0; display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer; padding: 8px; border-radius: 10px; border: 2px solid transparent; transition: all 0.2s; }
+    .tmpl-thumb:hover { border-color: var(--gold); background: var(--gold-pale); }
+    .tmpl-thumb.active { border-color: var(--gold); background: var(--gold-pale); }
+    .tmpl-thumb-box { border-radius: 6px; overflow: hidden; width: 70px; box-shadow: 0 3px 10px rgba(0,0,0,0.15); }
+    .tmpl-thumb-box img { width: 100%; display: block; }
+    .tmpl-thumb span { font-size: 10px; font-weight: 700; color: var(--navy); text-align: center; white-space: nowrap; max-width: 75px; overflow: hidden; text-overflow: ellipsis; }
+    .ctrl-group { display: flex; flex-direction: column; gap: 4px; }
+    .ctrl-group label { font-size: 11px; font-weight: 700; color: var(--navy); text-transform: uppercase; letter-spacing: 0.5px; }
+    .ctrl-input { width: 100%; padding: 8px 10px; border-radius: 6px; border: 1px solid #D1D5DB; font-size: 13px; font-family: inherit; outline: none; transition: border 0.2s; }
+    .ctrl-input:focus { border-color: var(--gold); }
+    .ctrl-row { display: flex; gap: 8px; }
+    .ctrl-color { width: 44px; height: 36px; border-radius: 6px; border: 1px solid #D1D5DB; cursor: pointer; padding: 2px; }
+    .ctrl-section { font-size: 10px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--gold); background: var(--navy); padding: 4px 10px; border-radius: 4px; }
   </style>
 </head>
 <body>
@@ -488,7 +503,7 @@
 
   <!-- VOTING -->
   <section class="page" id="page-voting">
-    <div class="page-header"><div class="eyebrow">Revenue Engine</div><h2>Voting System (₦200 / Vote)</h2><p>Online voting is the primary revenue channel. Voting opens one week after the audition &mdash; giving audiences time to know contestants before spending.</p></div>
+    <div class="page-header"><div class="eyebrow">Revenue Engine</div><h2>Voting System (<span id="voting-page-title">₦200</span> / Vote)</h2><p>Online voting is the primary revenue channel. Voting opens one week after the audition &mdash; giving audiences time to know contestants before spending.</p></div>
     <div class="alert alert-gold"><span class="alert-icon">💡</span><strong>Key Insight:</strong> Cold strangers do not spend money. Warmed-up fans do. Six days of daily contestant content before voting opens means every vote is an emotional investment.</div>
     <div class="card">
       <div class="card-title">Voting Round Calendar</div>
@@ -817,71 +832,47 @@
   <!-- GRAPHICS STUDIO -->
   <section class="page" id="page-studio">
     <div class="page-header">
-      <div class="eyebrow">Creative Assets</div>
+      <div class="eyebrow">Creative Powerhouse</div>
       <h2>Graphics Studio</h2>
-      <p>Customise and generate shareable media. Upload a contestant photo, edit the details, and download the final graphic directly as an image.</p>
+      <p>A full suite of pre-built, customisable templates for every stage of the season — from contestant cards to event promos. Edit, personalise, and download as a shareable PNG in seconds.</p>
     </div>
-    
-    <div class="grid-2">
-      <!-- Controls -->
-      <div class="card">
-        <div class="card-title">Template Controls</div>
-        <div style="display: flex; flex-direction: column; gap: 12px;">
-          <div>
-            <label style="font-size: 12px; font-weight: 600; color: var(--navy);">Contestant Name</label>
-            <input type="text" id="studio-name" value="David Solomon" style="width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #ccc; margin-top: 4px;" oninput="updateStudio()">
+
+    <!-- Template Picker -->
+    <div class="card" style="padding: 20px 24px;">
+      <div class="card-title" style="margin-bottom: 14px;">🎨 Choose a Template</div>
+      <div id="template-picker" style="display: flex; gap: 12px; overflow-x: auto; padding-bottom: 8px;">
+        <!-- Thumbnails injected by JS -->
+      </div>
+    </div>
+
+    <!-- Studio workspace -->
+    <div style="display: grid; grid-template-columns: 320px 1fr; gap: 24px; margin-top: 4px; align-items: start;">
+
+      <!-- LEFT: Controls Panel -->
+      <div>
+        <div class="card" id="controls-panel" style="padding: 22px 24px;">
+          <div class="card-title" id="controls-title">✏️ Customise Template</div>
+          <div id="controls-body" style="display: flex; flex-direction: column; gap: 13px; margin-top: 4px;">
+            <!-- Injected by JS based on template -->
           </div>
-          <div>
-            <label style="font-size: 12px; font-weight: 600; color: var(--navy);">Team</label>
-            <select id="studio-team" style="width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #ccc; margin-top: 4px;" onchange="updateStudio()">
-              <option value="Eagles of Zion" data-color="#1A3A8F">Eagles of Zion</option>
-              <option value="Shields of David" data-color="#991B1B">Shields of David</option>
-              <option value="Lions of Judah" data-color="#B45309">Lions of Judah</option>
-              <option value="Rivers of Eden" data-color="#065F46">Rivers of Eden</option>
-              <option value="Flames of Elijah" data-color="#C2410C">Flames of Elijah</option>
-              <option value="Arrows of Jonathan" data-color="#374151">Arrows of Jonathan</option>
-              <option value="Stars of Abraham" data-color="#6D28D9">Stars of Abraham</option>
-              <option value="Swords of Gideon" data-color="#78350F">Swords of Gideon</option>
-              <option value="Doves of Solomon" data-color="#0F766E">Doves of Solomon</option>
-              <option value="Thunder of Sinai" data-color="#111827">Thunder of Sinai</option>
-            </select>
-          </div>
-          <div>
-            <label style="font-size: 12px; font-weight: 600; color: var(--navy);">Favourite Scripture</label>
-            <input type="text" id="studio-verse" value="Philippians 4:13" style="width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #ccc; margin-top: 4px;" oninput="updateStudio()">
-          </div>
-          <div>
-            <label style="font-size: 12px; font-weight: 600; color: var(--navy);">Upload Photo</label>
-            <input type="file" id="studio-upload" accept="image/*" style="width: 100%; margin-top: 4px;" onchange="loadStudioImage(event)">
-          </div>
-          <button onclick="exportGraphic()" style="background: var(--navy); color: var(--gold); border: none; padding: 12px; border-radius: 6px; font-weight: 700; cursor: pointer; margin-top: 10px; display: flex; justify-content: center; align-items: center; gap: 8px; transition: 0.2s;">
-            <span class="icon">⬇️</span> Download Graphic
-          </button>
+          <hr class="divider" style="margin: 18px 0;">
+          <button onclick="exportGraphic()" style="width: 100%; background: linear-gradient(135deg, var(--navy), #1A3A8F); color: var(--gold); border: 2px solid var(--gold); padding: 13px; border-radius: 8px; font-weight: 800; font-size: 14px; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 8px; letter-spacing: 0.5px; transition: all 0.2s;">⬇ Download as PNG</button>
+          <p style="font-size: 11px; color: var(--text-muted); margin-top: 8px; text-align: center;">High-res 2× export ready for social media</p>
         </div>
       </div>
-      
-      <!-- Canvas / Preview -->
-      <div style="display: flex; justify-content: center; align-items: center; background: #E5E7EB; padding: 20px; border-radius: 12px; overflow: hidden;">
-        <div id="graphic-canvas" style="width: 300px; height: 400px; background: var(--navy); position: relative; border-radius: 12px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.3);">
-          <!-- Background Pattern -->
-          <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; opacity: 0.1; background-image: radial-gradient(var(--gold) 1px, transparent 1px); background-size: 10px 10px;"></div>
-          
-          <!-- Image -->
-          <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 120px; background: #fff; overflow: hidden; display: flex; justify-content: center; align-items: flex-start;">
-            <img id="graphic-img" src="https://via.placeholder.com/300x400.png?text=Upload+Photo" style="width: 100%; height: 100%; object-fit: cover;">
-          </div>
-          
-          <!-- Lower Third -->
-          <div id="graphic-lower" style="position: absolute; bottom: 0; left: 0; right: 0; height: 120px; background: #1A3A8F; padding: 16px; color: white; display: flex; flex-direction: column; justify-content: flex-end;">
-            <div style="font-size: 10px; font-weight: 700; color: var(--gold); text-transform: uppercase; letter-spacing: 2px;">RAFA Season 2</div>
-            <div id="graphic-name-out" style="font-size: 24px; font-weight: 800; font-family: 'Playfair Display', serif; margin-top: 4px; line-height: 1.1;">David Solomon</div>
-            <div id="graphic-team-out" style="font-size: 12px; font-weight: 600; margin-top: 4px; opacity: 0.9;">Team Eagles of Zion</div>
-            <div id="graphic-verse-out" style="font-size: 11px; font-style: italic; margin-top: 6px; color: rgba(255,255,255,0.7);">"Philippians 4:13"</div>
+
+      <!-- RIGHT: Live Canvas Preview -->
+      <div style="display: flex; flex-direction: column; align-items: center; gap: 16px;">
+        <div style="background: repeating-conic-gradient(#d1d5db 0% 25%, #e5e7eb 0% 50%) 0 0 / 20px 20px; padding: 28px; border-radius: 12px; display: flex; align-items: center; justify-content: center; width: 100%;">
+          <div id="graphic-canvas" style="position: relative; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.4); flex-shrink: 0;">
+            <!-- Template rendered here by JS -->
           </div>
         </div>
+        <p style="font-size: 12px; color: var(--text-muted);">↑ Live preview — exactly what will be exported</p>
       </div>
     </div>
   </section>
+
 </main>
 
 <!-- INTERACTIVE MODAL VIEWER FOR KITS -->
@@ -1064,45 +1055,525 @@ function updateVotePricing() {
   document.getElementById('parent-calc-rate').textContent = formatNaira(basePrice);
   document.getElementById('parent-calc-total').textContent = formatNaira(20 * basePrice) + ' per parent';
   document.getElementById('parent-calc-grand').textContent = formatNaira(2000 * basePrice) + ' from parents alone';
+  const vtEl = document.getElementById('voting-page-title');
+  if (vtEl) vtEl.textContent = formatNaira(basePrice);
 }
 
-function updateStudio() {
-  const name = document.getElementById('studio-name').value;
-  const teamSel = document.getElementById('studio-team');
-  const team = teamSel.value;
-  const color = teamSel.options[teamSel.selectedIndex].getAttribute('data-color');
-  const verse = document.getElementById('studio-verse').value;
-  
-  document.getElementById('graphic-name-out').textContent = name || 'Name';
-  document.getElementById('graphic-team-out').textContent = 'Team ' + team;
-  document.getElementById('graphic-verse-out').textContent = '"' + verse + '"';
-  document.getElementById('graphic-lower').style.background = color;
+/* =============================================
+   GRAPHICS STUDIO ENGINE
+   ============================================= */
+const TEAM_COLORS = {
+  'Eagles of Zion': '#1A3A8F',
+  'Shields of David': '#991B1B',
+  'Lions of Judah': '#B45309',
+  'Rivers of Eden': '#065F46',
+  'Flames of Elijah': '#C2410C',
+  'Arrows of Jonathan': '#374151',
+  'Stars of Abraham': '#6D28D9',
+  'Swords of Gideon': '#78350F',
+  'Doves of Solomon': '#0F766E',
+  'Thunder of Sinai': '#111827'
+};
+
+let studioState = {
+  templateId: 'contestant-card',
+  name: 'David Solomon',
+  team: 'Eagles of Zion',
+  verse: 'Philippians 4:13',
+  teamNumber: '4',
+  votingLink: 'vote.rafacontest.org/DS04',
+  eventDate: 'Sunday, 9th August 2025',
+  stage: 'Stage 1 — The Proving Ground',
+  stageNum: '60',
+  stageTime: '2',
+  round: 'Round One',
+  accentColor: '#D4AF37',
+  bgColor: '#08172E',
+  bgGradient: 'linear-gradient(160deg, #B22222 0%, #8B0000 30%, #3D0000 70%, #1a0000 100%)',
+  useGradient: false,
+  uploadedImg: null,
+  logoImg: null,
+  location: 'Evidence Chapel, Assemblies of God Nigeria',
+  broadcastLine: 'Watch Exclusively on RAFA Live',
+  leaderPosition: '1st',
+  leaderTeam: 'Eagles of Zion',
+  leaderVotes: '2,347',
+};
+
+const TEMPLATES = [
+  {
+    id: 'contestant-card',
+    label: 'Contestant Card',
+    emoji: '🎽',
+    aspect: [300, 420],
+    thumbBg: 'linear-gradient(135deg,#1A3A8F,#0D2145)',
+    desc: 'Shareable profile card with photo, team, vote link & QR code placeholder',
+  },
+  {
+    id: 'stage-promo',
+    label: 'Stage Promo',
+    emoji: '🔥',
+    aspect: [300, 420],
+    thumbBg: 'linear-gradient(160deg,#B22222,#3D0000)',
+    desc: 'Dramatic event promo — inspired by the provided example graphic',
+  },
+  {
+    id: 'voting-live',
+    label: 'Voting Is Live',
+    emoji: '🗳️',
+    aspect: [300, 300],
+    thumbBg: 'linear-gradient(135deg,#065F46,#0F766E)',
+    desc: 'Square social post announcing voting is now open',
+  },
+  {
+    id: 'how-to-vote',
+    label: 'How To Vote',
+    emoji: '📋',
+    aspect: [300, 380],
+    thumbBg: 'linear-gradient(135deg,#1A3A8F,#6D28D9)',
+    desc: 'Step-by-step infographic for parents on how to vote',
+  },
+  {
+    id: 'team-reveal',
+    label: 'Team Reveal',
+    emoji: '🏆',
+    aspect: [300, 300],
+    thumbBg: 'linear-gradient(135deg,#111827,#374151)',
+    desc: 'Bold square graphic for announcing a team name and colour',
+  },
+  {
+    id: 'leaderboard',
+    label: 'Leaderboard',
+    emoji: '📊',
+    aspect: [300, 380],
+    thumbBg: 'linear-gradient(135deg,#78350F,#B45309)',
+    desc: 'Vote leaderboard teaser for social media hype',
+  },
+  {
+    id: 'reel-cover',
+    label: 'Reels Cover',
+    emoji: '🎬',
+    aspect: [270, 480],
+    thumbBg: 'linear-gradient(160deg,#6D28D9,#4C1D95)',
+    desc: 'Vertical 9:16 cover for Instagram/TikTok Reels',
+  },
+  {
+    id: 'event-countdown',
+    label: 'Countdown',
+    emoji: '⏱️',
+    aspect: [300, 300],
+    thumbBg: 'linear-gradient(135deg,#C2410C,#7C2D12)',
+    desc: 'Square countdown post with days-to-go display',
+  },
+];
+
+const CONTROLS_CONFIG = {
+  'contestant-card': [
+    { type:'section', label:'Contestant Info' },
+    { type:'text', id:'name', label:'Contestant Name', placeholder:'e.g. David Solomon' },
+    { type:'select', id:'team', label:'Team', opts: Object.keys(TEAM_COLORS) },
+    { type:'text', id:'teamNumber', label:'Contestant Number', placeholder:'e.g. 4' },
+    { type:'text', id:'verse', label:'Favourite Scripture', placeholder:'e.g. Philippians 4:13' },
+    { type:'section', label:'Voting' },
+    { type:'text', id:'votingLink', label:'Voting Link', placeholder:'vote.rafacontest.org/ID' },
+    { type:'section', label:'Style' },
+    { type:'image', id:'uploadedImg', label:'Contestant Photo' },
+    { type:'color', id:'accentColor', label:'Accent Colour' },
+  ],
+  'stage-promo': [
+    { type:'section', label:'Event Details' },
+    { type:'text', id:'stage', label:'Stage Name', placeholder:'Stage 1 — The Proving Ground' },
+    { type:'text', id:'round', label:'Round Label', placeholder:'Round One' },
+    { type:'text', id:'stageNum', label:'Bible Verses Count', placeholder:'60' },
+    { type:'text', id:'stageTime', label:'Time (minutes)', placeholder:'2' },
+    { type:'text', id:'eventDate', label:'Date', placeholder:'Sunday, 9th August 2025' },
+    { type:'text', id:'location', label:'Venue / Location' },
+    { type:'text', id:'broadcastLine', label:'Broadcast Line', placeholder:'Watch Exclusively on...' },
+    { type:'section', label:'Style' },
+    { type:'color', id:'accentColor', label:'Accent Colour' },
+    { type:'gradient-toggle', id:'useGradient', label:'Use Custom Background' },
+    { type:'color', id:'bgColor', label:'Background Colour' },
+  ],
+  'voting-live': [
+    { type:'section', label:'Content' },
+    { type:'text', id:'votingLink', label:'Voting Link / Portal' },
+    { type:'text', id:'eventDate', label:'Voting Round Dates', placeholder:'Aug 7 – Aug 9' },
+    { type:'section', label:'Style' },
+    { type:'image', id:'uploadedImg', label:'Background / Photo (optional)' },
+    { type:'color', id:'accentColor', label:'Accent Colour' },
+  ],
+  'how-to-vote': [
+    { type:'section', label:'Content' },
+    { type:'text', id:'votingLink', label:'Voting Link' },
+    { type:'section', label:'Style' },
+    { type:'color', id:'accentColor', label:'Accent Colour' },
+    { type:'color', id:'bgColor', label:'Background Colour' },
+  ],
+  'team-reveal': [
+    { type:'section', label:'Team Info' },
+    { type:'text', id:'name', label:'Team Name', placeholder:'Eagles of Zion' },
+    { type:'select', id:'team', label:'Team Colour', opts: Object.keys(TEAM_COLORS) },
+    { type:'text', id:'teamNumber', label:'Team Number' },
+    { type:'section', label:'Style' },
+    { type:'color', id:'accentColor', label:'Accent Colour' },
+  ],
+  'leaderboard': [
+    { type:'section', label:'Leaderboard Data' },
+    { type:'text', id:'leaderPosition', label:'Top Position', placeholder:'1st' },
+    { type:'text', id:'leaderTeam', label:'Leading Team / Name' },
+    { type:'text', id:'leaderVotes', label:'Vote Count Shown', placeholder:'2,347' },
+    { type:'text', id:'stage', label:'After Stage', placeholder:'Stage 1' },
+    { type:'section', label:'Style' },
+    { type:'color', id:'accentColor', label:'Accent Colour' },
+    { type:'color', id:'bgColor', label:'Background Colour' },
+  ],
+  'reel-cover': [
+    { type:'section', label:'Content' },
+    { type:'text', id:'name', label:'Contestant Name' },
+    { type:'select', id:'team', label:'Team' , opts: Object.keys(TEAM_COLORS) },
+    { type:'text', id:'verse', label:'Scripture', placeholder:'Philippians 4:13' },
+    { type:'text', id:'stage', label:'Stage / Context', placeholder:'Stage 1 — The Proving Ground' },
+    { type:'section', label:'Style' },
+    { type:'image', id:'uploadedImg', label:'Photo' },
+    { type:'color', id:'accentColor', label:'Accent Colour' },
+  ],
+  'event-countdown': [
+    { type:'section', label:'Countdown' },
+    { type:'text', id:'teamNumber', label:'Days To Go', placeholder:'10' },
+    { type:'text', id:'stage', label:'What to count down to', placeholder:'The Proving Ground — Stage 1' },
+    { type:'text', id:'eventDate', label:'Full Date', placeholder:'Sunday 9th August 2025' },
+    { type:'section', label:'Style' },
+    { type:'color', id:'accentColor', label:'Accent Colour' },
+    { type:'color', id:'bgColor', label:'Background Colour' },
+  ],
+};
+
+function renderTemplatePicker() {
+  const picker = document.getElementById('template-picker');
+  if (!picker) return;
+  picker.innerHTML = TEMPLATES.map(t => `
+    <div class="tmpl-thumb ${studioState.templateId === t.id ? 'active' : ''}" onclick="selectTemplate('${t.id}')" title="${t.desc}">
+      <div class="tmpl-thumb-box" style="background:${t.thumbBg}; height:${t.aspect[1]/t.aspect[0]*70}px; display:flex; align-items:center; justify-content:center; font-size:26px;">${t.emoji}</div>
+      <span>${t.label}</span>
+    </div>
+  `).join('');
 }
 
-function loadStudioImage(event) {
+function renderControlsPanel() {
+  const tmpl = TEMPLATES.find(t => t.id === studioState.templateId);
+  const config = CONTROLS_CONFIG[studioState.templateId] || [];
+  const ctTitle = document.getElementById('controls-title');
+  const ctBody = document.getElementById('controls-body');
+  if (!ctBody) return;
+  if (ctTitle) ctTitle.textContent = `✏️ ${tmpl.emoji} ${tmpl.label}`;
+  ctBody.innerHTML = config.map(c => {
+    if (c.type === 'section') return `<div class="ctrl-section">${c.label}</div>`;
+    if (c.type === 'text') return `
+      <div class="ctrl-group">
+        <label>${c.label}</label>
+        <input class="ctrl-input" type="text" placeholder="${c.placeholder||''}" value="${studioState[c.id]||''}" oninput="studioState['${c.id}']=this.value;renderCanvas()">
+      </div>`;
+    if (c.type === 'select') return `
+      <div class="ctrl-group">
+        <label>${c.label}</label>
+        <select class="ctrl-input" onchange="studioState['${c.id}']=this.value;renderCanvas()">
+          ${(c.opts||[]).map(o=>`<option ${studioState[c.id]===o?'selected':''}>${o}</option>`).join('')}
+        </select>
+      </div>`;
+    if (c.type === 'color') return `
+      <div class="ctrl-group">
+        <label>${c.label}</label>
+        <div class="ctrl-row">
+          <input class="ctrl-color" type="color" value="${studioState[c.id]||'#D4AF37'}" oninput="studioState['${c.id}']=this.value;renderCanvas()">
+          <input class="ctrl-input" type="text" value="${studioState[c.id]||'#D4AF37'}" oninput="studioState['${c.id}']=this.value;renderCanvas()" style="flex:1;">
+        </div>
+      </div>`;
+    if (c.type === 'image') return `
+      <div class="ctrl-group">
+        <label>${c.label}</label>
+        <input type="file" accept="image/*" onchange="loadStudioImage(event,'${c.id}')" style="font-size:12px;">
+        ${studioState[c.id] ? `<div style="margin-top:6px;"><img src="${studioState[c.id]}" style="width:60px;height:60px;object-fit:cover;border-radius:6px;border:2px solid var(--gold);"></div>` : ''}
+      </div>`;
+    if (c.type === 'gradient-toggle') return `
+      <div class="ctrl-group">
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;"><input type="checkbox" ${studioState[c.id]?'checked':''} onchange="studioState['${c.id}']=this.checked;renderCanvas()"> ${c.label}</label>
+      </div>`;
+    return '';
+  }).join('');
+}
+
+function selectTemplate(id) {
+  studioState.templateId = id;
+  renderTemplatePicker();
+  renderControlsPanel();
+  renderCanvas();
+}
+
+function loadStudioImage(event, field) {
   const file = event.target.files[0];
-  if (file) {
-    const reader = new FileReader();
-    reader.onload = function(e) {
-      document.getElementById('graphic-img').src = e.target.result;
-    }
-    reader.readAsDataURL(file);
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    studioState[field] = e.target.result;
+    renderControlsPanel();
+    renderCanvas();
+  };
+  reader.readAsDataURL(file);
+}
+
+/* ---- CANVAS RENDERERS ---- */
+function renderCanvas() {
+  const canvas = document.getElementById('graphic-canvas');
+  if (!canvas) return;
+  const tmpl = TEMPLATES.find(t => t.id === studioState.templateId);
+  const [w, h] = tmpl.aspect;
+  canvas.style.width = w + 'px';
+  canvas.style.height = h + 'px';
+  const gold = studioState.accentColor || '#D4AF37';
+  const bg = studioState.bgColor || '#08172E';
+  const teamColor = TEAM_COLORS[studioState.team] || '#1A3A8F';
+  const img = studioState.uploadedImg;
+  const dotPattern = `background-image: radial-gradient(${gold}44 1px, transparent 1px); background-size: 14px 14px;`;
+  const diagonalLines = `background-image: repeating-linear-gradient(45deg, transparent, transparent 6px, ${gold}22 6px, ${gold}22 7px);`;
+
+  if (studioState.templateId === 'contestant-card') {
+    canvas.innerHTML = `
+      <div style="width:${w}px;height:${h}px;position:relative;background:${teamColor};font-family:'Inter',sans-serif;overflow:hidden;">
+        <!-- BG pattern -->
+        <div style="position:absolute;inset:0;${dotPattern}opacity:0.4;"></div>
+        <!-- Top bar -->
+        <div style="position:absolute;top:0;left:0;right:0;height:42px;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:space-between;padding:0 14px;">
+          <div style="font-size:9px;font-weight:800;color:${gold};letter-spacing:2px;text-transform:uppercase;">RAFA SEASON 2 · THE WORD LEAGUE</div>
+          <div style="font-size:10px;font-weight:800;color:white;background:${gold};color:${bg};padding:2px 8px;border-radius:3px;">#${studioState.teamNumber||'00'}</div>
+        </div>
+        <!-- Photo area -->
+        <div style="position:absolute;top:42px;left:0;right:0;height:${h-180}px;background:#111;overflow:hidden;">
+          ${img ? `<img src="${img}" style="width:100%;height:100%;object-fit:cover;object-position:top;display:block;">` : `<div style="width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(160deg,${teamColor}88,#111);color:rgba(255,255,255,0.3);font-size:40px;">👤<div style="font-size:11px;margin-top:8px;">Upload Photo</div></div>`}
+          <!-- gradient fade at bottom -->
+          <div style="position:absolute;bottom:0;left:0;right:0;height:60px;background:linear-gradient(to top,${teamColor},transparent);"></div>
+        </div>
+        <!-- Lower info -->
+        <div style="position:absolute;bottom:0;left:0;right:0;height:180px;background:linear-gradient(160deg,${teamColor},${bg});padding:16px;">
+          <div style="font-size:9px;font-weight:700;color:${gold};letter-spacing:1.5px;text-transform:uppercase;">Team ${studioState.team}</div>
+          <div style="font-size:26px;font-weight:800;color:white;font-family:'Playfair Display',serif;line-height:1.1;margin-top:4px;">${studioState.name||'Contestant Name'}</div>
+          <div style="font-size:10px;font-style:italic;color:rgba(255,255,255,0.7);margin-top:5px;">"${studioState.verse||'Philippians 4:13'}"</div>
+          <div style="height:1px;background:${gold}44;margin:10px 0;"></div>
+          <!-- Vote row -->
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <div>
+              <div style="font-size:9px;font-weight:700;color:${gold};text-transform:uppercase;letter-spacing:1px;">VOTE NOW</div>
+              <div style="font-size:11px;font-weight:700;color:white;">${studioState.votingLink||'vote.rafacontest.org'}</div>
+            </div>
+            <!-- QR placeholder -->
+            <div style="width:42px;height:42px;background:white;border-radius:5px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:1px;">
+              <div style="font-size:5px;color:#111;font-weight:900;letter-spacing:0.5px;">QR CODE</div>
+              <div style="width:30px;height:30px;background:linear-gradient(45deg,#111 25%,transparent 25%,transparent 75%,#111 75%),linear-gradient(45deg,#111 25%,transparent 25%,transparent 75%,#111 75%);background-size:8px 8px;background-position:0 0,4px 4px;"></div>
+            </div>
+          </div>
+        </div>
+      </div>`;
+  }
+  else if (studioState.templateId === 'stage-promo') {
+    const bgStyle = studioState.useGradient
+      ? `background:${bg};`
+      : `background:linear-gradient(160deg, #B22222 0%, #8B0000 30%, #3D0000 70%, #1a0000 100%);`;
+    canvas.innerHTML = `
+      <div style="width:${w}px;height:${h}px;position:relative;${bgStyle}font-family:'Inter',sans-serif;overflow:hidden;">
+        <!-- Light burst -->
+        <div style="position:absolute;top:-60px;right:-60px;width:280px;height:280px;background:radial-gradient(circle,${gold}33 0%,transparent 70%);pointer-events:none;"></div>
+        <div style="position:absolute;bottom:-40px;left:-40px;width:200px;height:200px;background:radial-gradient(circle,${gold}22 0%,transparent 70%);pointer-events:none;"></div>
+        <!-- Diag lines overlay -->
+        <div style="position:absolute;inset:0;${diagonalLines}"></div>
+        <!-- Top branding -->
+        <div style="position:absolute;top:18px;left:18px;right:18px;">
+          <div style="font-size:9px;font-weight:700;color:${gold};letter-spacing:2px;text-transform:uppercase;">Bible Recitation Competition</div>
+          <div style="font-size:14px;font-weight:900;color:white;margin-top:2px;">THE REFA'S</div>
+          <div style="font-size:9px;color:rgba(255,255,255,0.7);margin-top:6px;">Live @ ${studioState.location||'Evidence Chapel'}</div>
+        </div>
+        <!-- Big number -->
+        <div style="position:absolute;top:70px;left:0;right:0;text-align:center;">
+          <div style="font-size:180px;font-weight:900;color:white;line-height:1;letter-spacing:-8px;text-shadow:0 0 60px ${gold}66;">${studioState.stageNum||'60'}</div>
+        </div>
+        <!-- Round badge -->
+        <div style="position:absolute;top:185px;left:50%;transform:translateX(-50%);">
+          <div style="background:#B22222;color:white;padding:4px 14px;border-radius:20px;font-size:10px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;white-space:nowrap;">${studioState.round||'Round One'}</div>
+        </div>
+        <!-- Middle text -->
+        <div style="position:absolute;bottom:120px;left:0;right:0;text-align:center;padding:0 12px;">
+          <div style="font-size:24px;font-weight:900;color:white;line-height:1.1;text-shadow:0 2px 8px rgba(0,0,0,0.5);">BIBLE VERSES IN <span style="display:inline-block;background:#8B0000;padding:2px 10px;border-radius:6px;font-size:32px;color:${gold};vertical-align:middle;">${studioState.stageTime||'2'}</span> MINUTES</div>
+        </div>
+        <!-- Date -->
+        <div style="position:absolute;bottom:68px;left:0;right:0;text-align:center;">
+          <div style="font-size:13px;font-weight:800;color:white;letter-spacing:1px;text-transform:uppercase;">${studioState.eventDate||'Sunday, 9th August 2025'}</div>
+        </div>
+        <!-- Bottom bar -->
+        <div style="position:absolute;bottom:0;left:0;right:0;height:44px;background:linear-gradient(90deg,${gold},#c8960c);display:flex;align-items:center;justify-content:center;">
+          <div style="font-size:12px;font-weight:800;color:#1a0000;letter-spacing:0.5px;">${studioState.broadcastLine||'Watch Exclusively on RAFA Live'}</div>
+        </div>
+      </div>`;
+  }
+  else if (studioState.templateId === 'voting-live') {
+    canvas.innerHTML = `
+      <div style="width:${w}px;height:${h}px;position:relative;background:linear-gradient(135deg,${teamColor||'#065F46'},${bg});font-family:'Inter',sans-serif;overflow:hidden;">
+        ${img ? `<img src="${img}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0.25;">` : ''}
+        <div style="position:absolute;inset:0;${dotPattern}opacity:0.3;"></div>
+        <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center;">
+          <div style="font-size:42px;margin-bottom:6px;">🗳️</div>
+          <div style="font-size:11px;font-weight:700;color:${gold};letter-spacing:3px;text-transform:uppercase;margin-bottom:8px;">RAFA Season 2 · The Word League</div>
+          <div style="font-size:42px;font-weight:900;color:white;font-family:'Playfair Display',serif;line-height:1;">VOTING</div>
+          <div style="font-size:36px;font-weight:900;color:${gold};font-family:'Playfair Display',serif;line-height:1.1;margin-bottom:16px;">IS NOW LIVE!</div>
+          <div style="background:rgba(255,255,255,0.1);border:1px solid ${gold}66;border-radius:8px;padding:12px 20px;margin-bottom:16px;">
+            <div style="font-size:10px;color:${gold};font-weight:700;letter-spacing:1px;">VOTE AT</div>
+            <div style="font-size:13px;font-weight:800;color:white;">${studioState.votingLink||'vote.rafacontest.org'}</div>
+          </div>
+          <div style="font-size:14px;font-weight:700;color:rgba(255,255,255,0.9);">₦200 per vote</div>
+          <div style="font-size:11px;color:rgba(255,255,255,0.6);margin-top:4px;">${studioState.eventDate||'Aug 7 – Aug 9'}</div>
+        </div>
+        <div style="position:absolute;bottom:0;left:0;right:0;height:4px;background:${gold};"></div>
+      </div>`;
+  }
+  else if (studioState.templateId === 'how-to-vote') {
+    const steps = [
+      { n:'1', t:'Go to the link', d:studioState.votingLink||'vote.rafacontest.org' },
+      { n:'2', t:'Enter your phone number', d:'Used for OTP verification & fraud prevention' },
+      { n:'3', t:'Choose your contestant', d:'Search by name or team' },
+      { n:'4', t:'Select your vote pack', d:'₦200 single · ₦1,600 for 10 · ₦7,000 for 50' },
+      { n:'5', t:'Pay & confirm', d:'Instant confirmation sent via SMS' },
+    ];
+    canvas.innerHTML = `
+      <div style="width:${w}px;height:${h}px;position:relative;background:${bg};font-family:'Inter',sans-serif;overflow:hidden;">
+        <div style="position:absolute;inset:0;${dotPattern}opacity:0.2;"></div>
+        <!-- Header -->
+        <div style="background:linear-gradient(90deg,${gold},#c8960c);padding:14px 16px;">
+          <div style="font-size:9px;font-weight:700;color:${bg};letter-spacing:2px;">RAFA SEASON 2 · THE WORD LEAGUE</div>
+          <div style="font-size:20px;font-weight:900;color:${bg};margin-top:2px;">HOW TO VOTE</div>
+        </div>
+        <!-- Steps -->
+        <div style="padding:14px 14px 0;display:flex;flex-direction:column;gap:10px;">
+          ${steps.map(s=>`
+            <div style="display:flex;gap:10px;align-items:flex-start;">
+              <div style="width:28px;height:28px;background:${gold};border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:900;color:${bg};flex-shrink:0;margin-top:1px;">${s.n}</div>
+              <div>
+                <div style="font-size:13px;font-weight:800;color:white;">${s.t}</div>
+                <div style="font-size:10px;color:rgba(255,255,255,0.6);margin-top:1px;">${s.d}</div>
+              </div>
+            </div>`).join('')}
+        </div>
+        <!-- Bottom -->
+        <div style="position:absolute;bottom:0;left:0;right:0;background:rgba(255,255,255,0.06);padding:12px;text-align:center;border-top:1px solid ${gold}44;">
+          <div style="font-size:10px;font-weight:700;color:${gold};">Every vote counts. Support your champion! 🙏</div>
+        </div>
+      </div>`;
+  }
+  else if (studioState.templateId === 'team-reveal') {
+    canvas.innerHTML = `
+      <div style="width:${w}px;height:${h}px;position:relative;background:${teamColor};font-family:'Inter',sans-serif;overflow:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;">
+        <div style="position:absolute;inset:0;${dotPattern}opacity:0.3;"></div>
+        <div style="position:absolute;top:-50px;left:50%;transform:translateX(-50%);width:250px;height:250px;background:radial-gradient(circle,rgba(255,255,255,0.12),transparent 70%);"></div>
+        <div style="position:relative;text-align:center;padding:24px;">
+          <div style="font-size:9px;font-weight:700;color:${gold};letter-spacing:3px;margin-bottom:12px;">RAFA SEASON 2 · TEAM REVEAL</div>
+          <div style="font-size:60px;margin-bottom:8px;">🏆</div>
+          <div style="font-size:11px;font-weight:700;color:${gold};letter-spacing:2px;margin-bottom:6px;">TEAM ${studioState.teamNumber||'#'}</div>
+          <div style="font-size:36px;font-weight:900;color:white;font-family:'Playfair Display',serif;line-height:1.1;margin-bottom:12px;">${studioState.name||studioState.team||'Eagles of Zion'}</div>
+          <div style="height:3px;width:60px;background:${gold};margin:0 auto 12px;border-radius:2px;"></div>
+          <div style="font-size:11px;color:rgba(255,255,255,0.7);">10 members · 1 mentor · Season 2</div>
+        </div>
+        <div style="position:absolute;bottom:0;left:0;right:0;height:4px;background:${gold};"></div>
+      </div>`;
+  }
+  else if (studioState.templateId === 'leaderboard') {
+    const podium = [
+      { pos: studioState.leaderPosition||'1st', name: studioState.leaderTeam||'Eagles of Zion', votes: studioState.leaderVotes||'2,347', color: gold },
+      { pos: '2nd', name: '— —', votes: '???', color: '#9CA3AF' },
+      { pos: '3rd', name: '— —', votes: '???', color: '#C2410C' },
+    ];
+    canvas.innerHTML = `
+      <div style="width:${w}px;height:${h}px;position:relative;background:${bg};font-family:'Inter',sans-serif;overflow:hidden;">
+        <div style="position:absolute;inset:0;${diagonalLines}"></div>
+        <div style="padding:16px 16px 0;position:relative;">
+          <div style="font-size:9px;font-weight:700;color:${gold};letter-spacing:2px;text-transform:uppercase;">RAFA Season 2 · After ${studioState.stage||'Stage 1'}</div>
+          <div style="font-size:22px;font-weight:900;color:white;margin-top:4px;font-family:'Playfair Display',serif;">Vote Leaderboard 🔥</div>
+          <div style="height:2px;background:linear-gradient(90deg,${gold},transparent);margin:10px 0;"></div>
+        </div>
+        <div style="padding:0 12px;display:flex;flex-direction:column;gap:8px;position:relative;">
+          ${podium.map((p,i)=>`
+            <div style="display:flex;align-items:center;gap:10px;background:rgba(255,255,255,0.05);border:1px solid ${p.color}44;border-radius:8px;padding:10px 12px;">
+              <div style="font-size:22px;font-weight:900;color:${p.color};width:32px;">${p.pos}</div>
+              <div style="flex:1;">
+                <div style="font-size:14px;font-weight:700;color:white;">${p.name}</div>
+                <div style="font-size:10px;color:rgba(255,255,255,0.5);">Votes cast</div>
+              </div>
+              <div style="font-size:16px;font-weight:800;color:${p.color};">${p.votes}</div>
+            </div>`).join('')}
+        </div>
+        <div style="position:absolute;bottom:0;left:0;right:0;padding:14px;text-align:center;">
+          <div style="font-size:10px;color:${gold};font-weight:700;">🗳️ Vote now · ${studioState.votingLink||'vote.rafacontest.org'}</div>
+        </div>
+      </div>`;
+  }
+  else if (studioState.templateId === 'reel-cover') {
+    canvas.innerHTML = `
+      <div style="width:${w}px;height:${h}px;position:relative;background:${teamColor};font-family:'Inter',sans-serif;overflow:hidden;">
+        ${img ? `<img src="${img}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top;">` : ''}
+        <div style="position:absolute;inset:0;background:linear-gradient(to bottom, transparent 30%, ${bg}EE 80%);"></div>
+        <div style="position:absolute;inset:0;${dotPattern}opacity:0.15;"></div>
+        <!-- top label -->
+        <div style="position:absolute;top:16px;left:16px;right:16px;display:flex;justify-content:space-between;align-items:center;">
+          <div style="font-size:9px;font-weight:800;color:${gold};letter-spacing:2px;background:rgba(0,0,0,0.5);padding:3px 8px;border-radius:4px;">RAFA S2</div>
+          <div style="width:8px;height:8px;border-radius:50%;background:${gold};box-shadow:0 0 8px ${gold};"></div>
+        </div>
+        <!-- bottom info -->
+        <div style="position:absolute;bottom:0;left:0;right:0;padding:18px;">
+          <div style="font-size:9px;color:${gold};font-weight:700;letter-spacing:1.5px;text-transform:uppercase;">${studioState.stage||'Stage 1 — The Proving Ground'}</div>
+          <div style="font-size:28px;font-weight:900;color:white;font-family:'Playfair Display',serif;line-height:1.1;margin-top:3px;">${studioState.name||'Contestant Name'}</div>
+          <div style="font-size:11px;color:rgba(255,255,255,0.7);margin-top:3px;">Team ${studioState.team}</div>
+          <div style="font-size:10px;font-style:italic;color:${gold};margin-top:6px;">"${studioState.verse||'Philippians 4:13'}"</div>
+          <div style="height:1px;background:${gold}55;margin:10px 0;"></div>
+          <div style="font-size:9px;color:rgba(255,255,255,0.5);">🗳️ ${studioState.votingLink||'vote.rafacontest.org'} · ₦200/vote</div>
+        </div>
+      </div>`;
+  }
+  else if (studioState.templateId === 'event-countdown') {
+    canvas.innerHTML = `
+      <div style="width:${w}px;height:${h}px;position:relative;background:${bg};font-family:'Inter',sans-serif;overflow:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;">
+        <div style="position:absolute;inset:0;${dotPattern}opacity:0.2;"></div>
+        <div style="position:absolute;top:-30px;right:-30px;width:200px;height:200px;background:radial-gradient(circle,${gold}33,transparent 70%);"></div>
+        <div style="position:relative;text-align:center;padding:20px;">
+          <div style="font-size:9px;font-weight:700;color:${gold};letter-spacing:3px;margin-bottom:14px;text-transform:uppercase;">RAFA Season 2 · Countdown</div>
+          <div style="font-size:100px;font-weight:900;color:${gold};line-height:1;text-shadow:0 0 30px ${gold}66;">${studioState.teamNumber||'10'}</div>
+          <div style="font-size:18px;font-weight:800;color:white;margin-top:-4px;">DAYS TO GO</div>
+          <div style="height:2px;background:linear-gradient(90deg,transparent,${gold},transparent);margin:14px 0;"></div>
+          <div style="font-size:15px;font-weight:700;color:white;line-height:1.3;">${studioState.stage||'Stage 1 — The Proving Ground'}</div>
+          <div style="font-size:12px;color:rgba(255,255,255,0.6);margin-top:6px;">${studioState.eventDate||'Sunday 9th August 2025'}</div>
+        </div>
+        <div style="position:absolute;bottom:0;left:0;right:0;height:4px;background:${gold};"></div>
+      </div>`;
   }
 }
+
+function initStudio() {
+  renderTemplatePicker();
+  renderControlsPanel();
+  renderCanvas();
+}
+
+function updateStudio() { renderCanvas(); }
 
 function exportGraphic() {
   const node = document.getElementById('graphic-canvas');
+  if (!node) return;
   if (window.html2canvas) {
-    html2canvas(node, { scale: 2 }).then(canvas => {
+    html2canvas(node.firstElementChild || node, { scale: 2, useCORS: true, allowTaint: true }).then(canvas => {
       const link = document.createElement('a');
-      link.download = 'rafa-contestant-graphic.png';
+      link.download = `rafa-${studioState.templateId}-${Date.now()}.png`;
       link.href = canvas.toDataURL('image/png');
       link.click();
-    });
+    }).catch(() => alert('Export failed. Try a different browser if issue persists.'));
   } else {
-    alert("Canvas export library not loaded yet. Please wait a moment and try again.");
+    alert('Export library loading. Please try again in a moment.');
   }
 }
+
 
 function getPhaseProgress(phase) {
   const total = phase.tasks.length;
@@ -1368,6 +1839,7 @@ document.addEventListener('DOMContentLoaded', function() {
   renderTasks();
   renderTeams();
   updateGlobalProgress();
+  initStudio();
 });
 </script>
 </body>
