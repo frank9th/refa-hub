@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Timer Display - RAFA</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@700;800&family=Bebas+Neue&family=Great+Vibes&family=Oswald:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background-color: #00FF00; /* Default Chroma Green */
+      transition: background 0.3s ease;
+    }
+    #display-container {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+    #cd-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.6);
+      z-index: 1;
+      pointer-events: none;
+      display: none;
+    }
+    .cd-text-element {
+      position: absolute;
+      width: 100%;
+      text-align: center;
+      z-index: 2;
+      line-height: 1.2;
+      text-shadow: 0 4px 10px rgba(0,0,0,0.5);
+      color: #FFFFFF;
+      transition: color 0.2s ease, font-size 0.2s ease;
+    }
+    #cd-display {
+      font-size: 15vw;
+      font-weight: 700;
+      top: 35%;
+    }
+    #cd-title {
+      font-size: 4vw;
+      top: 20%;
+    }
+    #cd-desc {
+      font-size: 2vw;
+      top: 70%;
+    }
+    #cd-footer {
+      font-size: 1.5vw;
+      top: 85%;
+    }
+
+    #cd-display.warning {
+      color: #EF4444;
+      animation: pulse-warn 1s infinite alternate;
+    }
+    @keyframes pulse-warn {
+      0% { text-shadow: 0 0 20px rgba(239, 68, 68, 0.5); }
+      100% { text-shadow: 0 0 40px rgba(239, 68, 68, 0.9); }
+    }
+  </style>
+</head>
+<body>
+
+  <div id="display-container">
+    <div id="cd-overlay"></div>
+    <div id="cd-title" class="cd-text-element"></div>
+    <div id="cd-desc" class="cd-text-element"></div>
+    <div id="cd-display" class="cd-text-element">00:00</div>
+    <div id="cd-footer" class="cd-text-element"></div>
+  </div>
+
+  <script>
+    const cdChannel = new BroadcastChannel('countdown_sync');
+    const timerText = document.getElementById('cd-display');
+    const titleText = document.getElementById('cd-title');
+    const descText = document.getElementById('cd-desc');
+    const footerText = document.getElementById('cd-footer');
+    const overlay = document.getElementById('cd-overlay');
+
+    cdChannel.onmessage = (event) => {
+      const state = event.data;
+      
+      // Update Time & Warning State
+      timerText.textContent = state.timeText;
+      if (state.isWarning) {
+        timerText.classList.add('warning');
+      } else {
+        timerText.classList.remove('warning');
+      }
+
+      // Update Texts & Colors & Sizes
+      titleText.textContent = state.titleText;
+      titleText.style.color = state.titleColor;
+      titleText.style.fontSize = state.titleSize + 'vw';
+
+      descText.textContent = state.descText;
+      descText.style.color = state.descColor;
+      descText.style.fontSize = state.descSize + 'vw';
+
+      footerText.textContent = state.footerText;
+      footerText.style.color = state.footerColor;
+      footerText.style.fontSize = state.footerSize + 'vw';
+
+      timerText.style.fontSize = state.timerSize + 'vw';
+      if (!state.isWarning) {
+        timerText.style.color = state.timerColor;
+      }
+
+      // Update Background & Overlay
+      document.body.style.background = state.background;
+      document.body.style.backgroundColor = state.backgroundColor;
+      document.body.style.backgroundImage = state.backgroundImage;
+      document.body.style.backgroundSize = state.backgroundSize;
+      document.body.style.backgroundPosition = state.backgroundPosition;
+      
+      
+      if (state.overlayOpacity > 0) {
+        overlay.style.display = 'block';
+        overlay.style.background = `rgba(0,0,0,${state.overlayOpacity / 100})`;
+      } else {
+        overlay.style.display = 'none';
+      }
+
+      // Update Styling
+      document.querySelectorAll('.cd-text-element').forEach(el => {
+        el.style.fontFamily = state.fontFamily;
+      });
+
+      // Update Positions
+      if (state.positions) {
+        timerText.style.transform = `translate(${state.positions['cd-display'].x}px, ${state.positions['cd-display'].y}px)`;
+        titleText.style.transform = `translate(${state.positions['cd-title'].x}px, ${state.positions['cd-title'].y}px)`;
+        descText.style.transform = `translate(${state.positions['cd-desc'].x}px, ${state.positions['cd-desc'].y}px)`;
+        footerText.style.transform = `translate(${state.positions['cd-footer'].x}px, ${state.positions['cd-footer'].y}px)`;
+      }
+    };
+  </script>
+</body>
+</html>
