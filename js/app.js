@@ -102,7 +102,7 @@ const GOALS_DATA = [
 ];
 
 const CURRENT_PHASE_DATA = {
-  date: 'July 22, 2025 — PRE-AUDITION URGENCY WEEK',
+  date: 'July 22, 2026 — PRE-AUDITION URGENCY WEEK',
   title: 'Pre-Audition Setup — Audition is 10 Days Away',
   desc: 'Audition is August 1. Voting platform, social media handles, application form, and sponsorship outreach must all be completed this week. Every day matters.'
 };
