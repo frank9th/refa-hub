@@ -60,7 +60,7 @@ window.RENDERERS['team-reveal'] = function(w, h, s, gold, bg, tc, img, logo) {
       <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:250px;height:250px;background:radial-gradient(circle,rgba(255,255,255,0.15) 0%,transparent 70%);z-index:1;"></div>
       
       <div style="z-index:2;width:100%;padding:0 20px;box-sizing:border-box;">
-        <div style="font-size:10px;color:${gold};letter-spacing:3px;font-weight:bold;margin-bottom:30px;">RAFA SEASON 2 · TEAM REVEAL</div>
+        <div style="font-size:10px;color:${gold};letter-spacing:3px;font-weight:bold;margin-bottom:30px;">REFA SEASON 2 · TEAM REVEAL</div>
         
         <div style="font-size:65px;margin-bottom:20px;">🏆</div>
         <div style="display:inline-block;background:${gold};color:#000;font-size:12px;font-weight:900;padding:4px 12px;border-radius:16px;margin-bottom:15px;letter-spacing:1px;">TEAM ${s.teamNumber}</div>

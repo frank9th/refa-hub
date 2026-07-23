@@ -79,7 +79,7 @@ window.RENDERERS['contestant-card'] = function(w, h, s, gold, bg, tc, img, logo)
       <div style="position:absolute;top:0;left:0;right:0;bottom:0;background:radial-gradient(rgba(255,255,255,0.1) 1px,transparent 1px);background-size:14px 14px;z-index:0;"></div>
       
       <div style="height:42px;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:space-between;padding:0 20px;z-index:2;position:relative;">
-        <div style="font-size:9px;color:${gold};letter-spacing:1px;font-weight:bold;">RAFA SEASON 2 · THE WORD LEAGUE</div>
+        <div style="font-size:9px;color:${gold};letter-spacing:1px;font-weight:bold;">REFA SEASON 2 · THE WORD LEAGUE</div>
         <div style="background:${gold};color:#000;font-size:10px;font-weight:900;padding:2px 8px;border-radius:12px;">#${s.teamNumber}</div>
       </div>
       

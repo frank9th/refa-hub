@@ -46,12 +46,12 @@ const PHASES = [
     { id:'pw9', text:'Aug 8: Countdown post + leaderboard teaser', detail:'"Who is leading? Find out TOMORROW at Stage 1!" Voting closes midnight.', tag:'media' }
   ]},
   { id: 'stage1', title: 'Stage 1 - The Proving Ground', date: 'August 9', tasks: [
-    { id:'s1a', text:'Stage branded backdrop and podium set up', detail:'RAFA Season 2 branding, scoreboard display, team banners in fan zones', tag:'ops' },
+    { id:'s1a', text:'Stage branded backdrop and podium set up', detail:'REFA Season 2 branding, scoreboard display, team banners in fan zones', tag:'ops' },
     { id:'s1b', text:'Live stream setup tested - 2 camera angles minimum', detail:'Stable internet confirmed. Test stream done 1 hour before event.', tag:'tech' },
     { id:'s1c', text:'MC/Host briefed with full running order', detail:'MC has script, contestant list, team order, judge bios, sponsor mentions', tag:'ops' },
     { id:'s1d', text:'Judges panel in position (3 judges)', detail:'Score sheets, timing devices, and microphones confirmed', tag:'ops' },
     { id:'s1e', text:'Reserved Family Corners marked and stewarded', detail:'Each team has a dedicated section. Parent Supporter Cards distributed at door.', tag:'ops' },
-    { id:'s1f', text:'Opening ceremony conducted', detail:'Prayer, RAFA mission statement, Season 2 overview, sponsor mentions', tag:'ops' },
+    { id:'s1f', text:'Opening ceremony conducted', detail:'Prayer, REFA mission statement, Season 2 overview, sponsor mentions', tag:'ops' },
     { id:'s1g', text:'Round 1 voting leaderboard announced live', detail:'MC reads current top 3 from voting platform before competition begins', tag:'ops' },
     { id:'s1h', text:'All performances filmed and recorded', detail:'Every contestant moment captured. Highlights editor briefed on key clips.', tag:'content' },
     { id:'s1i', text:'Judges deliver filmed remarks', detail:'Each judge gives short filmed commentary after each team section', tag:'content' },
@@ -107,7 +107,7 @@ const CURRENT_PHASE_DATA = {
   desc: 'Audition is August 1. Voting platform, social media handles, application form, and sponsorship outreach must all be completed this week. Every day matters.'
 };
 
-const STORAGE_KEY = 'rafa_s2_tasks_v1';
+const STORAGE_KEY = 'refa_s2_tasks_v1';
 let checked = {};
 try { checked = JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; } catch(e) { checked = {}; }
 
@@ -304,11 +304,11 @@ const KIT_PREVIEWS = {
     html: `
       <div class="preview-box">
         <h4>📩 Outreach Email Template (For Schools)</h4>
-        <p style="font-size:13px;color:var(--text-muted);margin-bottom:10px;">Subject: Partner with RAFA Season 2: Empowering Youth Through Scripture & Excellence</p>
+        <p style="font-size:13px;color:var(--text-muted);margin-bottom:10px;">Subject: Partner with REFA Season 2: Empowering Youth Through Scripture & Excellence</p>
         <div style="background:#F8F9FB;padding:14px;border-radius:8px;font-size:12.5px;line-height:1.6;border-left:3px solid var(--gold);">
           Dear Principal / Director,<br/><br/>
           Greetings in the name of our Lord Jesus Christ.<br/>
-          I am writing on behalf of <strong>Refiners of Faith Academy (RAFA)</strong>. Following Season 1's success, we are thrilled to launch <strong>RAFA Season 2: "Words That Last"</strong>...
+          I am writing on behalf of <strong>Refiners of Faith Academy (REFA)</strong>. Following Season 1's success, we are thrilled to launch <strong>REFA Season 2: "Words That Last"</strong>...
         </div>
       </div>
       <div class="preview-box">
@@ -341,7 +341,7 @@ const KIT_PREVIEWS = {
       <div class="preview-box">
         <h4>🎴 Printable QR Voting Card (Audition Day Handout)</h4>
         <div class="print-card-mockup">
-          <div class="print-card-header">RAFA SEASON 2: WORDS THAT LAST</div>
+          <div class="print-card-header">REFA SEASON 2: WORDS THAT LAST</div>
           <div style="font-size:12px;color:var(--gold-light);">Contestant Card &amp; Voting Pass (₦200/Vote)</div>
           <div class="print-card-qr">[ QR CODE PORTAL ]</div>
           <div style="font-size:11px;opacity:0.9;">🔥 THE 100-VOTE FAMILY CHALLENGE</div>
@@ -352,11 +352,11 @@ const KIT_PREVIEWS = {
         <h4>📱 WhatsApp Broadcast Copy (Ready to Share)</h4>
         <div class="wa-chat-box">
           <div class="wa-bubble">
-            Praise the Lord family! 👋 My child, <strong>[Name]</strong>, has been selected for RAFA Season 2 Bible Championship! 📖🏆<br/><br/>
+            Praise the Lord family! 👋 My child, <strong>[Name]</strong>, has been selected for REFA Season 2 Bible Championship! 📖🏆<br/><br/>
             Voting is now LIVE! (1 Vote = ₦200 | 10 Votes = ₦1,600)<br/>
-            👉 <strong>vote.rafacontest.org/[ID]</strong>
+            👉 <strong>vote.refacontest.org/[ID]</strong>
           </div>
-          <button class="wa-btn-copy" onclick="navigator.clipboard.writeText('Praise the Lord family! 👋 My child has been selected for RAFA Season 2 Bible Championship! Voting is LIVE! (1 Vote = ₦200 | 10 Votes = ₦1,600). Please vote at: vote.rafacontest.org');alert('Copied to clipboard!')">📋 Copy WhatsApp Text</button>
+          <button class="wa-btn-copy" onclick="navigator.clipboard.writeText('Praise the Lord family! 👋 My child has been selected for REFA Season 2 Bible Championship! Voting is LIVE! (1 Vote = ₦200 | 10 Votes = ₦1,600). Please vote at: vote.refacontest.org');alert('Copied to clipboard!')">📋 Copy WhatsApp Text</button>
         </div>
       </div>
     `
@@ -386,13 +386,13 @@ const KIT_PREVIEWS = {
     `
   },
   bible: {
-    title: '📘 RAFA Season 2 Master Production Bible',
+    title: '📘 REFA Season 2 Master Production Bible',
     subtitle: 'Full Architecture, Rules, Scoring & Workflow',
     html: `
       <div class="preview-box">
         <h4>🏆 "The Word League" Architecture Summary</h4>
         <p style="font-size:13px;color:var(--text-main);line-height:1.6;">
-          Season 2 transforms RAFA into a multi-week reality TV-style Bible league. 100 contestants (ages 10-15) compete across 10 mentored teams.
+          Season 2 transforms REFA into a multi-week reality TV-style Bible league. 100 contestants (ages 10-15) compete across 10 mentored teams.
         </p>
       </div>
       <div class="preview-box">

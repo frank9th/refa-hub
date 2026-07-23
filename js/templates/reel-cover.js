@@ -77,7 +77,7 @@ window.RENDERERS['reel-cover'] = function(w, h, s, gold, bg, tc, img, logo) {
       
       <div style="position:absolute;top:30px;left:30px;background:rgba(0,0,0,0.5);padding:6px 12px;border-radius:20px;display:flex;align-items:center;border:1px solid rgba(255,255,255,0.2);">
         <div style="width:6px;height:6px;border-radius:50%;background:${gold};margin-right:8px;"></div>
-        <div style="font-size:10px;font-weight:bold;letter-spacing:1px;">RAFA S2</div>
+        <div style="font-size:10px;font-weight:bold;letter-spacing:1px;">REFA S2</div>
       </div>
       
       <div style="position:absolute;bottom:40px;left:30px;right:30px;">

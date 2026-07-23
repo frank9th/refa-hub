@@ -52,7 +52,7 @@ window.RENDERERS['grand-final'] = function(w, h, s, gold, bg, tc, img, logo) {
     <div style="width:${w}px;height:${h}px;background:linear-gradient(135deg,#0a0015 0%,#1a0a2e 50%,#0D2145 100%);position:relative;overflow:hidden;display:flex;flex-direction:column;justify-content:center;align-items:center;color:white;font-family:'Inter',sans-serif;">
       <div style="position:absolute;top:0;left:0;right:0;bottom:0;background:radial-gradient(${gold}26 1px,transparent 1px);background-size:14px 14px;"></div>
       <div style="z-index:2;text-align:center;">
-        <div style="font-size:9px;color:${gold};letter-spacing:3px;margin-bottom:20px;">RAFA SEASON 2</div>
+        <div style="font-size:9px;color:${gold};letter-spacing:3px;margin-bottom:20px;">REFA SEASON 2</div>
         ${logoHtml}
         <div style="font-size:50px;margin-bottom:15px;">🏆</div>
         <div style="font-family:'Playfair Display',serif;font-size:32px;font-weight:800;letter-spacing:1px;">THE LAST WORD</div>

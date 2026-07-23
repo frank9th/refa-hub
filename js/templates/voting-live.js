@@ -50,7 +50,7 @@ window.RENDERERS['voting-live'] = function(w, h, s, gold, bg, tc, img, logo) {
       
       <div style="z-index:2;width:100%;padding:0 30px;box-sizing:border-box;">
         <div style="font-size:50px;margin-bottom:15px;">🗳️</div>
-        <div style="font-size:11px;color:${gold};letter-spacing:2px;font-weight:bold;margin-bottom:10px;">RAFA SEASON 2 · THE WORD LEAGUE</div>
+        <div style="font-size:11px;color:${gold};letter-spacing:2px;font-weight:bold;margin-bottom:10px;">REFA SEASON 2 · THE WORD LEAGUE</div>
         <div style="font-size:46px;font-weight:900;letter-spacing:2px;line-height:1;">VOTING</div>
         <div style="font-family:'Playfair Display',serif;font-size:38px;color:${gold};font-style:italic;margin-bottom:30px;">Is Now Live!</div>
         

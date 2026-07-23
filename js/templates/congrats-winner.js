@@ -74,7 +74,7 @@ window.RENDERERS['congrats-winner'] = function(w, h, s, gold, bg, tc, img, logo)
       </div>
       
       <div style="position:absolute;bottom:35px;font-size:10px;color:${gold};letter-spacing:2px;font-weight:bold;z-index:2;">
-        RAFA Season 2 · The Word League
+        REFA Season 2 · The Word League
       </div>
       <div style="position:absolute;bottom:0;left:0;right:0;height:4px;background:${gold};"></div>
     </div>

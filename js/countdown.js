@@ -230,7 +230,7 @@ function changeBackground() {
       container.style.backgroundSize = 'cover';
       container.style.backgroundPosition = 'center';
     } else {
-      container.style.backgroundImage = 'url("https://via.placeholder.com/1920x1080.png?text=RAFA+Timer+Background")';
+      container.style.backgroundImage = 'url("https://via.placeholder.com/1920x1080.png?text=REFA+Timer+Background")';
       container.style.backgroundSize = 'cover';
       container.style.backgroundPosition = 'center';
     }
@@ -343,7 +343,7 @@ function exportCountdownGraphic() {
     backgroundColor: null
   }).then(canvas => {
     const link = document.createElement('a');
-    link.download = 'RAFA_Timer_Graphic_' + Date.now() + '.png';
+    link.download = 'REFA_Timer_Graphic_' + Date.now() + '.png';
     link.href = canvas.toDataURL('image/png', 1.0);
     link.click();
     

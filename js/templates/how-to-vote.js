@@ -42,7 +42,7 @@ window.RENDERERS['how-to-vote'] = function(w, h, s, gold, bg, tc, img, logo) {
       <div style="position:absolute;top:0;left:0;right:0;bottom:0;background:radial-gradient(rgba(255,255,255,0.1) 1px,transparent 1px);background-size:14px 14px;z-index:0;"></div>
       
       <div style="background:linear-gradient(90deg,${gold},#FDE047);padding:20px;text-align:center;color:#000;position:relative;z-index:2;">
-        <div style="font-size:9px;font-weight:bold;letter-spacing:2px;margin-bottom:4px;">RAFA SEASON 2 · THE WORD LEAGUE</div>
+        <div style="font-size:9px;font-weight:bold;letter-spacing:2px;margin-bottom:4px;">REFA SEASON 2 · THE WORD LEAGUE</div>
         <div style="font-size:22px;font-weight:900;letter-spacing:1px;">HOW TO VOTE</div>
       </div>
       

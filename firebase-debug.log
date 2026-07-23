@@ -1,0 +1,66 @@
+[debug] [2026-07-22T15:13:32.770Z] ----------------------------------------------------------------------
+[debug] [2026-07-22T15:13:32.779Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\Frank\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js deploy --project refa-hub-2026
+[debug] [2026-07-22T15:13:32.782Z] CLI Version:   15.17.0
+[debug] [2026-07-22T15:13:32.782Z] Platform:      win32
+[debug] [2026-07-22T15:13:32.783Z] Node Version:  v22.14.0
+[debug] [2026-07-22T15:13:32.785Z] Time:          Wed Jul 22 2026 16:13:32 GMT+0100 (West Africa Standard Time)
+[debug] [2026-07-22T15:13:32.785Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2026-07-22T15:13:42.410Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-07-22T15:13:42.411Z] > authorizing via signed-in user (frankakpore@gmail.com)
+[debug] [2026-07-22T15:13:42.412Z] [iam] checking project refa-hub-2026 for permissions ["firebase.projects.get","firebasehosting.sites.update"]
+[debug] [2026-07-22T15:13:42.417Z] Checked if tokens are valid: true, expires at: 1784736635491
+[debug] [2026-07-22T15:13:42.417Z] Checked if tokens are valid: true, expires at: 1784736635491
+[debug] [2026-07-22T15:13:42.420Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/refa-hub-2026:testIamPermissions [none]
+[debug] [2026-07-22T15:13:42.420Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/refa-hub-2026:testIamPermissions  x-goog-user-project=refa-hub-2026
+[debug] [2026-07-22T15:13:42.420Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/refa-hub-2026:testIamPermissions {"permissions":["firebase.projects.get","firebasehosting.sites.update"]}
+[debug] [2026-07-22T15:13:57.155Z] *** [apiv2] error from fetch(https://cloudresourcemanager.googleapis.com/v1/projects/refa-hub-2026:testIamPermissions, {"headers":{},"method":"POST","body":"{\"permissions\":[\"firebase.projects.get\",\"firebasehosting.sites.update\"]}"}): FetchError: request to https://cloudresourcemanager.googleapis.com/v1/projects/refa-hub-2026:testIamPermissions failed, reason: socket hang up
+[debug] [2026-07-22T15:13:57.157Z] [iam] error while checking permissions, command may fail: Failed to make request to https://cloudresourcemanager.googleapis.com/v1/projects/refa-hub-2026:testIamPermissions
+[debug] [2026-07-22T15:13:57.159Z] Checked if tokens are valid: true, expires at: 1784736635491
+[debug] [2026-07-22T15:13:57.159Z] Checked if tokens are valid: true, expires at: 1784736635491
+[debug] [2026-07-22T15:13:57.160Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/refa-hub-2026 [none]
+[debug] [2026-07-22T15:14:07.959Z] *** [apiv2] error from fetch(https://firebase.googleapis.com/v1beta1/projects/refa-hub-2026, {"headers":{},"method":"GET","signal":{"reason":""}}): FetchError: request to https://firebase.googleapis.com/v1beta1/projects/refa-hub-2026 failed, reason: socket hang up
+[debug] [2026-07-22T15:14:07.961Z] Failed to make request to https://firebase.googleapis.com/v1beta1/projects/refa-hub-2026 (original: request to https://firebase.googleapis.com/v1beta1/projects/refa-hub-2026 failed, reason: socket hang up)
+[debug] [2026-07-22T15:14:13.019Z] Error: Timed out.
+    at Timeout._onTimeout (C:\Users\Frank\AppData\Roaming\npm\node_modules\firebase-tools\lib\utils.js:309:49)
+    at listOnTimeout (node:internal/timers:594:17)
+    at process.processTimers (node:internal/timers:529:7)
+[error] 
+[error] Error: An unexpected error has occurred.
+[debug] [2026-07-22T15:14:48.503Z] ----------------------------------------------------------------------
+[debug] [2026-07-22T15:14:48.508Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\Frank\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js deploy --project refa-hub-2026 --debug
+[debug] [2026-07-22T15:14:48.508Z] CLI Version:   15.17.0
+[debug] [2026-07-22T15:14:48.508Z] Platform:      win32
+[debug] [2026-07-22T15:14:48.509Z] Node Version:  v22.14.0
+[debug] [2026-07-22T15:14:48.509Z] Time:          Wed Jul 22 2026 16:14:48 GMT+0100 (West Africa Standard Time)
+[debug] [2026-07-22T15:14:48.509Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2026-07-22T15:14:55.086Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-07-22T15:14:55.088Z] > authorizing via signed-in user (frankakpore@gmail.com)
+[debug] [2026-07-22T15:14:55.089Z] [iam] checking project refa-hub-2026 for permissions ["firebase.projects.get","firebasehosting.sites.update"]
+[debug] [2026-07-22T15:14:55.096Z] Checked if tokens are valid: true, expires at: 1784736635491
+[debug] [2026-07-22T15:14:55.096Z] Checked if tokens are valid: true, expires at: 1784736635491
+[debug] [2026-07-22T15:14:55.099Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/refa-hub-2026:testIamPermissions [none]
+[debug] [2026-07-22T15:14:55.099Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/refa-hub-2026:testIamPermissions  x-goog-user-project=refa-hub-2026
+[debug] [2026-07-22T15:14:55.100Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/refa-hub-2026:testIamPermissions {"permissions":["firebase.projects.get","firebasehosting.sites.update"]}
+[debug] [2026-07-22T15:15:00.822Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/refa-hub-2026:testIamPermissions 200
+[debug] [2026-07-22T15:15:00.823Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/refa-hub-2026:testIamPermissions {"permissions":["firebase.projects.get","firebasehosting.sites.update"]}
+[debug] [2026-07-22T15:15:00.824Z] Checked if tokens are valid: true, expires at: 1784736635491
+[debug] [2026-07-22T15:15:00.824Z] Checked if tokens are valid: true, expires at: 1784736635491
+[debug] [2026-07-22T15:15:00.825Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/refa-hub-2026 [none]
+[debug] [2026-07-22T15:15:02.401Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/refa-hub-2026 200
+[debug] [2026-07-22T15:15:02.401Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/refa-hub-2026 {"projectId":"refa-hub-2026","projectNumber":"669575221546","displayName":"Refa Hub","name":"projects/refa-hub-2026","resources":{"hostingSite":"refa-hub-2026"},"state":"ACTIVE","labels":{"firebase":"enabled"},"etag":"1_653949d5-f0b0-485f-a677-0efd16fe722e"}
+[info] 
+[info] === Deploying to 'refa-hub-2026'...
+[info] 
+[info] i  deploying hosting 
+[debug] [2026-07-22T15:15:02.408Z] Checked if tokens are valid: true, expires at: 1784736635491
+[debug] [2026-07-22T15:15:02.408Z] Checked if tokens are valid: true, expires at: 1784736635491
+[debug] [2026-07-22T15:15:02.409Z] >>> [apiv2][query] GET https://firebasehosting.googleapis.com/v1beta1/projects/refa-hub-2026/sites/refa-hub-2026 [none]
+[debug] [2026-07-22T15:15:13.699Z] *** [apiv2] error from fetch(https://firebasehosting.googleapis.com/v1beta1/projects/refa-hub-2026/sites/refa-hub-2026, {"headers":{},"method":"GET"}): FetchError: request to https://firebasehosting.googleapis.com/v1beta1/projects/refa-hub-2026/sites/refa-hub-2026 failed, reason: Client network socket disconnected before secure TLS connection was established
+[debug] [2026-07-22T15:15:18.753Z] Error: Timed out.
+    at Timeout._onTimeout (C:\Users\Frank\AppData\Roaming\npm\node_modules\firebase-tools\lib\utils.js:309:49)
+    at listOnTimeout (node:internal/timers:594:17)
+    at process.processTimers (node:internal/timers:529:7)
+[error] 
+[error] Error: An unexpected error has occurred.

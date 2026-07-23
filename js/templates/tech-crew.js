@@ -71,7 +71,7 @@ window.RENDERERS['tech-crew'] = function(w, h, s, gold, bg, tc, img, logo) {
       <div style="width:40px;height:1px;background:${gold};margin:25px auto 0;opacity:0.5;z-index:2;"></div>
       
       <div style="position:absolute;bottom:25px;font-size:9px;opacity:0.6;letter-spacing:3px;text-transform:uppercase;z-index:2;">
-        Technical Team · RAFA Season 2
+        Technical Team · REFA Season 2
       </div>
     </div>
   `;

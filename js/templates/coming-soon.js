@@ -32,7 +32,7 @@ window.RENDERERS['coming-soon'] = function(w, h, s, gold, bg, tc, img, logo) {
     <div style="width:${w}px;height:${h}px;background:#090909;position:relative;overflow:hidden;color:white;font-family:'Inter',sans-serif;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;">
       <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:300px;height:300px;background:radial-gradient(circle,rgba(212,175,55,0.15) 0%,transparent 60%);z-index:0;"></div>
       
-      <div style="position:absolute;top:40px;font-size:10px;color:${gold};letter-spacing:4px;font-weight:bold;opacity:0.6;z-index:2;">RAFA SEASON 2</div>
+      <div style="position:absolute;top:40px;font-size:10px;color:${gold};letter-spacing:4px;font-weight:bold;opacity:0.6;z-index:2;">REFA SEASON 2</div>
       
       <div style="z-index:2;font-family:'Oswald',sans-serif;">
         <div style="font-size:28px;letter-spacing:2px;margin-bottom:5px;">SOMETHING BIG</div>

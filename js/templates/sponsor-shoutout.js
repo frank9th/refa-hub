@@ -69,7 +69,7 @@ window.RENDERERS['sponsor-shoutout'] = function(w, h, s, gold, bg, tc, img, logo
       <div style="font-size:12px;font-style:italic;opacity:0.7;">"Thank you for your support"</div>
       
       <div style="position:absolute;bottom:30px;font-size:10px;color:${gold};letter-spacing:2px;font-weight:bold;opacity:0.8;">
-        RAFA Season 2 · The Word League
+        REFA Season 2 · The Word League
       </div>
     </div>
   `;

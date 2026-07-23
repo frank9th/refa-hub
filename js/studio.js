@@ -44,7 +44,7 @@ let studioState = {
   team: 'Eagles of Zion',
   verse: 'Philippians 4:13',
   teamNumber: '4',
-  votingLink: 'vote.rafacontest.org/DS04',
+  votingLink: 'vote.refacontest.org/DS04',
   eventDate: 'Saturday, 9th August 2026',
   stage: 'Stage 1 — The Proving Ground',
   stageNum: '60',
@@ -284,7 +284,7 @@ function exportGraphic() {
     const url = format === 'jpeg' ? c.toDataURL('image/jpeg', quality) : c.toDataURL('image/png');
     const a = document.createElement('a');
     a.href = url;
-    a.download = `rafa-${studioState.templateId}-${Date.now()}.${format}`;
+    a.download = `refa-${studioState.templateId}-${Date.now()}.${format}`;
     a.click();
   }).catch(err => {
     canvas.style.transform = originalTransform;

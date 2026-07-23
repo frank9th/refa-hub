@@ -35,7 +35,7 @@ window.RENDERERS['champions-chosen'] = function(w, h, s, gold, bg, tc, img, logo
       <div style="position:absolute;font-size:20px;opacity:0.3;bottom:80px;left:60px;">✨</div>
       <div style="position:absolute;font-size:28px;opacity:0.4;bottom:40px;right:50px;">✨</div>
       
-      <div style="font-size:11px;font-weight:900;letter-spacing:3px;margin-bottom:10px;z-index:2;">RAFA SEASON 2</div>
+      <div style="font-size:11px;font-weight:900;letter-spacing:3px;margin-bottom:10px;z-index:2;">REFA SEASON 2</div>
       <div style="font-family:'Bebas Neue',sans-serif;font-size:65px;line-height:1;margin-bottom:5px;z-index:2;letter-spacing:2px;">THE 100</div>
       <div style="font-family:'Playfair Display',serif;font-size:32px;font-weight:800;font-style:italic;margin-bottom:25px;z-index:2;">ARE CHOSEN</div>
       

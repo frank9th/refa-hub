@@ -66,7 +66,7 @@ window.RENDERERS['bts'] = function(w, h, s, gold, bg, tc, img, logo) {
       </div>
       
       <div style="position:absolute;bottom:25px;font-size:10px;color:${gold};letter-spacing:2px;font-weight:bold;z-index:2;">
-        Behind The Scenes · RAFA Season 2
+        Behind The Scenes · REFA Season 2
       </div>
     </div>
   `;

@@ -66,7 +66,7 @@ window.RENDERERS['event-team'] = function(w, h, s, gold, bg, tc, img, logo) {
       </div>
       
       <div style="position:absolute;bottom:25px;font-size:10px;opacity:0.8;letter-spacing:2px;z-index:2;">
-        RAFA Season 2 · The Word League
+        REFA Season 2 · The Word League
       </div>
       <div style="position:absolute;bottom:0;left:0;right:0;height:4px;background:${gold};"></div>
     </div>
