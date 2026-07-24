@@ -299,114 +299,633 @@ function renderTeams() {
 /* INTERACTIVE KIT MODAL VIEWER LOGIC */
 const KIT_PREVIEWS = {
   sponsorship: {
-    title: '🤝 Sponsorship Pitch Deck & Partner Kit',
-    subtitle: 'Outreach Letters, Tier Matrix & Official Agreement',
+    title: '🤝 REFA Season 2 — Sponsorship Pitch Deck & Partner Kit',
+    subtitle: 'Full Ready-to-Use Outreach Letters, Tier Matrix, Executive Summary & Agreement Contract',
+    file: 'Sponsorship_Pitch_Deck.md',
     html: `
+      <div class="kit-toolbar" style="display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap;">
+        <button class="cd-btn" onclick="copyKitText('sponsorship')" style="background:var(--primary);color:white;padding:8px 16px;font-size:12px;border-radius:6px;cursor:pointer;border:none;font-weight:bold;">📋 Copy Full Deck Text</button>
+        <a href="Sponsorship_Pitch_Deck.md" download class="cd-btn" style="background:var(--gold);color:var(--navy);padding:8px 16px;font-size:12px;border-radius:6px;text-decoration:none;font-weight:bold;">📥 Download Raw (.md)</a>
+        <button class="cd-btn" onclick="printKitContent()" style="background:#F1F5F9;color:var(--navy);padding:8px 16px;font-size:12px;border-radius:6px;cursor:pointer;border:1px solid #CBD5E1;font-weight:bold;">🖨️ Print / Save PDF</button>
+      </div>
+
       <div class="preview-box">
-        <h4>📩 Outreach Email Template (For Schools)</h4>
-        <p style="font-size:13px;color:var(--text-muted);margin-bottom:10px;">Subject: Partner with REFA Season 2: Empowering Youth Through Scripture & Excellence</p>
-        <div style="background:#F8F9FB;padding:14px;border-radius:8px;font-size:12.5px;line-height:1.6;border-left:3px solid var(--gold);">
-          Dear Principal / Director,<br/><br/>
-          Greetings in the name of our Lord Jesus Christ.<br/>
-          I am writing on behalf of <strong>Refiners of Faith Academy (REFA)</strong>. Following Season 1's success, we are thrilled to launch <strong>REFA Season 2: "Words That Last"</strong>...
+        <div style="display:flex;justify-content:space-between;align-items:center;border-bottom:2px solid var(--gold);padding-bottom:8px;margin-bottom:14px;">
+          <h4 style="margin:0;color:var(--navy);font-size:17px;">📩 1. SPONSORSHIP OUTREACH LETTER TEMPLATES</h4>
+          <span style="font-size:11px;background:var(--gold-pale);color:var(--navy);padding:3px 8px;border-radius:4px;font-weight:700;">Ready-to-Send</span>
+        </div>
+
+        <div style="margin-bottom:20px;">
+          <h5 style="color:var(--navy);font-size:14px;margin-bottom:6px;">Template A: For Christian Schools & Educational Institutions</h5>
+          <div style="font-size:12px;color:var(--text-muted);margin-bottom:6px;font-weight:bold;">Subject: Partner with REFA Season 2: Empowering Youth Through Scripture & Excellence</div>
+          <div style="background:#F8F9FB;padding:16px;border-radius:8px;font-size:13px;line-height:1.7;border-left:4px solid var(--gold);white-space:pre-line;color:var(--text-main);" id="letter-template-a">
+Dear [Principal / Director's Name],
+
+Greetings in the precious name of our Lord Jesus Christ.
+
+I am writing on behalf of Refiners of Faith Academy (REFA), an NGO dedicated to inspiring youth to systematically study, memorize, and live out the Word of God.
+
+Following the remarkable success of Season 1—which gathered over 60 youth contestants and filled our church auditorium—we are thrilled to announce REFA Season 2: "Words That Last", launching this August. 
+
+This season introduces The Word League: a multi-week reality TV-style Bible championship featuring 100 screened contestants aged 10–15, organized into 10 mentored teams, competing before thousands of live and online audience members.
+
+Because [School Name] stands for educational and moral excellence, we would be honored to have you as an Official Education Partner for Season 2. 
+
+What this partnership offers [School Name]:
+• Brand Visibility: Direct exposure to over 5,000 live attendees and 50,000+ digital viewers across Nigeria.
+• Youth Leadership Alignment: Position your institution at the forefront of youth spiritual and academic development.
+• On-Stage & Digital Recognition: Premium banner placement, live MC mentions, and dedicated social media spotlights.
+
+Attached is our official Sponsorship Proposal outlining the partnership tiers (Title, Gold, Silver, and Community Partner). 
+
+We would love to schedule a brief 10-minute call or meeting this week to discuss how we can tailor this partnership to benefit your institution.
+
+Warm regards,
+
+[Your Name / Title]
+Event Producer, REFA Season 2
+Phone: [Insert Phone Number] | Email: [Insert Email]
+          </div>
+          <button onclick="copyToClipboard(document.getElementById('letter-template-a').innerText, this)" style="margin-top:8px;background:var(--navy);color:var(--gold);border:none;padding:6px 14px;border-radius:4px;font-size:11px;font-weight:bold;cursor:pointer;">📋 Copy Template A</button>
+        </div>
+
+        <div>
+          <h5 style="color:var(--navy);font-size:14px;margin-bottom:6px;">Template B: For Faith-Based Businesses, Bookstores & Family Brands</h5>
+          <div style="font-size:12px;color:var(--text-muted);margin-bottom:6px;font-weight:bold;">Subject: Sponsorship Opportunity: Reach 50,000+ Christian Families at REFA Season 2</div>
+          <div style="background:#F8F9FB;padding:16px;border-radius:8px;font-size:13px;line-height:1.7;border-left:4px solid var(--primary);white-space:pre-line;color:var(--text-main);" id="letter-template-b">
+Dear [Business Owner / Marketing Lead],
+
+Is your brand looking to connect deeply with Christian families, parents, and youth in a meaningful, values-driven environment?
+
+Refiners of Faith Academy (REFA) invites [Company Name] to partner with us for Season 2 of the REFA Bible Recitation Championship ("Words That Last").
+
+Season 2 is structured as a high-engagement, multi-week competition featuring:
+• 100 Contestants (ages 10–15) across 10 teams.
+• 3 Live Stage Events at the Church Auditorium (Free public admission).
+• Nationwide Online Voting & Social Media Campaign projected to generate 50,000+ impressions.
+
+By sponsoring REFA Season 2, [Company Name] will gain prominent branding across our live stream, stage backdrops, event programs, and digital voting portal.
+
+Please find our complete Sponsorship Tiers attached. Packages start from ₦50,000 up to Title Sponsorship at ₦500,000.
+
+We welcome the opportunity to discuss how [Company Name] can feature prominently in this season's journey.
+
+Best regards,
+
+[Your Name / Title]
+REFA Season 2 Production Team
+          </div>
+          <button onclick="copyToClipboard(document.getElementById('letter-template-b').innerText, this)" style="margin-top:8px;background:var(--navy);color:var(--gold);border:none;padding:6px 14px;border-radius:4px;font-size:11px;font-weight:bold;cursor:pointer;">📋 Copy Template B</button>
         </div>
       </div>
+
       <div class="preview-box">
-        <h4>🏆 Sponsorship Tiers Overview</h4>
-        <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:10px;">
-          <div style="background:var(--gold-pale);padding:12px;border-radius:8px;border:1px solid var(--gold);">
-            <strong style="color:var(--navy);">👑 TITLE SPONSOR &mdash; ₦500,000</strong>
-            <ul style="font-size:11.5px;margin-top:6px;padding-left:14px;color:var(--text-main);">
-              <li>Event Naming Rights</li>
-              <li>Prime Center Stage Backdrop</li>
-              <li>VIP Table of 10 at Grand Final</li>
-            </ul>
+        <h4 style="color:var(--navy);font-size:17px;border-bottom:2px solid var(--gold);padding-bottom:6px;margin-bottom:14px;">📊 2. EXECUTIVE SUMMARY & EVENT OVERVIEW</h4>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:14px;">
+          <div style="background:var(--bg-deep);padding:12px;border-radius:8px;border:1px solid var(--border-color);">
+            <div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;">Theme</div>
+            <div style="font-weight:700;color:var(--navy);font-size:14px;">Words That Last</div>
           </div>
-          <div style="background:#FFFBEB;padding:12px;border-radius:8px;border:1px solid #B45309;">
-            <strong style="color:#B45309;">🥇 GOLD SPONSOR &mdash; ₦250,000</strong>
-            <ul style="font-size:11.5px;margin-top:6px;padding-left:14px;color:var(--text-main);">
-              <li>Side Stage Banner Placement</li>
-              <li>2x Social Media Feature Posts</li>
-              <li>6 VIP Seats at Grand Final</li>
-            </ul>
+          <div style="background:var(--bg-deep);padding:12px;border-radius:8px;border:1px solid var(--border-color);">
+            <div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;">Target Contestants</div>
+            <div style="font-weight:700;color:var(--navy);font-size:14px;">100 Youth (Ages 10-15)</div>
           </div>
+          <div style="background:var(--bg-deep);padding:12px;border-radius:8px;border:1px solid var(--border-color);">
+            <div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;">Projected Reach</div>
+            <div style="font-weight:700;color:var(--navy);font-size:14px;">50,000+ Impressions</div>
+          </div>
+          <div style="background:var(--bg-deep);padding:12px;border-radius:8px;border:1px solid var(--border-color);">
+            <div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;">Expected Votes</div>
+            <div style="font-weight:700;color:var(--navy);font-size:14px;">20,000+ Votes</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="preview-box">
+        <h4 style="color:var(--navy);font-size:17px;border-bottom:2px solid var(--gold);padding-bottom:6px;margin-bottom:14px;">🏆 3. OFFICIAL SPONSORSHIP TIERS MATRIX</h4>
+        <div style="overflow-x:auto;">
+          <table style="width:100%;border-collapse:collapse;font-size:12.5px;">
+            <thead>
+              <tr style="background:var(--navy);color:white;">
+                <th style="padding:10px;text-align:left;">Deliverable / Benefit</th>
+                <th style="padding:10px;text-align:center;background:#B45309;">TITLE SPONSOR<br/>(₦500,000)</th>
+                <th style="padding:10px;text-align:center;background:#D4AF37;color:var(--navy);">GOLD SPONSOR<br/>(₦250,000)</th>
+                <th style="padding:10px;text-align:center;background:#475569;">SILVER SPONSOR<br/>(₦100,000)</th>
+                <th style="padding:10px;text-align:center;background:#1E293B;">COMMUNITY<br/>(₦50,000)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr style="border-bottom:1px solid #E2E8F0;">
+                <td style="padding:10px;font-weight:bold;">Naming Rights</td>
+                <td style="padding:10px;text-align:center;background:#FEF3C7;font-weight:bold;">"REFA S2 powered by [Brand]"</td>
+                <td style="padding:10px;text-align:center;">—</td>
+                <td style="padding:10px;text-align:center;">—</td>
+                <td style="padding:10px;text-align:center;">—</td>
+              </tr>
+              <tr style="border-bottom:1px solid #E2E8F0;">
+                <td style="padding:10px;font-weight:bold;">Main Stage Branding</td>
+                <td style="padding:10px;text-align:center;">Prime Center Stage + Standees</td>
+                <td style="padding:10px;text-align:center;">Side Stage Banner</td>
+                <td style="padding:10px;text-align:center;">Event Backdrop Logo</td>
+                <td style="padding:10px;text-align:center;">Program Book Listing</td>
+              </tr>
+              <tr style="border-bottom:1px solid #E2E8F0;">
+                <td style="padding:10px;font-weight:bold;">Digital Voting Portal</td>
+                <td style="padding:10px;text-align:center;">Header Banner Placement</td>
+                <td style="padding:10px;text-align:center;">Featured Logo on Page</td>
+                <td style="padding:10px;text-align:center;">Logo on Supporter List</td>
+                <td style="padding:10px;text-align:center;">Name Listed</td>
+              </tr>
+              <tr style="border-bottom:1px solid #E2E8F0;">
+                <td style="padding:10px;font-weight:bold;">Live Stream Commercial</td>
+                <td style="padding:10px;text-align:center;">Watermark + 30s Commercial</td>
+                <td style="padding:10px;text-align:center;">Lower-Third Logo Overlay</td>
+                <td style="padding:10px;text-align:center;">Verbal MC Mention</td>
+                <td style="padding:10px;text-align:center;">Rolling End Credits</td>
+              </tr>
+              <tr style="border-bottom:1px solid #E2E8F0;">
+                <td style="padding:10px;font-weight:bold;">Social Media Features</td>
+                <td style="padding:10px;text-align:center;">5 Dedicated Posts + Reels</td>
+                <td style="padding:10px;text-align:center;">2 Dedicated Posts</td>
+                <td style="padding:10px;text-align:center;">1 Group Sponsor Post</td>
+                <td style="padding:10px;text-align:center;">Thank You Post</td>
+              </tr>
+              <tr>
+                <td style="padding:10px;font-weight:bold;">VIP Seating (Grand Final)</td>
+                <td style="padding:10px;text-align:center;font-weight:bold;">VIP Table (10 Seats)</td>
+                <td style="padding:10px;text-align:center;">Reserved (6 Seats)</td>
+                <td style="padding:10px;text-align:center;">Reserved (2 Seats)</td>
+                <td style="padding:10px;text-align:center;">Regular Seating</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="preview-box">
+        <h4 style="color:var(--navy);font-size:17px;border-bottom:2px solid var(--gold);padding-bottom:6px;margin-bottom:14px;">📝 4. OFFICIAL SPONSORSHIP AGREEMENT FORM</h4>
+        <div style="background:#FFFBEB;padding:18px;border-radius:8px;border:1px solid #F59E0B;font-size:13px;line-height:1.8;">
+          <strong>SPONSOR INFORMATION:</strong><br/>
+          Organization Name: __________________________________________________<br/>
+          Contact Person: ______________________ Position/Title: ___________________<br/>
+          Phone: ______________________________ Email: ________________________<br/><br/>
+          
+          <strong>SELECTED SPONSORSHIP TIER:</strong><br/>
+          [ ] Title Sponsor (₦500,000) &nbsp;&nbsp;&nbsp; [ ] Gold Sponsor (₦250,000)<br/>
+          [ ] Silver Sponsor (₦100,000) &nbsp;&nbsp;&nbsp; [ ] Community Supporter (₦50,000)<br/>
+          [ ] Custom In-Kind Partnership (Prizes, Printing, Media, Equipment)<br/><br/>
+          
+          <strong>TERMS:</strong> 50% commitment deposit due upon signing; balance due on or before August 5, 2026.<br/><br/>
+          <strong>SIGNATURES:</strong><br/>
+          ____________________________________ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ____________________________________<br/>
+          <em>Sponsor Representative &amp; Date</em> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <em>REFA Executive Producer &amp; Date</em>
         </div>
       </div>
     `
   },
   parent: {
-    title: '👨‍👩‍👧 Parent Voting Starter Pack & Mobilization Kit',
-    subtitle: 'Audition Day Handouts, WhatsApp Copy & Printable Cards (₦200/Vote)',
+    title: '👨‍👩‍👧 REFA Season 2 — Parent Voting Starter Pack & Mobilization Kit',
+    subtitle: 'Full Ready-to-Print Audition Letter, QR Challenge Card, WhatsApp Copy & Parent FAQs',
+    file: 'Parent_Voting_Starter_Pack.md',
     html: `
+      <div class="kit-toolbar" style="display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap;">
+        <button class="cd-btn" onclick="copyKitText('parent')" style="background:var(--primary);color:white;padding:8px 16px;font-size:12px;border-radius:6px;cursor:pointer;border:none;font-weight:bold;">📋 Copy Full Pack Text</button>
+        <a href="Parent_Voting_Starter_Pack.md" download class="cd-btn" style="background:var(--gold);color:var(--navy);padding:8px 16px;font-size:12px;border-radius:6px;text-decoration:none;font-weight:bold;">📥 Download Raw (.md)</a>
+        <button class="cd-btn" onclick="printKitContent()" style="background:#F1F5F9;color:var(--navy);padding:8px 16px;font-size:12px;border-radius:6px;cursor:pointer;border:1px solid #CBD5E1;font-weight:bold;">🖨️ Print / Save PDF</button>
+      </div>
+
       <div class="preview-box">
-        <h4>🎴 Printable QR Voting Card (Audition Day Handout)</h4>
-        <div class="print-card-mockup">
-          <div class="print-card-header">REFA SEASON 2: WORDS THAT LAST</div>
-          <div style="font-size:12px;color:var(--gold-light);">Contestant Card &amp; Voting Pass (₦200/Vote)</div>
-          <div class="print-card-qr">[ QR CODE PORTAL ]</div>
-          <div style="font-size:11px;opacity:0.9;">🔥 THE 100-VOTE FAMILY CHALLENGE</div>
-          <p style="font-size:10px;margin-top:4px;color:var(--gold-light);">Rally 10 friends to buy 10 votes each!</p>
+        <h4 style="color:var(--navy);font-size:17px;border-bottom:2px solid var(--gold);padding-bottom:6px;margin-bottom:14px;">📜 SECTION 1: PARENT WELCOME LETTER (AUDITION DAY HANDOUT)</h4>
+        <div style="background:#F8F9FB;padding:18px;border-radius:8px;font-size:13px;line-height:1.8;border-left:4px solid var(--gold);" id="parent-welcome-letter">
+Dear Parent / Guardian,
+
+Welcome to Refiners of Faith Academy (REFA) Season 2 — "The Word League"!
+
+Congratulations on bringing your child to the Season 2 Auditions. By supporting your child in hiding God’s Word in their heart, you are building a spiritual foundation that will last a lifetime (Psalm 119:11).
+
+What’s New in Season 2?
+Season 2 is structured as an exciting team-based Bible competition:
+• 100 Contestants will be selected and placed into 10 Teams of 10, led by dedicated Mentors.
+• Contestants will receive weekly group coaching, spiritual encouragement, and stage preparation.
+• Entry to all live stage events is 100% FREE at the Church Auditorium!
+
+Your Role as a Campaign Manager:
+In Season 2, parents are not just spectators—you are your child’s #1 Cheerleader and Campaign Manager! 
+Audience voting accounts for 20% of the total score (increasing to 25% at the Grand Final). Every vote cast for your child brings them closer to the championship trophy and cash prizes!
+
+3 Simple Steps to Start Today:
+1. Join your Child's Team WhatsApp Group: Scan the QR code on your card before leaving today.
+2. Save the Official Voting Link: Voting officially opens on August 7.
+3. Take the 100-Vote Family Challenge: Mobilize 10 friends or relatives to cast 10 votes each!
+
+Thank you for your devotion, prayers, and active support. Together, let us raise champions for Christ!
+
+Warmly,
+The REFA Season 2 Executive Team
+        </div>
+        <button onclick="copyToClipboard(document.getElementById('parent-welcome-letter').innerText, this)" style="margin-top:10px;background:var(--navy);color:var(--gold);border:none;padding:6px 14px;border-radius:4px;font-size:11px;font-weight:bold;cursor:pointer;">📋 Copy Welcome Letter</button>
+      </div>
+
+      <div class="preview-box">
+        <h4 style="color:var(--navy);font-size:17px;border-bottom:2px solid var(--gold);padding-bottom:6px;margin-bottom:14px;">🎴 SECTION 2: PRINTABLE VOTING PASS & "100-VOTE CHALLENGE" CARD</h4>
+        <div class="print-card-mockup" style="max-width:550px;margin:0 auto;text-align:left;background:linear-gradient(135deg, #08172E 0%, #152D5A 100%);color:white;padding:24px;border-radius:12px;border:2px solid var(--gold);">
+          <div style="font-weight:bold;color:var(--gold);font-size:14px;text-align:center;margin-bottom:8px;">🏆 REFINERS OF FAITH ACADEMY (REFA) — SEASON 2: "WORDS THAT LAST"</div>
+          <div style="background:rgba(255,255,255,0.1);padding:10px;border-radius:6px;margin-bottom:12px;font-size:12px;">
+            <div>CONTESTANT NAME: ____________________________</div>
+            <div style="margin-top:4px;">TEAM: _________________________________________</div>
+          </div>
+          <div style="text-align:center;margin:14px 0;background:rgba(212,175,55,0.15);padding:12px;border-radius:8px;border:1px dashed var(--gold);">
+            <div style="font-size:13px;font-weight:bold;color:var(--gold);">📲 VOTE ONLINE: vote.refacontest.org/[ID]</div>
+            <div style="font-size:11px;opacity:0.8;margin-top:4px;">[ SCAN QR CODE OR SEARCH BY NAME ]</div>
+          </div>
+          <div style="font-weight:bold;color:var(--gold-light);font-size:12px;margin-bottom:8px;">🔥 THE 100-VOTE FAMILY CHALLENGE (CHECKLIST):</div>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;font-size:11px;background:rgba(0,0,0,0.2);padding:10px;border-radius:6px;">
+            <div>[ ] Uncle / Aunt</div>
+            <div>[ ] Church Group</div>
+            <div>[ ] School Friend</div>
+            <div>[ ] Neighbor</div>
+            <div>[ ] Choir Member</div>
+            <div>[ ] Work Colleague</div>
+            <div>[ ] Family Friend</div>
+            <div>[ ] Youth Fellowship</div>
+            <div>[ ] Grandparents</div>
+          </div>
+          <div style="font-size:10px;text-align:center;margin-top:10px;color:var(--gold-light); font-style:italic;">🌟 Top Voting Family per Team wins the "COMMUNITY CHAMPION AWARD"!</div>
         </div>
       </div>
+
       <div class="preview-box">
-        <h4>📱 WhatsApp Broadcast Copy (Ready to Share)</h4>
-        <div class="wa-chat-box">
-          <div class="wa-bubble">
-            Praise the Lord family! 👋 My child, <strong>[Name]</strong>, has been selected for REFA Season 2 Bible Championship! 📖🏆<br/><br/>
-            Voting is now LIVE! (1 Vote = ₦200 | 10 Votes = ₦1,600)<br/>
-            👉 <strong>vote.refacontest.org/[ID]</strong>
+        <h4 style="color:var(--navy);font-size:17px;border-bottom:2px solid var(--gold);padding-bottom:6px;margin-bottom:14px;">📱 SECTION 3: READY-TO-COPY WHATSAPP BROADCAST TEMPLATES FOR PARENTS</h4>
+        
+        <div style="margin-bottom:16px;">
+          <h5 style="color:var(--navy);font-size:13px;margin-bottom:6px;">Message 1: For Family & Friends (Warm & Encouraging)</h5>
+          <div class="wa-chat-box">
+            <div class="wa-bubble" id="wa-msg-1">
+Praise the Lord family and friends! 👋
+My child, <strong>[Insert Child's Name]</strong>, has been selected to compete in <strong>REFA Season 2 Bible Recitation Championship ("The Word League")</strong>! 📖🏆
+
+They have been memorizing scripture passages and preparing diligently. Online voting is now officially OPEN, and your support accounts for a vital part of their overall score!
+
+Please click the link below to cast your votes for <strong>[Insert Child's Name]</strong>:
+👉 <strong>[Insert Voting Link]</strong>
+
+💡 <em>1 Vote = ₦200 | You can also get a 10-Vote bundle for ₦1,600.</em>
+Thank you for encouraging the young generation to love God’s Word! God bless you abundantly! 🙏
+            </div>
+            <button class="wa-btn-copy" onclick="copyToClipboard(document.getElementById('wa-msg-1').innerText, this)">📋 Copy Message 1</button>
           </div>
-          <button class="wa-btn-copy" onclick="navigator.clipboard.writeText('Praise the Lord family! 👋 My child has been selected for REFA Season 2 Bible Championship! Voting is LIVE! (1 Vote = ₦200 | 10 Votes = ₦1,600). Please vote at: vote.refacontest.org');alert('Copied to clipboard!')">📋 Copy WhatsApp Text</button>
+        </div>
+
+        <div style="margin-bottom:16px;">
+          <h5 style="color:var(--navy);font-size:13px;margin-bottom:6px;">Message 2: For Church & Fellowship WhatsApp Groups</h5>
+          <div class="wa-chat-box">
+            <div class="wa-bubble" id="wa-msg-2">
+"Thy word have I hid in mine heart, that I might not sin against thee." — Psalm 119:11
+
+Dear brethren, please join me in supporting my child, <strong>[Insert Child's Name]</strong>, who is representing our church community at the <strong>REFA Season 2 Bible Recitation Championship</strong>!
+
+They will be reciting scriptures under timed conditions against 100 contestants across Lagos!
+
+You can support their journey by voting for them online:
+🔗 <strong>[Insert Voting Link]</strong>
+
+Voting takes less than 1 minute using Card, Bank Transfer, or USSD. Thank you for standing with our youth in scripture memory! ✨
+            </div>
+            <button class="wa-btn-copy" onclick="copyToClipboard(document.getElementById('wa-msg-2').innerText, this)">📋 Copy Message 2</button>
+          </div>
+        </div>
+
+        <div>
+          <h5 style="color:var(--navy);font-size:13px;margin-bottom:6px;">Message 3: Short WhatsApp Status / Story Text</h5>
+          <div class="wa-chat-box">
+            <div class="wa-bubble" id="wa-msg-3">
+🚨 <strong>VOTING IS NOW LIVE!</strong> 🚨
+Help my child <strong>[Insert Child's Name]</strong> win the REFA Season 2 Bible Championship! 🏆📖
+
+Every vote counts! Click the link below to vote now 👇
+🔗 <strong>[Insert Voting Link]</strong>
+#REFASeason2 #TheWordLeague #WordsThatLast
+            </div>
+            <button class="wa-btn-copy" onclick="copyToClipboard(document.getElementById('wa-msg-3').innerText, this)">📋 Copy Message 3</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="preview-box">
+        <h4 style="color:var(--navy);font-size:17px;border-bottom:2px solid var(--gold);padding-bottom:6px;margin-bottom:14px;">📖 SECTION 4: STEP-BY-STEP "HOW TO VOTE" GUIDE & FAQS</h4>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:16px;">
+          <div style="background:#F8F9FB;padding:14px;border-radius:8px;border-top:3px solid var(--primary);">
+            <strong style="color:var(--navy);">Step 1: Open Link</strong>
+            <p style="font-size:12px;color:var(--text-muted);margin-top:4px;">Click the WhatsApp link or scan QR code on the card.</p>
+          </div>
+          <div style="background:#F8F9FB;padding:14px;border-radius:8px;border-top:3px solid var(--gold);">
+            <strong style="color:var(--navy);">Step 2: Find Contestant</strong>
+            <p style="font-size:12px;color:var(--text-muted);margin-top:4px;">Search by contestant name or team name.</p>
+          </div>
+          <div style="background:#F8F9FB;padding:14px;border-radius:8px;border-top:3px solid #10B981;">
+            <strong style="color:var(--navy);">Step 3: Select Package</strong>
+            <p style="font-size:12px;color:var(--text-muted);margin-top:4px;">Choose 1 vote (₦200) up to 100 votes (₦13,000).</p>
+          </div>
+          <div style="background:#F8F9FB;padding:14px;border-radius:8px;border-top:3px solid #8B5CF6;">
+            <strong style="color:var(--navy);">Step 4: Secure Payment</strong>
+            <p style="font-size:12px;color:var(--text-muted);margin-top:4px;">Pay instantly via Card, Bank Transfer, or USSD.</p>
+          </div>
         </div>
       </div>
     `
   },
   social: {
-    title: '📱 Social Media & WhatsApp Launch Kit',
-    subtitle: 'Campaign Feed Copy, Reels Scripts & Designer Briefs',
+    title: '📱 REFA Season 2 — Social Media & WhatsApp Launch Kit',
+    subtitle: 'Full Campaign Strategy, Day-by-Day Copywriting, Reel Scripts & Designer Briefs',
+    file: 'Social_Media_Launch_Kit.md',
     html: `
+      <div class="kit-toolbar" style="display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap;">
+        <button class="cd-btn" onclick="copyKitText('social')" style="background:var(--primary);color:white;padding:8px 16px;font-size:12px;border-radius:6px;cursor:pointer;border:none;font-weight:bold;">📋 Copy Full Campaign Text</button>
+        <a href="Social_Media_Launch_Kit.md" download class="cd-btn" style="background:var(--gold);color:var(--navy);padding:8px 16px;font-size:12px;border-radius:6px;text-decoration:none;font-weight:bold;">📥 Download Raw (.md)</a>
+        <button class="cd-btn" onclick="printKitContent()" style="background:#F1F5F9;color:var(--navy);padding:8px 16px;font-size:12px;border-radius:6px;cursor:pointer;border:1px solid #CBD5E1;font-weight:bold;">🖨️ Print / Save PDF</button>
+      </div>
+
       <div class="preview-box">
-        <h4>🎬 30-Second Contestant Spotlight Reel Script</h4>
-        <div style="background:#F3E8FF;padding:14px;border-radius:8px;font-size:12px;line-height:1.6;border-left:4px solid #6D28D9;">
-          <strong>Audio:</strong> Upbeat, inspiring cinematic instrumental.<br/>
-          <strong>Visual:</strong> Quick cut of contestant smiling &rarr; practicing scripture &rarr; standing confident.<br/>
-          <strong>Overlay Text:</strong> Name: [Contestant Name] | Team: Eagles of Zion | Fav Verse: Phil 4:13<br/>
-          <strong>Caption:</strong> "Meet [Name] from Team Eagles of Zion! Voting opens Aug 7!"
+        <h4 style="color:var(--navy);font-size:17px;border-bottom:2px solid var(--gold);padding-bottom:6px;margin-bottom:14px;">🎯 1. STRATEGY & OFFICIAL HASHTAG SET</h4>
+        <div style="background:var(--gold-pale);padding:12px;border-radius:8px;font-size:13px;color:var(--navy);font-weight:bold;">
+          Official Campaign Hashtags:<br/>
+          <span style="color:#B45309;">#REFASeason2 #TheWordLeague #WordsThatLast #VoteForWord #REFAChampion2026</span>
         </div>
       </div>
+
       <div class="preview-box">
-        <h4>📅 Campaign Posting Feed Schedule</h4>
-        <ul style="font-size:12.5px;color:var(--text-main);line-height:1.8;padding-left:18px;">
-          <li><strong>Jul 22:</strong> "Something Big is Coming" Teaser Video</li>
-          <li><strong>Aug 2:</strong> "The 100 Champions Chosen" Graphic</li>
-          <li><strong>Aug 4:</strong> 10 Team Reveals Carousel</li>
-          <li><strong>Aug 7:</strong> 🟢 VOTING IS NOW OPEN Post (₦200/vote)</li>
-        </ul>
+        <h4 style="color:var(--navy);font-size:17px;border-bottom:2px solid var(--gold);padding-bottom:6px;margin-bottom:14px;">🗓️ 2. DAY-BY-DAY COPYWRITING & CONTENT CALENDAR</h4>
+        
+        <!-- PHASE 1 -->
+        <div style="margin-bottom:20px;">
+          <h5 style="color:var(--primary);font-size:14px;background:#EFF6FF;padding:6px 12px;border-radius:6px;">PHASE 1: PRE-AUDITION TEASER CAMPAIGN (JULY 22 – JULY 31)</h5>
+          
+          <div style="margin-top:10px;background:#F8F9FB;padding:14px;border-radius:8px;border-left:4px solid var(--primary);">
+            <strong style="color:var(--navy);">July 22 — Teaser Announcement 1 (The Return)</strong>
+            <div style="margin-top:6px;font-size:12.5px;line-height:1.6;white-space:pre-line;color:var(--text-main);" id="post-jul-22">
+SOMETHING BIG IS COMING. 🔥  
+Season 1 was incredible… but Season 2 is taking scripture recitation to a whole new level! 📖⚡  
+
+Get ready for REFA Season 2: THE WORD LEAGUE! 🏆  
+100 Contestants. 10 Mentored Teams. 3 Stages. 1 Grand Champion.  
+
+Theme: "Words That Last"  
+Screening Day: August 1st, 2026.  
+
+Are you ready to see young minds ablaze with the Word of God? Tag a parent or youth below! 👇  
+#REFASeason2 #TheWordLeague #WordsThatLast #BibleRecitation #YouthMinistry
+            </div>
+            <button onclick="copyToClipboard(document.getElementById('post-jul-22').innerText, this)" style="margin-top:8px;background:var(--navy);color:var(--gold);border:none;padding:5px 12px;border-radius:4px;font-size:11px;font-weight:bold;cursor:pointer;">📋 Copy Caption</button>
+          </div>
+        </div>
+
+        <!-- PHASE 2 -->
+        <div style="margin-bottom:20px;">
+          <h5 style="color:#B45309;font-size:14px;background:#FEF3C7;padding:6px 12px;border-radius:6px;">PHASE 2: AUDITION & ANNOUNCEMENT WEEK (AUGUST 1 – AUGUST 2)</h5>
+          
+          <div style="margin-top:10px;background:#F8F9FB;padding:14px;border-radius:8px;border-left:4px solid #B45309;">
+            <strong style="color:var(--navy);">August 2 — Official 100 Champions Announcement</strong>
+            <div style="margin-top:6px;font-size:12.5px;line-height:1.6;white-space:pre-line;color:var(--text-main);" id="post-aug-2">
+📢 THE 100 CHAMPIONS HAVE BEEN CHOSEN! 🎉  
+
+After an intense screening session, we are proud to announce the 100 accepted contestants for REFA Season 2: The Word League! 📖🔥  
+
+These incredible youth (ages 10–15) have officially entered the arena to compete for the ultimate championship title, cash prizes, and trophies!  
+
+🔴 VOTING OPENS ON AUGUST 7TH! Get ready to back your favourite contestant!  
+#REFASeason2 #The100 #WordsThatLast #TheWordLeague
+            </div>
+            <button onclick="copyToClipboard(document.getElementById('post-aug-2').innerText, this)" style="margin-top:8px;background:var(--navy);color:var(--gold);border:none;padding:5px 12px;border-radius:4px;font-size:11px;font-weight:bold;cursor:pointer;">📋 Copy Caption</button>
+          </div>
+        </div>
+
+        <!-- PHASE 3 -->
+        <div>
+          <h5 style="color:#059669;font-size:14px;background:#D1FAE5;padding:6px 12px;border-radius:6px;">PHASE 3: VOTING LAUNCH (AUGUST 7)</h5>
+          
+          <div style="margin-top:10px;background:#F8F9FB;padding:14px;border-radius:8px;border-left:4px solid #059669;">
+            <strong style="color:var(--navy);">August 7 — VOTING IS OFFICIALLY OPEN! 🟢</strong>
+            <div style="margin-top:6px;font-size:12.5px;line-height:1.6;white-space:pre-line;color:var(--text-main);" id="post-aug-7">
+🚨 VOTING IS NOW OFFICIALLY OPEN! 🟢🗳️  
+
+The wait is over! You can now cast your votes for your favourite contestant and team in REFA Season 2: The Word League!  
+
+📲 HOW TO VOTE:  
+1. Visit vote.refacontest.org  
+2. Search for your contestant's name or team.  
+3. Select your vote package (1 Vote = ₦200 | 10 Votes = ₦1,600).  
+4. Complete payment securely via Card, Transfer, or USSD!  
+
+⏰ Round 1 Voting closes TOMORROW at Midnight!  
+VOTE NOW! 👉 vote.refacontest.org  
+#VoteNow #REFASeason2 #TheWordLeague #VoteForWord
+            </div>
+            <button onclick="copyToClipboard(document.getElementById('post-aug-7').innerText, this)" style="margin-top:8px;background:var(--navy);color:var(--gold);border:none;padding:5px 12px;border-radius:4px;font-size:11px;font-weight:bold;cursor:pointer;">📋 Copy Caption</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="preview-box">
+        <h4 style="color:var(--navy);font-size:17px;border-bottom:2px solid var(--gold);padding-bottom:6px;margin-bottom:14px;">🎨 3. VISUAL ASSET BRIEFS FOR MEDIA & DESIGN TEAM</h4>
+        <div style="overflow-x:auto;">
+          <table style="width:100%;border-collapse:collapse;font-size:12px;">
+            <thead>
+              <tr style="background:var(--navy);color:white;">
+                <th style="padding:8px;text-align:left;">Asset Needed</th>
+                <th style="padding:8px;text-align:left;">Format / Dimensions</th>
+                <th style="padding:8px;text-align:left;">Content Required</th>
+                <th style="padding:8px;text-align:center;">Target Date</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr style="border-bottom:1px solid #E2E8F0;">
+                <td style="padding:8px;font-weight:bold;">Season 2 Teaser Poster</td>
+                <td style="padding:8px;">1080x1350 (IG Portrait)</td>
+                <td style="padding:8px;">REFA Logo, Theme: "Words That Last", Dates</td>
+                <td style="padding:8px;text-align:center;">July 22</td>
+              </tr>
+              <tr style="border-bottom:1px solid #E2E8F0;">
+                <td style="padding:8px;font-weight:bold;">"100 Champions Chosen" Graphic</td>
+                <td style="padding:8px;">1080x1080 (Grid)</td>
+                <td style="padding:8px;">Celebratory gold design, 100 contestant names</td>
+                <td style="padding:8px;text-align:center;">Aug 2</td>
+              </tr>
+              <tr style="border-bottom:1px solid #E2E8F0;">
+                <td style="padding:8px;font-weight:bold;">10 Team Badge Graphics</td>
+                <td style="padding:8px;">1080x1080 (Carousel)</td>
+                <td style="padding:8px;">Team Logo, Team Name, Mentor Photo</td>
+                <td style="padding:8px;text-align:center;">Aug 4</td>
+              </tr>
+              <tr>
+                <td style="padding:8px;font-weight:bold;">"VOTING IS LIVE" Graphic</td>
+                <td style="padding:8px;">1080x1350 & Story</td>
+                <td style="padding:8px;">Bold text, QR Code placeholder, Vote Rates (₦200 / ₦1.6k)</td>
+                <td style="padding:8px;text-align:center;">Aug 7</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     `
   },
   bible: {
-    title: '📘 REFA Season 2 Master Production Bible',
-    subtitle: 'Full Architecture, Rules, Scoring & Workflow',
+    title: '📘 REFA Season 2 — Master Event Production Bible',
+    subtitle: 'Full Season Architecture, 7-Phase Execution Timeline, Scoring Rubrics & Operations',
+    file: 'REFA_Season2_Strategy.md',
     html: `
-      <div class="preview-box">
-        <h4>🏆 "The Word League" Architecture Summary</h4>
-        <p style="font-size:13px;color:var(--text-main);line-height:1.6;">
-          Season 2 transforms REFA into a multi-week reality TV-style Bible league. 100 contestants (ages 10-15) compete across 10 mentored teams.
-        </p>
+      <div class="kit-toolbar" style="display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap;">
+        <button class="cd-btn" onclick="copyKitText('bible')" style="background:var(--primary);color:white;padding:8px 16px;font-size:12px;border-radius:6px;cursor:pointer;border:none;font-weight:bold;">📋 Copy Master Bible Text</button>
+        <a href="REFA_Season2_Strategy.md" download class="cd-btn" style="background:var(--gold);color:var(--navy);padding:8px 16px;font-size:12px;border-radius:6px;text-decoration:none;font-weight:bold;">📥 Download Raw (.md)</a>
+        <button class="cd-btn" onclick="printKitContent()" style="background:#F1F5F9;color:var(--navy);padding:8px 16px;font-size:12px;border-radius:6px;cursor:pointer;border:1px solid #CBD5E1;font-weight:bold;">🖨️ Print / Save PDF</button>
       </div>
+
       <div class="preview-box">
-        <h4>⚖️ Official Scoring Formula</h4>
-        <ul style="font-size:12.5px;color:var(--text-main);line-height:1.8;padding-left:18px;">
-          <li>Scripture Accuracy: <strong>50%</strong></li>
-          <li>Speed / Timing: <strong>20%</strong></li>
-          <li>Expression &amp; Delivery: <strong>10%</strong></li>
-          <li>Audience Voting Score: <strong>20%</strong> (25% at Final)</li>
-        </ul>
+        <h4 style="color:var(--navy);font-size:17px;border-bottom:2px solid var(--gold);padding-bottom:6px;margin-bottom:14px;">🎯 1. SEASON 2 TARGET KPI METRICS</h4>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;">
+          <div style="background:var(--gold-pale);padding:14px;border-radius:8px;border:1px solid var(--gold);text-align:center;">
+            <div style="font-size:11px;color:var(--navy);text-transform:uppercase;font-weight:bold;">Screened Contestants</div>
+            <div style="font-size:22px;font-weight:800;color:var(--navy);margin-top:4px;">100</div>
+          </div>
+          <div style="background:#ECFDF5;padding:14px;border-radius:8px;border:1px solid #10B981;text-align:center;">
+            <div style="font-size:11px;color:#065F46;text-transform:uppercase;font-weight:bold;">Target Revenue</div>
+            <div style="font-size:22px;font-weight:800;color:#065F46;margin-top:4px;">₦5,000,000+</div>
+          </div>
+          <div style="background:#EFF6FF;padding:14px;border-radius:8px;border:1px solid var(--primary);text-align:center;">
+            <div style="font-size:11px;color:var(--primary);text-transform:uppercase;font-weight:bold;">Social Impressions</div>
+            <div style="font-size:22px;font-weight:800;color:var(--primary);margin-top:4px;">50,000+</div>
+          </div>
+          <div style="background:#F5F3FF;padding:14px;border-radius:8px;border:1px solid #8B5CF6;text-align:center;">
+            <div style="font-size:11px;color:#5B21B6;text-transform:uppercase;font-weight:bold;">Total Votes</div>
+            <div style="font-size:22px;font-weight:800;color:#5B21B6;margin-top:4px;">20,000+</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="preview-box">
+        <h4 style="color:var(--navy);font-size:17px;border-bottom:2px solid var(--gold);padding-bottom:6px;margin-bottom:14px;">💡 2. CORE CONCEPT: "THE WORD LEAGUE" (4 PILLARS)</h4>
+        <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px;">
+          <div style="background:#F8F9FB;padding:14px;border-radius:8px;border-left:4px solid var(--gold);">
+            <strong style="color:var(--navy);">1. TEAM IDENTITY</strong>
+            <p style="font-size:12px;color:var(--text-muted);margin-top:4px;">10 teams of 10 contestants, each with a mentor, jersey colour, and team chant.</p>
+          </div>
+          <div style="background:#F8F9FB;padding:14px;border-radius:8px;border-left:4px solid var(--primary);">
+            <strong style="color:var(--navy);">2. REALITY TV FORMAT</strong>
+            <p style="font-size:12px;color:var(--text-muted);margin-top:4px;">Every stage is filmed, edited into highlight reels, and distributed across platforms.</p>
+          </div>
+          <div style="background:#F8F9FB;padding:14px;border-radius:8px;border-left:4px solid #10B981;">
+            <strong style="color:var(--navy);">3. THE VOTE IS THE VOICE</strong>
+            <p style="font-size:12px;color:var(--text-muted);margin-top:4px;">Audience votes online to power contestants and drive sustainable event revenue.</p>
+          </div>
+          <div style="background:#F8F9FB;padding:14px;border-radius:8px;border-left:4px solid #8B5CF6;">
+            <strong style="color:var(--navy);">4. JOURNEY STORYTELLING</strong>
+            <p style="font-size:12px;color:var(--text-muted);margin-top:4px;">Follow each child's growth and scripture mastery across 7 structured phases.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="preview-box">
+        <h4 style="color:var(--navy);font-size:17px;border-bottom:2px solid var(--gold);padding-bottom:6px;margin-bottom:14px;">⚖️ 3. OFFICIAL SCORING FORMULA & WEIGHTS</h4>
+        <div style="background:#F8F9FB;padding:16px;border-radius:8px;">
+          <ul style="font-size:13px;color:var(--text-main);line-height:1.9;padding-left:18px;margin:0;">
+            <li>Scripture Accuracy &amp; Completeness: <strong>50%</strong> (Direct recitation precision)</li>
+            <li>Speed &amp; Timed Recitation: <strong>20%</strong> (Reciting under countdown pressure)</li>
+            <li>Expression, Clarity &amp; Stage Delivery: <strong>10%</strong> (Vocal strength &amp; presence)</li>
+            <li>Audience Voting Score: <strong>20%</strong> (Scaled to <strong>25% at Grand Final</strong>)</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="preview-box">
+        <h4 style="color:var(--navy);font-size:17px;border-bottom:2px solid var(--gold);padding-bottom:6px;margin-bottom:14px;">🗓️ 4. 7-PHASE EXECUTION ARCHITECTURE</h4>
+        <div style="display:flex;flex-direction:column;gap:10px;">
+          <div style="background:#F8F9FB;padding:12px;border-radius:6px;border-left:3px solid var(--navy);font-size:12.5px;">
+            <strong>Phase 1: Pre-Audition Urgency (July 1-31)</strong> — Voting platform build, sponsor outreach, team lead recruitment.
+          </div>
+          <div style="background:#F8F9FB;padding:12px;border-radius:6px;border-left:3px solid var(--gold);font-size:12.5px;">
+            <strong>Phase 2: Audition Screening (August 1)</strong> — 100 contestants screened, 10 teams drafted, parent packs handed out.
+          </div>
+          <div style="background:#F8F9FB;padding:12px;border-radius:6px;border-left:3px solid var(--primary);font-size:12.5px;">
+            <strong>Phase 3: Profile Week (August 2-8)</strong> — Profile videos published daily, voting portal opens Aug 7.
+          </div>
+          <div style="background:#F8F9FB;padding:12px;border-radius:6px;border-left:3px solid #10B981;font-size:12.5px;">
+            <strong>Phase 4: Stage 1 — The Proving Ground (August 9)</strong> — First live event, 30 contestants advance.
+          </div>
+          <div style="background:#F8F9FB;padding:12px;border-radius:6px;border-left:3px solid #F59E0B;font-size:12.5px;">
+            <strong>Phase 5: Stage 2 — The Refinement (August 16)</strong> — Second live event, 10 finalists chosen.
+          </div>
+          <div style="background:#F8F9FB;padding:12px;border-radius:6px;border-left:3px solid #8B5CF6;font-size:12.5px;">
+            <strong>Phase 6: Finalist Prep (August 17 - September 5)</strong> — Intensive mentor coaching & vote surge.
+          </div>
+          <div style="background:#F8F9FB;padding:12px;border-radius:6px;border-left:3px solid #EF4444;font-size:12.5px;">
+            <strong>Phase 7: Grand Final — The Last Word (September 6)</strong> — Live championship, awards & grand champion crown.
+          </div>
+        </div>
       </div>
     `
   }
 };
+
+function copyToClipboard(text, btnElement) {
+  navigator.clipboard.writeText(text).then(() => {
+    if (btnElement) {
+      const origText = btnElement.innerText;
+      btnElement.innerText = '✅ Copied!';
+      btnElement.style.background = '#10B981';
+      btnElement.style.color = '#FFFFFF';
+      setTimeout(() => {
+        btnElement.innerText = origText;
+        btnElement.style.background = '';
+        btnElement.style.color = '';
+      }, 2000);
+    }
+  }).catch(err => {
+    console.error('Copy failed', err);
+  });
+}
+
+function copyKitText(kitKey) {
+  const kit = KIT_PREVIEWS[kitKey];
+  if (!kit) return;
+  const tempDiv = document.createElement('div');
+  tempDiv.innerHTML = kit.html;
+  const text = tempDiv.innerText || tempDiv.textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    alert('✅ Full kit document copied to clipboard!');
+  });
+}
+
+function printKitContent() {
+  const content = document.getElementById('modal-content').innerHTML;
+  const title = document.getElementById('modal-title').innerText;
+  const printWindow = window.open('', '_blank');
+  printWindow.document.write(`
+    <html>
+      <head>
+        <title>${title}</title>
+        <style>
+          body { font-family: Arial, sans-serif; padding: 20px; color: #1E293B; line-height: 1.6; }
+          .preview-box { border: 1px solid #CBD5E1; padding: 20px; border-radius: 8px; margin-bottom: 20px; }
+          h4 { color: #08172E; border-bottom: 2px solid #D4AF37; padding-bottom: 4px; }
+          table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+          th, td { border: 1px solid #CBD5E1; padding: 8px; font-size: 12px; }
+          th { background: #08172E; color: white; }
+          .kit-toolbar { display: none !important; }
+          button { display: none !important; }
+        </style>
+      </head>
+      <body>
+        <h2>${title}</h2>
+        ${content}
+      </body>
+    </html>
+  `);
+  printWindow.document.close();
+  printWindow.focus();
+  setTimeout(() => {
+    printWindow.print();
+    printWindow.close();
+  }, 500);
+}
 
 function openKitModal(kitKey) {
   const kit = KIT_PREVIEWS[kitKey];
