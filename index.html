@@ -26,6 +26,7 @@
     <a class="nav-item" onclick="goTo('timeline')" id="nav-timeline"><span class="icon">📅</span> Season Timeline</a>
     <div class="nav-section-label">Live Tools</div>
     <a class="nav-item" onclick="goTo('countdown')" id="nav-countdown"><span class="icon">⏱️</span> Countdown Timer</a>
+    <a class="nav-item" onclick="goTo('letters')" id="nav-letters"><span class="icon">✉️</span> Letter Generator</a>
     <div class="nav-section-label">Execution</div>
     <a class="nav-item" onclick="goTo('tasks')" id="nav-tasks"><span class="icon">✅</span> Phase Tasks</a>
     <a class="nav-item" onclick="goTo('studio')" id="nav-studio"><span class="icon">🎨</span> Graphics Studio</a>
@@ -92,7 +93,7 @@
           </div>
           <div class="kit-body">
             <div class="kit-badge-row">
-              <span class="kit-chip chip-gold">4 Tiers (₦50k-₦500k)</span>
+              <span class="kit-chip chip-gold">4 Tiers (₦100k-₦1M)</span>
               <span class="kit-chip chip-blue">Proposal Deck</span>
             </div>
             <ul class="kit-features">
@@ -103,7 +104,10 @@
             </ul>
             <div class="kit-actions">
               <button class="btn-preview" onclick="openKitModal('sponsorship')">🚀 Open Ready-to-Use Kit</button>
-              <a href="Sponsorship_Pitch_Deck.md" target="_blank" class="btn-raw">📄 Raw (.md)</a>
+              <div style="display:flex; gap:5px; margin-top:5px;">
+                <button class="btn-raw" onclick="editTemplate('sponsorship_schools')" style="background:var(--navy);color:var(--white);border:none;border-radius:4px;padding:8px 12px;font-size:12px;cursor:pointer;">✏️ Letter (Schools)</button>
+                <button class="btn-raw" onclick="editTemplate('sponsorship_business')" style="background:var(--navy);color:var(--white);border:none;border-radius:4px;padding:8px 12px;font-size:12px;cursor:pointer;">✏️ Letter (Business)</button>
+              </div>
             </div>
           </div>
         </div>
@@ -544,7 +548,7 @@
     <div class="alert alert-red"><span class="alert-icon">⚡</span><strong>Urgent:</strong> Send sponsorship pitch decks by July 25. Sponsors need minimum 2 weeks to decide and process. Audition is August 1.</div>
     <div class="sponsor-tier" style="border-color:var(--gold);background:var(--gold-pale);">
       <div class="tier-title" style="color:var(--navy);">Title Sponsor</div>
-      <div class="tier-price" style="color:var(--gold);">₦500,000</div>
+      <div class="tier-price" style="color:var(--gold);">₦1,000,000</div>
       <div class="tier-benefit" style="color:var(--navy);">Event named after sponsor ("REFA Season 2 powered by [Brand]")</div>
       <div class="tier-benefit" style="color:var(--navy);">Opening and closing banner at all 3 stage events</div>
       <div class="tier-benefit" style="color:var(--navy);">All digital asset mentions throughout the season</div>
@@ -554,7 +558,7 @@
     </div>
     <div class="sponsor-tier" style="border-color:#B45309;background:#FFFBEB;">
       <div class="tier-title" style="color:#B45309;">Gold Sponsor</div>
-      <div class="tier-price" style="color:#B45309;">₦250,000</div>
+      <div class="tier-price" style="color:#B45309;">₦500,000</div>
       <div class="tier-benefit" style="color:var(--navy);">Logo on all digital assets and programme</div>
       <div class="tier-benefit" style="color:var(--navy);">Stage mention at 2 events</div>
       <div class="tier-benefit" style="color:var(--navy);">Social media feature post (twice during season)</div>
@@ -562,14 +566,14 @@
     </div>
     <div class="sponsor-tier" style="border-color:#6B7280;background:#F9FAFB;">
       <div class="tier-title" style="color:#374151;">Silver Sponsor</div>
-      <div class="tier-price" style="color:#374151;">₦100,000</div>
+      <div class="tier-price" style="color:#374151;">₦250,000</div>
       <div class="tier-benefit" style="color:var(--navy);">Logo on event programme</div>
       <div class="tier-benefit" style="color:var(--navy);">Stage mention at 1 event</div>
       <div class="tier-benefit" style="color:var(--navy);">Social media shoutout post</div>
     </div>
     <div class="sponsor-tier" style="border-color:#9CA3AF;background:#FFFFFF;">
       <div class="tier-title" style="color:#6B7280;">Community Supporter</div>
-      <div class="tier-price" style="color:#6B7280;">₦50,000</div>
+      <div class="tier-price" style="color:#6B7280;">₦100,000</div>
       <div class="tier-benefit" style="color:var(--navy);">Name listed in event programme and digital credits</div>
       <div class="tier-benefit" style="color:var(--navy);">Thank-you post on social media</div>
     </div>
@@ -789,6 +793,118 @@
 
     </div>
   </section>
+  <!-- LETTER GENERATOR -->
+  <section class="page" id="page-letters">
+    <div class="page-header" style="display:flex; justify-content:space-between; align-items:flex-end;">
+      <div>
+        <div class="eyebrow">Production</div>
+        <h2>Letter Generator</h2>
+        <p>Create and print official REFA / AG Nigeria documents.</p>
+      </div>
+      <button class="btn-preview" onclick="window.print()" style="font-size:14px; padding:10px 20px;">🖨️ Print / Save PDF</button>
+    </div>
+
+    <div class="letter-layout">
+      <!-- Editor Form -->
+      <div class="letter-editor no-print">
+        <details class="card" open>
+          <summary class="card-title" style="cursor:pointer; user-select:none; list-style:none;">Document Settings <span>▼</span></summary>
+          
+          <div class="form-group">
+            <label>Our Ref</label>
+            <input type="text" id="let-our-ref" placeholder="e.g. REFA/2026/SP-01" oninput="updateLetter()" />
+          </div>
+          
+          <div class="form-group">
+            <label>Your Ref</label>
+            <input type="text" id="let-your-ref" placeholder="Optional" oninput="updateLetter()" />
+          </div>
+          
+          <div class="form-group">
+            <label>Date</label>
+            <input type="text" id="let-date" placeholder="e.g. 24th July, 2026" oninput="updateLetter()" />
+          </div>
+          
+          <hr class="divider" style="margin:20px 0" />
+          
+          <div class="form-group">
+            <label>Recipient Name / Salutation</label>
+            <input type="text" id="let-salutation" placeholder="e.g. MR. JOHN DOE" oninput="updateLetter()" />
+          </div>
+          
+          <div class="form-group">
+            <label>Subject / Title</label>
+            <input type="text" id="let-subject" placeholder="e.g. SPONSORSHIP REQUEST" oninput="updateLetter()" />
+          </div>
+          
+          <div class="form-group">
+            <label>Body</label>
+            <div class="rich-toolbar" style="display:flex; gap:5px; margin-bottom:5px; background:#f4f4f4; padding:5px; border-radius:4px; border:1px solid rgba(0,0,0,0.1);">
+              <button type="button" onclick="document.execCommand('bold',false,null)" style="background:white; border:1px solid #ccc; border-radius:4px; cursor:pointer; padding:2px 8px; font-weight:bold;">B</button>
+              <button type="button" onclick="document.execCommand('italic',false,null)" style="background:white; border:1px solid #ccc; border-radius:4px; cursor:pointer; padding:2px 8px; font-style:italic;">I</button>
+              <button type="button" onclick="document.execCommand('underline',false,null)" style="background:white; border:1px solid #ccc; border-radius:4px; cursor:pointer; padding:2px 8px; text-decoration:underline;">U</button>
+              <button type="button" onclick="document.execCommand('insertUnorderedList',false,null)" style="background:white; border:1px solid #ccc; border-radius:4px; cursor:pointer; padding:2px 8px;">• List</button>
+            </div>
+            <div id="let-body" contenteditable="true" style="width: 100%; min-height: 200px; max-height: 400px; padding: 10px 12px; border: 1px solid rgba(0,0,0,0.1); border-radius: 6px; font-family: 'Inter', sans-serif; font-size: 13px; background: white; overflow-y: auto;" oninput="updateLetter()"></div>
+          </div>
+          
+          <hr class="divider" style="margin:20px 0" />
+          
+          <div class="form-group">
+            <label style="margin-bottom:10px;display:block;">Include Signatures</label>
+            <label class="checkbox-label" style="font-weight:bold; color:var(--navy); margin-bottom:12px; display:block;">
+              <input type="checkbox" id="let-use-signed-bg" onchange="updateLetterBg()"> Use Pre-Signed Background Image
+            </label>
+          </div>
+        </details>
+        
+        <details class="card" style="margin-top:20px;" open>
+          <summary class="card-title" style="cursor:pointer; user-select:none; list-style:none;">Styling Options <span>▼</span></summary>
+          <p style="font-size:11px; color:#666; margin-bottom:15px; margin-top:10px; line-height:1.4;">Click any text element on the letter to select it. You can drag elements to reposition them.</p>
+          
+          <div class="form-group">
+            <label>Font Family</label>
+            <select id="style-font" style="width:100%; padding:8px; border:1px solid rgba(0,0,0,0.1); border-radius:6px;" onchange="applyStyle('fontFamily', this.value)">
+              <option value="'Times New Roman', serif">Times New Roman</option>
+              <option value="'Arial', sans-serif">Arial</option>
+              <option value="'Inter', sans-serif">Inter</option>
+              <option value="'Great Vibes', cursive">Great Vibes (Cursive)</option>
+              <option value="'Oswald', sans-serif">Oswald</option>
+            </select>
+          </div>
+          
+          <div class="form-group" style="display:flex; gap:10px;">
+            <div style="flex:1;">
+              <label>Size (px)</label>
+              <input type="number" id="style-size" value="14" style="width:100%; padding:8px; border:1px solid rgba(0,0,0,0.1); border-radius:6px;" oninput="applyStyle('fontSize', this.value + 'px')" />
+            </div>
+            <div style="flex:1;">
+              <label>Color</label>
+              <input type="color" id="style-color" value="#000000" style="width:100%; padding:4px; height:36px; border:1px solid rgba(0,0,0,0.1); border-radius:6px; cursor:pointer;" oninput="applyStyle('color', this.value)" />
+            </div>
+          </div>
+          
+          <div class="form-group" style="display:flex; gap:10px; margin-top:10px;">
+            <label class="checkbox-label"><input type="checkbox" id="style-bold" onchange="applyStyle('fontWeight', this.checked ? 'bold' : 'normal')"> Bold</label>
+            <label class="checkbox-label"><input type="checkbox" id="style-italic" onchange="applyStyle('fontStyle', this.checked ? 'italic' : 'normal')"> Italic</label>
+            <label class="checkbox-label"><input type="checkbox" id="style-underline" onchange="applyStyle('textDecoration', this.checked ? 'underline' : 'none')"> Underline</label>
+          </div>
+        </details>
+      </div>
+
+      <!-- Live Preview -->
+      <div class="letter-preview-container" style="overflow-x: auto; overflow-y: auto;">
+        <img src="" id="lh-bg-img" style="display:none;" alt="Letterhead Source" />
+        
+        <div id="letter-scale-outer" class="letter-scale-outer">
+          <div class="letter-page-wrapper" id="letter-page-wrapper">
+             <!-- JS Paginated Pages will be injected here -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
 </main>
 
 <!-- INTERACTIVE MODAL VIEWER FOR KITS -->
@@ -807,7 +923,7 @@
   </div>
 </div>
 
-  <script src="js/app.js"></script>
+  <script src="js/app.js?v=3"></script>
   <script src="js/templates/bts.js"></script>
   <script src="js/templates/champions-chosen.js"></script>
   <script src="js/templates/coming-soon.js"></script>

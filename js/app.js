@@ -12,93 +12,107 @@ const TEAMS_DATA = [
 ];
 
 const PHASES = [
-  { id: 'preseason', title: 'Pre-Season Setup', date: 'July 1 - July 31', tasks: [
-    { id:'ps1', text:'Finalise Season 2 branding', detail:'Logo, colours, fonts, season name and theme locked', tag:'ops' },
-    { id:'ps2', text:'Create and launch social media handles', detail:'Instagram, TikTok, Facebook, YouTube all set up and first teaser posted', tag:'media' },
-    { id:'ps3', text:'Build contestant application form', detail:'Google Form or website form collecting name, age, church, guardian contact', tag:'admin' },
-    { id:'ps4', text:'Commission and test voting platform', detail:'Platform contracted, test environment built and verified before Aug 1', tag:'tech' },
-    { id:'ps5', text:'Draft and send sponsorship pitch deck', detail:'Send to minimum 20 prospective sponsors by July 25', tag:'finance' },
-    { id:'ps6', text:'Recruit all 10 mentors', detail:'Brief them on roles, schedule and content expectations', tag:'ops' },
-    { id:'ps7', text:'Assign content and media manager', detail:'Confirm who is responsible for daily posting, filming, and editing', tag:'media' },
-    { id:'ps8', text:'Build content calendar for Aug 2-8', detail:'Every post planned and designed before audition day', tag:'content' },
-    { id:'ps9', text:'Run "Coming Soon" teaser campaign', detail:'"The Word League is Coming" - reels, countdowns, mystery posts', tag:'media' },
-    { id:'ps10', text:'Print Parent Voting Starter Packs', detail:'QR code cards, voting guide, challenge card - 100 copies minimum', tag:'ops' }
-  ]},
-  { id: 'audition', title: 'Audition / Screening Day', date: 'August 1', tasks: [
-    { id:'au1', text:'Set up 3-4 screening stations in church', detail:'Each station has a judge, score sheets, and timing device', tag:'ops' },
-    { id:'au2', text:'Contestant registration and check-in', detail:'Name tags, registration packets, consent forms from parents', tag:'admin' },
-    { id:'au3', text:'Brief judging panel (3-5 judges)', detail:'Scoring criteria: accuracy, pronunciation, spirit. Standardised sheets.', tag:'ops' },
-    { id:'au4', text:'Film BTS content throughout the day', detail:'Lobby atmosphere, reactions, contestant arrivals - do NOT film actual assessments', tag:'content' },
-    { id:'au5', text:'Distribute Parent Voting Starter Packs', detail:'Every parent leaves with QR code card, how-to guide, and challenge card', tag:'admin' },
-    { id:'au6', text:'Add parents to team WhatsApp groups', detail:'All 10 groups created with mentor admins; parents added same day', tag:'ops' },
-    { id:'au7', text:'Assign contestants to teams', detail:'10 teams of 10. Balance age, ability, church representation where possible.', tag:'ops' },
-    { id:'au8', text:'Post Screening Day reel by end of day', detail:'BTS atmosphere footage builds anticipation for announcement tomorrow', tag:'content' }
-  ]},
-  { id: 'profileweek', title: 'Profile Week - Build-Up', date: 'August 2 - 8', tasks: [
-    { id:'pw1', text:'Aug 2: Announce 100 accepted contestants', detail:'Celebratory announcement post. Congratulations graphic. Let excitement land.', tag:'media' },
-    { id:'pw2', text:'Aug 3: Introduce mentors - 5 per day', detail:'Mentor profile posts: photo, bio, quote. Split across platforms.', tag:'content' },
-    { id:'pw3', text:'Aug 4: Team reveals staggered', detail:'Post each team name, colour, and member list throughout the day', tag:'content' },
-    { id:'pw4', text:'Aug 5: Training Day content', detail:'Film teams preparing with mentors. Short clips per team.', tag:'content' },
-    { id:'pw5', text:'Aug 5: Send "How to Vote" guide to all parents', detail:'Screenshots and step-by-step via WhatsApp broadcast to all parent groups', tag:'admin' },
-    { id:'pw6', text:'Aug 6: Contestant spotlight series begins', detail:'3 spotlight videos per day, 30 sec each. Name, team, favourite scripture, why they joined.', tag:'content' },
-    { id:'pw7', text:'Aug 7: VOTING OPENS - Round 1', detail:'Post voting link across all platforms. WhatsApp blast to all parent groups simultaneously.', tag:'tech' },
-    { id:'pw8', text:'Aug 7: "Families Behind the Word" series begins', detail:'First parent video published. Set the template for the series.', tag:'content' },
-    { id:'pw9', text:'Aug 8: Countdown post + leaderboard teaser', detail:'"Who is leading? Find out TOMORROW at Stage 1!" Voting closes midnight.', tag:'media' }
-  ]},
-  { id: 'stage1', title: 'Stage 1 - The Proving Ground', date: 'August 9', tasks: [
-    { id:'s1a', text:'Stage branded backdrop and podium set up', detail:'REFA Season 2 branding, scoreboard display, team banners in fan zones', tag:'ops' },
-    { id:'s1b', text:'Live stream setup tested - 2 camera angles minimum', detail:'Stable internet confirmed. Test stream done 1 hour before event.', tag:'tech' },
-    { id:'s1c', text:'MC/Host briefed with full running order', detail:'MC has script, contestant list, team order, judge bios, sponsor mentions', tag:'ops' },
-    { id:'s1d', text:'Judges panel in position (3 judges)', detail:'Score sheets, timing devices, and microphones confirmed', tag:'ops' },
-    { id:'s1e', text:'Reserved Family Corners marked and stewarded', detail:'Each team has a dedicated section. Parent Supporter Cards distributed at door.', tag:'ops' },
-    { id:'s1f', text:'Opening ceremony conducted', detail:'Prayer, REFA mission statement, Season 2 overview, sponsor mentions', tag:'ops' },
-    { id:'s1g', text:'Round 1 voting leaderboard announced live', detail:'MC reads current top 3 from voting platform before competition begins', tag:'ops' },
-    { id:'s1h', text:'All performances filmed and recorded', detail:'Every contestant moment captured. Highlights editor briefed on key clips.', tag:'content' },
-    { id:'s1i', text:'Judges deliver filmed remarks', detail:'Each judge gives short filmed commentary after each team section', tag:'content' },
-    { id:'s1j', text:'Stage 1 results announced live', detail:'Bottom 2 per team identified. Next round explained to audience.', tag:'ops' }
-  ]},
-  { id: 'poststage1', title: 'Post-Stage 1 Content Window', date: 'August 10 - 15', tasks: [
-    { id:'pt1a', text:'Aug 10: Stage 1 highlights reel published', detail:'5-10 min edited video on YouTube + Instagram Reels + Facebook within 48 hrs', tag:'content' },
-    { id:'pt1b', text:'Aug 11: Top 5 Moments clips posted', detail:'Best recitations, judge reactions, crowd moments as short-form clips', tag:'content' },
-    { id:'pt1c', text:'Aug 12: Voting Round 2 OPENS', detail:'Announce across all platforms. WhatsApp blast to all parent groups.', tag:'tech' },
-    { id:'pt1d', text:'Aug 12: Leaderboard update published', detail:'"Who is leading after Stage 1?" Reveal top 3 without exact vote counts.', tag:'media' },
-    { id:'pt1e', text:'Aug 13: Day-in-life contestant video', detail:'1-2 contestants featured showing their preparation and home life', tag:'content' },
-    { id:'pt1f', text:'Aug 14: Send individual clip links to parents', detail:'"Share this highlight of YOUR child!" - personalised WhatsApp message per team', tag:'admin' },
-    { id:'pt1g', text:'Aug 15: Stage 2 teaser campaign begins', detail:'"The Refinement begins tomorrow. Who is ready?" Countdown content goes live.', tag:'media' }
-  ]},
-  { id: 'stage2', title: 'Stage 2 - The Refinement', date: 'August 16', tasks: [
-    { id:'s2a', text:'Stage setup with new format signage', detail:'Duet zone, Cross-Examination format explained on display boards', tag:'ops' },
-    { id:'s2b', text:'New challenge formats briefed to contestants', detail:'Cross-Examination, Duet Round, Speed Recall rules explained in advance', tag:'ops' },
-    { id:'s2c', text:'Live stream active with updated graphics', detail:'Season progression shown, cumulative scores displayed', tag:'tech' },
-    { id:'s2d', text:'Round 2 leaderboard announced live on stage', detail:'MC reads current top 5 from voting before competition begins', tag:'ops' },
-    { id:'s2e', text:'Team immunity results tracked and posted', detail:'Which teams secured immunity shown on scoreboard during event', tag:'ops' },
-    { id:'s2f', text:'Parent Award nominations announced', detail:'MC announces which parents are nominated for Grand Final awards', tag:'ops' },
-    { id:'s2g', text:'All performances filmed for highlights', detail:'Key clip moments flagged live for editors', tag:'content' },
-    { id:'s2h', text:'Final voting window announced open after event', detail:'"Final voting window is NOW OPEN. Closes September 5 midnight."', tag:'tech' }
-  ]},
-  { id: 'final', title: 'Grand Final - The Last Word', date: 'September 6', tasks: [
-    { id:'f1', text:'Full stage production setup - elevated', detail:'Premium lighting, sound, backdrop, red carpet entrance banner, live band briefed', tag:'ops' },
-    { id:'f2', text:'VIP and reserved seating arranged', detail:'Sponsor tables, Family Corners, judges table all labelled and stewarded', tag:'ops' },
-    { id:'f3', text:'Professional videographer and multi-camera setup', detail:'Minimum 3 camera angles. Dedicated sound recording. Backup stream confirmed.', tag:'tech' },
-    { id:'f4', text:'Media and press invitations sent', detail:'Gospel blogs, Christian news outlets, social media journalists invited', tag:'media' },
-    { id:'f5', text:'Finalist red carpet arrival filmed and streamed', detail:'Teams walk coordinated arrival. MC commentates. Parents in frame.', tag:'content' },
-    { id:'f6', text:'Live worship opening segment', detail:'Live band. 10-15 minutes of worship to set spiritual tone.', tag:'ops' },
-    { id:'f7', text:'All 3 championship rounds executed', detail:'Personal Mastery then The Gauntlet then Final Power Recitation', tag:'ops' },
-    { id:'f8', text:'Parent Testimony segment (2 minutes)', detail:'2-3 selected parents, 30 sec each, before results. Prompt given in advance.', tag:'content' },
-    { id:'f9', text:'Final vote tally confirmed and sealed', detail:'Voting coordinator hands sealed result to judges before event starts', tag:'finance' },
-    { id:'f10', text:'Full awards ceremony staged', detail:'1st/2nd/3rd + Consolation + Fan Favourite + Best Team + Best Mentor + Parent Awards', tag:'ops' },
-    { id:'f11', text:'Post-event fellowship and celebration', detail:'Contestants, families, mentors gather for reflection and community', tag:'ops' },
-    { id:'f12', text:'Full Final video published within 72 hours', detail:'YouTube premiere + all social highlights. Season 2 wrap content begins.', tag:'content' }
-  ]}
+  {
+    id: 'preseason', title: 'Pre-Season Setup', date: 'July 1 - July 31', tasks: [
+      { id: 'ps1', text: 'Finalise Season 2 branding', detail: 'Logo, colours, fonts, season name and theme locked', tag: 'ops' },
+      { id: 'ps2', text: 'Create and launch social media handles', detail: 'Instagram, TikTok, Facebook, YouTube all set up and first teaser posted', tag: 'media' },
+      { id: 'ps3', text: 'Build contestant application form', detail: 'Google Form or website form collecting name, age, church, guardian contact', tag: 'admin' },
+      { id: 'ps4', text: 'Commission and test voting platform', detail: 'Platform contracted, test environment built and verified before Aug 1', tag: 'tech' },
+      { id: 'ps5', text: 'Draft and send sponsorship pitch deck', detail: 'Send to minimum 20 prospective sponsors by July 25', tag: 'finance' },
+      { id: 'ps6', text: 'Recruit all 10 mentors', detail: 'Brief them on roles, schedule and content expectations', tag: 'ops' },
+      { id: 'ps7', text: 'Assign content and media manager', detail: 'Confirm who is responsible for daily posting, filming, and editing', tag: 'media' },
+      { id: 'ps8', text: 'Build content calendar for Aug 2-8', detail: 'Every post planned and designed before audition day', tag: 'content' },
+      { id: 'ps9', text: 'Run "Coming Soon" teaser campaign', detail: '"The Word League is Coming" - reels, countdowns, mystery posts', tag: 'media' },
+      { id: 'ps10', text: 'Print Parent Voting Starter Packs', detail: 'QR code cards, voting guide, challenge card - 100 copies minimum', tag: 'ops' }
+    ]
+  },
+  {
+    id: 'audition', title: 'Audition / Screening Day', date: 'August 1', tasks: [
+      { id: 'au1', text: 'Set up 3-4 screening stations in church', detail: 'Each station has a judge, score sheets, and timing device', tag: 'ops' },
+      { id: 'au2', text: 'Contestant registration and check-in', detail: 'Name tags, registration packets, consent forms from parents', tag: 'admin' },
+      { id: 'au3', text: 'Brief judging panel (3-5 judges)', detail: 'Scoring criteria: accuracy, pronunciation, spirit. Standardised sheets.', tag: 'ops' },
+      { id: 'au4', text: 'Film BTS content throughout the day', detail: 'Lobby atmosphere, reactions, contestant arrivals - do NOT film actual assessments', tag: 'content' },
+      { id: 'au5', text: 'Distribute Parent Voting Starter Packs', detail: 'Every parent leaves with QR code card, how-to guide, and challenge card', tag: 'admin' },
+      { id: 'au6', text: 'Add parents to team WhatsApp groups', detail: 'All 10 groups created with mentor admins; parents added same day', tag: 'ops' },
+      { id: 'au7', text: 'Assign contestants to teams', detail: '10 teams of 10. Balance age, ability, church representation where possible.', tag: 'ops' },
+      { id: 'au8', text: 'Post Screening Day reel by end of day', detail: 'BTS atmosphere footage builds anticipation for announcement tomorrow', tag: 'content' }
+    ]
+  },
+  {
+    id: 'profileweek', title: 'Profile Week - Build-Up', date: 'August 2 - 8', tasks: [
+      { id: 'pw1', text: 'Aug 2: Announce 100 accepted contestants', detail: 'Celebratory announcement post. Congratulations graphic. Let excitement land.', tag: 'media' },
+      { id: 'pw2', text: 'Aug 3: Introduce mentors - 5 per day', detail: 'Mentor profile posts: photo, bio, quote. Split across platforms.', tag: 'content' },
+      { id: 'pw3', text: 'Aug 4: Team reveals staggered', detail: 'Post each team name, colour, and member list throughout the day', tag: 'content' },
+      { id: 'pw4', text: 'Aug 5: Training Day content', detail: 'Film teams preparing with mentors. Short clips per team.', tag: 'content' },
+      { id: 'pw5', text: 'Aug 5: Send "How to Vote" guide to all parents', detail: 'Screenshots and step-by-step via WhatsApp broadcast to all parent groups', tag: 'admin' },
+      { id: 'pw6', text: 'Aug 6: Contestant spotlight series begins', detail: '3 spotlight videos per day, 30 sec each. Name, team, favourite scripture, why they joined.', tag: 'content' },
+      { id: 'pw7', text: 'Aug 7: VOTING OPENS - Round 1', detail: 'Post voting link across all platforms. WhatsApp blast to all parent groups simultaneously.', tag: 'tech' },
+      { id: 'pw8', text: 'Aug 7: "Families Behind the Word" series begins', detail: 'First parent video published. Set the template for the series.', tag: 'content' },
+      { id: 'pw9', text: 'Aug 8: Countdown post + leaderboard teaser', detail: '"Who is leading? Find out TOMORROW at Stage 1!" Voting closes midnight.', tag: 'media' }
+    ]
+  },
+  {
+    id: 'stage1', title: 'Stage 1 - The Proving Ground', date: 'August 9', tasks: [
+      { id: 's1a', text: 'Stage branded backdrop and podium set up', detail: 'REFA Season 2 branding, scoreboard display, team banners in fan zones', tag: 'ops' },
+      { id: 's1b', text: 'Live stream setup tested - 2 camera angles minimum', detail: 'Stable internet confirmed. Test stream done 1 hour before event.', tag: 'tech' },
+      { id: 's1c', text: 'MC/Host briefed with full running order', detail: 'MC has script, contestant list, team order, judge bios, sponsor mentions', tag: 'ops' },
+      { id: 's1d', text: 'Judges panel in position (3 judges)', detail: 'Score sheets, timing devices, and microphones confirmed', tag: 'ops' },
+      { id: 's1e', text: 'Reserved Family Corners marked and stewarded', detail: 'Each team has a dedicated section. Parent Supporter Cards distributed at door.', tag: 'ops' },
+      { id: 's1f', text: 'Opening ceremony conducted', detail: 'Prayer, REFA mission statement, Season 2 overview, sponsor mentions', tag: 'ops' },
+      { id: 's1g', text: 'Round 1 voting leaderboard announced live', detail: 'MC reads current top 3 from voting platform before competition begins', tag: 'ops' },
+      { id: 's1h', text: 'All performances filmed and recorded', detail: 'Every contestant moment captured. Highlights editor briefed on key clips.', tag: 'content' },
+      { id: 's1i', text: 'Judges deliver filmed remarks', detail: 'Each judge gives short filmed commentary after each team section', tag: 'content' },
+      { id: 's1j', text: 'Stage 1 results announced live', detail: 'Bottom 2 per team identified. Next round explained to audience.', tag: 'ops' }
+    ]
+  },
+  {
+    id: 'poststage1', title: 'Post-Stage 1 Content Window', date: 'August 10 - 15', tasks: [
+      { id: 'pt1a', text: 'Aug 10: Stage 1 highlights reel published', detail: '5-10 min edited video on YouTube + Instagram Reels + Facebook within 48 hrs', tag: 'content' },
+      { id: 'pt1b', text: 'Aug 11: Top 5 Moments clips posted', detail: 'Best recitations, judge reactions, crowd moments as short-form clips', tag: 'content' },
+      { id: 'pt1c', text: 'Aug 12: Voting Round 2 OPENS', detail: 'Announce across all platforms. WhatsApp blast to all parent groups.', tag: 'tech' },
+      { id: 'pt1d', text: 'Aug 12: Leaderboard update published', detail: '"Who is leading after Stage 1?" Reveal top 3 without exact vote counts.', tag: 'media' },
+      { id: 'pt1e', text: 'Aug 13: Day-in-life contestant video', detail: '1-2 contestants featured showing their preparation and home life', tag: 'content' },
+      { id: 'pt1f', text: 'Aug 14: Send individual clip links to parents', detail: '"Share this highlight of YOUR child!" - personalised WhatsApp message per team', tag: 'admin' },
+      { id: 'pt1g', text: 'Aug 15: Stage 2 teaser campaign begins', detail: '"The Refinement begins tomorrow. Who is ready?" Countdown content goes live.', tag: 'media' }
+    ]
+  },
+  {
+    id: 'stage2', title: 'Stage 2 - The Refinement', date: 'August 16', tasks: [
+      { id: 's2a', text: 'Stage setup with new format signage', detail: 'Duet zone, Cross-Examination format explained on display boards', tag: 'ops' },
+      { id: 's2b', text: 'New challenge formats briefed to contestants', detail: 'Cross-Examination, Duet Round, Speed Recall rules explained in advance', tag: 'ops' },
+      { id: 's2c', text: 'Live stream active with updated graphics', detail: 'Season progression shown, cumulative scores displayed', tag: 'tech' },
+      { id: 's2d', text: 'Round 2 leaderboard announced live on stage', detail: 'MC reads current top 5 from voting before competition begins', tag: 'ops' },
+      { id: 's2e', text: 'Team immunity results tracked and posted', detail: 'Which teams secured immunity shown on scoreboard during event', tag: 'ops' },
+      { id: 's2f', text: 'Parent Award nominations announced', detail: 'MC announces which parents are nominated for Grand Final awards', tag: 'ops' },
+      { id: 's2g', text: 'All performances filmed for highlights', detail: 'Key clip moments flagged live for editors', tag: 'content' },
+      { id: 's2h', text: 'Final voting window announced open after event', detail: '"Final voting window is NOW OPEN. Closes September 5 midnight."', tag: 'tech' }
+    ]
+  },
+  {
+    id: 'final', title: 'Grand Final - The Last Word', date: 'September 6', tasks: [
+      { id: 'f1', text: 'Full stage production setup - elevated', detail: 'Premium lighting, sound, backdrop, red carpet entrance banner, live band briefed', tag: 'ops' },
+      { id: 'f2', text: 'VIP and reserved seating arranged', detail: 'Sponsor tables, Family Corners, judges table all labelled and stewarded', tag: 'ops' },
+      { id: 'f3', text: 'Professional videographer and multi-camera setup', detail: 'Minimum 3 camera angles. Dedicated sound recording. Backup stream confirmed.', tag: 'tech' },
+      { id: 'f4', text: 'Media and press invitations sent', detail: 'Gospel blogs, Christian news outlets, social media journalists invited', tag: 'media' },
+      { id: 'f5', text: 'Finalist red carpet arrival filmed and streamed', detail: 'Teams walk coordinated arrival. MC commentates. Parents in frame.', tag: 'content' },
+      { id: 'f6', text: 'Live worship opening segment', detail: 'Live band. 10-15 minutes of worship to set spiritual tone.', tag: 'ops' },
+      { id: 'f7', text: 'All 3 championship rounds executed', detail: 'Personal Mastery then The Gauntlet then Final Power Recitation', tag: 'ops' },
+      { id: 'f8', text: 'Parent Testimony segment (2 minutes)', detail: '2-3 selected parents, 30 sec each, before results. Prompt given in advance.', tag: 'content' },
+      { id: 'f9', text: 'Final vote tally confirmed and sealed', detail: 'Voting coordinator hands sealed result to judges before event starts', tag: 'finance' },
+      { id: 'f10', text: 'Full awards ceremony staged', detail: '1st/2nd/3rd + Consolation + Fan Favourite + Best Team + Best Mentor + Parent Awards', tag: 'ops' },
+      { id: 'f11', text: 'Post-event fellowship and celebration', detail: 'Contestants, families, mentors gather for reflection and community', tag: 'ops' },
+      { id: 'f12', text: 'Full Final video published within 72 hours', detail: 'YouTube premiere + all social highlights. Season 2 wrap content begins.', tag: 'content' }
+    ]
+  }
 ];
 
 const GOALS_DATA = [
-  { label:'Contestants', value:'100 accepted', icon:'👥' },
-  { label:'Revenue Target', value:'₦5,000,000+', icon:'💰' },
-  { label:'Social Reach', value:'50,000 impressions', icon:'📱' },
-  { label:'Total Votes Target', value:'20,000+ (₦200/vote)', icon:'🗳️' },
-  { label:'Live Viewers per Stage', value:'5,000+', icon:'📺' },
-  { label:'Brand Mission', value:"Nigeria's #1 Youth Bible Championship", icon:'🏆' }
+  { label: 'Contestants', value: '100 accepted', icon: '👥' },
+  { label: 'Revenue Target', value: '₦5,000,000+', icon: '💰' },
+  { label: 'Social Reach', value: '50,000 impressions', icon: '📱' },
+  { label: 'Total Votes Target', value: '20,000+ (₦200/vote)', icon: '🗳️' },
+  { label: 'Live Viewers per Stage', value: '5,000+', icon: '📺' },
+  { label: 'Brand Mission', value: "Nigeria's #1 Youth Bible Championship", icon: '🏆' }
 ];
 
 const CURRENT_PHASE_DATA = {
@@ -109,7 +123,7 @@ const CURRENT_PHASE_DATA = {
 
 const STORAGE_KEY = 'refa_s2_tasks_v1';
 let checked = {};
-try { checked = JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; } catch(e) { checked = {}; }
+try { checked = JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; } catch (e) { checked = {}; }
 
 function save() { localStorage.setItem(STORAGE_KEY, JSON.stringify(checked)); }
 
@@ -119,6 +133,11 @@ function goTo(id) {
   document.getElementById('page-' + id).classList.add('active');
   const navItem = document.getElementById('nav-' + id);
   if (navItem) navItem.classList.add('active');
+
+  if (id === 'letters') {
+    updateLetter();
+  }
+
   window.scrollTo(0, 0);
 }
 
@@ -141,23 +160,23 @@ function formatNaira(num) {
 
 function updateVotePricing() {
   const basePrice = parseInt(document.getElementById('base-vote-price').value) || 0;
-  
+
   document.getElementById('price-1').textContent = formatNaira(basePrice);
-  
+
   const price10 = Math.floor(basePrice * 10 * 0.8);
   document.getElementById('price-10').textContent = formatNaira(price10);
   document.getElementById('desc-10').textContent = 'Save ' + formatNaira((basePrice * 10) - price10);
-  
+
   const price50 = Math.floor(basePrice * 50 * 0.7);
   document.getElementById('price-50').textContent = formatNaira(price50);
   document.getElementById('desc-50').textContent = 'Save ' + formatNaira((basePrice * 50) - price50);
-  
+
   const price100 = Math.floor(basePrice * 100 * 0.65);
   document.getElementById('price-100').textContent = formatNaira(price100);
   document.getElementById('desc-100').textContent = 'Save ' + formatNaira((basePrice * 100) - price100) + ' (Super Supporter)';
-  
+
   document.getElementById('target-alert').innerHTML = '<span class="alert-icon">📊</span>Target: <strong>20,000 total votes × ' + formatNaira(basePrice) + '</strong> = <strong>' + formatNaira(20000 * basePrice) + ' minimum</strong>';
-  
+
   document.getElementById('parent-calc-rate').textContent = formatNaira(basePrice);
   document.getElementById('parent-calc-total').textContent = formatNaira(20 * basePrice) + ' per parent';
   document.getElementById('parent-calc-grand').textContent = formatNaira(2000 * basePrice) + ' from parents alone';
@@ -177,7 +196,7 @@ function getGlobalProgress() {
   return { done, total, pct: total ? Math.round((done / total) * 100) : 0 };
 }
 
-const TAG_LABELS = { ops:'Ops', media:'Media', admin:'Admin', finance:'Finance', content:'Content', tech:'Tech' };
+const TAG_LABELS = { ops: 'Ops', media: 'Media', admin: 'Admin', finance: 'Finance', content: 'Content', tech: 'Tech' };
 
 function renderTasks() {
   const container = document.getElementById('task-list-container');
@@ -193,25 +212,25 @@ function renderTasks() {
     const statusLabel = isComplete ? 'Complete' : (done > 0 ? 'In Progress' : 'Upcoming');
     div.innerHTML =
       '<div class="task-phase-header" onclick="togglePhase(\'' + phase.id + '\')">' +
-        '<div class="phase-info"><h3>' + phase.title + '</h3><p>' + phase.date + '</p></div>' +
-        '<div class="phase-meta">' +
-          '<span class="phase-count" id="count-' + phase.id + '">' + done + '/' + total + ' done</span>' +
-          '<span class="phase-badge ' + statusClass + '" id="badge-' + phase.id + '"><span class="dot"></span>' + statusLabel + '</span>' +
-          '<span class="phase-chevron">&#8250;</span>' +
-        '</div>' +
+      '<div class="phase-info"><h3>' + phase.title + '</h3><p>' + phase.date + '</p></div>' +
+      '<div class="phase-meta">' +
+      '<span class="phase-count" id="count-' + phase.id + '">' + done + '/' + total + ' done</span>' +
+      '<span class="phase-badge ' + statusClass + '" id="badge-' + phase.id + '"><span class="dot"></span>' + statusLabel + '</span>' +
+      '<span class="phase-chevron">&#8250;</span>' +
+      '</div>' +
       '</div>' +
       '<div class="task-phase-bar"><div class="task-phase-bar-fill" id="bar-' + phase.id + '" style="width:' + pct + '%"></div></div>' +
       '<div class="task-phase-body" id="body-' + phase.id + '">' +
-        phase.tasks.map(t => {
-          const isChecked = !!checked[t.id];
-          return '<div class="task-item" id="item-' + t.id + '">' +
-            '<div class="task-cb ' + (isChecked ? 'checked' : '') + '" onclick="toggleTask(\'' + t.id + '\')" id="cb-' + t.id + '"></div>' +
-            '<div class="task-text ' + (isChecked ? 'done-text' : '') + '" id="txt-' + t.id + '">' +
-              '<strong>' + t.text + '</strong><span>' + t.detail + '</span>' +
-            '</div>' +
-            '<span class="task-tag tag-' + t.tag + '">' + TAG_LABELS[t.tag] + '</span>' +
+      phase.tasks.map(t => {
+        const isChecked = !!checked[t.id];
+        return '<div class="task-item" id="item-' + t.id + '">' +
+          '<div class="task-cb ' + (isChecked ? 'checked' : '') + '" onclick="toggleTask(\'' + t.id + '\')" id="cb-' + t.id + '"></div>' +
+          '<div class="task-text ' + (isChecked ? 'done-text' : '') + '" id="txt-' + t.id + '">' +
+          '<strong>' + t.text + '</strong><span>' + t.detail + '</span>' +
+          '</div>' +
+          '<span class="task-tag tag-' + t.tag + '">' + TAG_LABELS[t.tag] + '</span>' +
           '</div>';
-        }).join('') +
+      }).join('') +
       '</div>';
     container.appendChild(div);
   });
@@ -262,7 +281,7 @@ function renderDashboardProgress() {
     return '<div class="progress-wrap" style="margin-bottom:14px;">' +
       '<div class="progress-label"><span style="font-weight:600;color:var(--navy);font-size:13px;">' + p.title + '</span><span>' + done + '/' + total + '</span></div>' +
       '<div class="progress-bar"><div class="progress-fill" style="width:' + pct + '%"></div></div>' +
-    '</div>';
+      '</div>';
   }).join('');
 }
 
@@ -277,8 +296,8 @@ function renderDashboard() {
   if (goalsList) {
     goalsList.innerHTML = GOALS_DATA.map(g =>
       '<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:#F8F9FB;border-radius:8px;">' +
-        '<span style="font-size:13px;color:var(--text-muted);">' + g.icon + ' ' + g.label + '</span>' +
-        '<span style="font-size:13px;font-weight:700;color:var(--navy);">' + g.value + '</span>' +
+      '<span style="font-size:13px;color:var(--text-muted);">' + g.icon + ' ' + g.label + '</span>' +
+      '<span style="font-size:13px;font-weight:700;color:var(--navy);">' + g.value + '</span>' +
       '</div>'
     ).join('');
   }
@@ -289,9 +308,9 @@ function renderTeams() {
   if (!grid) return;
   grid.innerHTML = TEAMS_DATA.map(t =>
     '<div class="team-card" style="background:linear-gradient(135deg,' + t.color + ',' + t.color + 'CC);">' +
-      '<div class="team-num">TEAM ' + t.num + '</div>' +
-      '<div class="team-name">' + t.name + '</div>' +
-      '<div class="team-color-label">10 members + 1 mentor</div>' +
+    '<div class="team-num">TEAM ' + t.num + '</div>' +
+    '<div class="team-name">' + t.name + '</div>' +
+    '<div class="team-color-label">10 members + 1 mentor</div>' +
     '</div>'
   ).join('');
 }
@@ -366,7 +385,7 @@ Season 2 is structured as a high-engagement, multi-week competition featuring:
 
 By sponsoring REFA Season 2, [Company Name] will gain prominent branding across our live stream, stage backdrops, event programs, and digital voting portal.
 
-Please find our complete Sponsorship Tiers attached. Packages start from ₦50,000 up to Title Sponsorship at ₦500,000.
+Please find our complete Sponsorship Tiers attached. Packages start from ₦100,000 up to Title Sponsorship at ₦1,000,000.
 
 We welcome the opportunity to discuss how [Company Name] can feature prominently in this season's journey.
 
@@ -408,10 +427,10 @@ REFA Season 2 Production Team
             <thead>
               <tr style="background:var(--navy);color:white;">
                 <th style="padding:10px;text-align:left;">Deliverable / Benefit</th>
-                <th style="padding:10px;text-align:center;background:#B45309;">TITLE SPONSOR<br/>(₦500,000)</th>
-                <th style="padding:10px;text-align:center;background:#D4AF37;color:var(--navy);">GOLD SPONSOR<br/>(₦250,000)</th>
-                <th style="padding:10px;text-align:center;background:#475569;">SILVER SPONSOR<br/>(₦100,000)</th>
-                <th style="padding:10px;text-align:center;background:#1E293B;">COMMUNITY<br/>(₦50,000)</th>
+                <th style="padding:10px;text-align:center;background:#B45309;">TITLE SPONSOR<br/>(₦1,000,000)</th>
+                <th style="padding:10px;text-align:center;background:#D4AF37;color:var(--navy);">GOLD SPONSOR<br/>(₦500,000)</th>
+                <th style="padding:10px;text-align:center;background:#475569;">SILVER SPONSOR<br/>(₦250,000)</th>
+                <th style="padding:10px;text-align:center;background:#1E293B;">COMMUNITY<br/>(₦100,000)</th>
               </tr>
             </thead>
             <tbody>
@@ -471,8 +490,8 @@ REFA Season 2 Production Team
           Phone: ______________________________ Email: ________________________<br/><br/>
           
           <strong>SELECTED SPONSORSHIP TIER:</strong><br/>
-          [ ] Title Sponsor (₦500,000) &nbsp;&nbsp;&nbsp; [ ] Gold Sponsor (₦250,000)<br/>
-          [ ] Silver Sponsor (₦100,000) &nbsp;&nbsp;&nbsp; [ ] Community Supporter (₦50,000)<br/>
+          [ ] Title Sponsor (₦1,000,000) &nbsp;&nbsp;&nbsp; [ ] Gold Sponsor (₦500,000)<br/>
+          [ ] Silver Sponsor (₦250,000) &nbsp;&nbsp;&nbsp; [ ] Community Supporter (₦100,000)<br/>
           [ ] Custom In-Kind Partnership (Prizes, Printing, Media, Equipment)<br/><br/>
           
           <strong>TERMS:</strong> 50% commitment deposit due upon signing; balance due on or before August 5, 2026.<br/><br/>
@@ -942,7 +961,7 @@ function closeKitModal(e) {
   }
 }
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
   renderDashboard();
   renderDashboardProgress();
   renderTasks();
@@ -950,3 +969,474 @@ document.addEventListener('DOMContentLoaded', function() {
   updateGlobalProgress();
   initStudio();
 });
+
+let savedPositions = {};
+
+function savePositions() {
+  const refs = ['out-our-ref', 'out-your-ref', 'out-date', 'out-salutation', 'out-subject'];
+  refs.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) {
+      savedPositions[id] = {
+        left: el.style.left,
+        top: el.style.top,
+        fontFamily: el.style.fontFamily,
+        fontSize: el.style.fontSize,
+        color: el.style.color,
+        fontWeight: el.style.fontWeight,
+        fontStyle: el.style.fontStyle,
+        textDecoration: el.style.textDecoration
+      };
+    }
+  });
+}
+
+function updateLetter() {
+  savePositions();
+
+  const wrapper = document.getElementById('letter-page-wrapper');
+  if (!wrapper) return;
+  const bgImgSrc = document.getElementById('lh-bg-img') ? document.getElementById('lh-bg-img').src : '';
+
+  // Create a hidden div to parse the WYSIWYG HTML into nodes
+  const sourceDiv = document.createElement('div');
+  sourceDiv.innerHTML = document.getElementById('let-body').innerHTML;
+
+  wrapper.innerHTML = ''; // Clear pages
+
+  let pageIndex = 1;
+  let currentPage, currentBody;
+
+  function createPage() {
+    const page = document.createElement('div');
+    page.className = 'letter-page';
+
+    // Background
+    const bg = document.createElement('img');
+    bg.src = bgImgSrc;
+    bg.className = 'lh-bg page-bg-visual';
+    page.appendChild(bg);
+
+    const overlay = document.createElement('div');
+    overlay.className = 'lh-overlay';
+
+    if (pageIndex === 1) {
+      overlay.innerHTML = `
+            <div class="lh-ref-date">
+              <div class="lh-abs draggable" style="top: ${savedPositions['out-our-ref']?.top || '151.5px'}; left: ${savedPositions['out-our-ref']?.left || '140px'}; font-family: 'Times New Roman', serif; font-weight: bold; font-size: 14px;" id="out-our-ref"></div>
+              <div class="lh-abs draggable" style="top: ${savedPositions['out-your-ref']?.top || '151.5px'}; left: ${savedPositions['out-your-ref']?.left || '420px'}; font-family: 'Times New Roman', serif; font-weight: bold; font-size: 14px;" id="out-your-ref"></div>
+              <div class="lh-abs draggable" style="top: ${savedPositions['out-date']?.top || '151.5px'}; left: ${savedPositions['out-date']?.left || '630px'}; font-family: 'Times New Roman', serif; font-weight: bold; font-size: 14px;" id="out-date"></div>
+            </div>
+            
+            <div class="lh-abs draggable" style="top: ${savedPositions['out-salutation']?.top || '190px'}; left: ${savedPositions['out-salutation']?.left || '100px'}; font-weight: bold; text-transform: uppercase;" id="out-salutation"></div>
+            
+            <div class="lh-abs draggable" style="top: ${savedPositions['out-subject']?.top || '240px'}; left: ${savedPositions['out-subject']?.left || '100px'}; width: 594px; font-weight: bold; text-align: center; text-transform: uppercase; text-decoration: underline; font-size: 16px;" id="out-subject"></div>
+            
+            <div class="lh-abs" style="top: 290px; left: 100px; width: 594px; font-family: 'Times New Roman', serif; text-align: justify; font-size: 15px; line-height: 1.5;" id="out-body-${pageIndex}"></div>
+       `;
+    } else {
+      overlay.innerHTML = `
+            <div class="lh-abs" style="top: 150px; left: 100px; width: 594px; font-family: 'Times New Roman', serif; text-align: justify; font-size: 15px; line-height: 1.5;" id="out-body-${pageIndex}"></div>
+       `;
+    }
+
+    page.appendChild(overlay);
+    wrapper.appendChild(page);
+
+    currentBody = document.getElementById(`out-body-${pageIndex}`);
+    currentPage = page;
+  }
+
+  createPage();
+
+  // Update header text on Page 1
+  const setTxt = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+  setTxt('out-our-ref', document.getElementById('let-our-ref').value);
+  setTxt('out-your-ref', document.getElementById('let-your-ref').value);
+  setTxt('out-date', document.getElementById('let-date').value);
+  setTxt('out-salutation', document.getElementById('let-salutation').value);
+  setTxt('out-subject', document.getElementById('let-subject').value);
+
+  // Re-apply saved custom styles (fonts, colors, etc)
+  ['out-our-ref', 'out-your-ref', 'out-date', 'out-salutation', 'out-subject'].forEach(id => {
+    const el = document.getElementById(id);
+    const s = savedPositions[id];
+    if (el && s) {
+      if (s.fontFamily) el.style.fontFamily = s.fontFamily;
+      if (s.fontSize) el.style.fontSize = s.fontSize;
+      if (s.color) el.style.color = s.color;
+      if (s.fontWeight) el.style.fontWeight = s.fontWeight;
+      if (s.fontStyle) el.style.fontStyle = s.fontStyle;
+      if (s.textDecoration) el.style.textDecoration = s.textDecoration;
+    }
+  });
+
+  // Paginate nodes
+  const blocks = Array.from(sourceDiv.childNodes);
+  for (let block of blocks) {
+    currentBody.appendChild(block);
+
+    // Check height
+    const maxHeight = pageIndex === 1 ? 733 : 873;
+    if (currentBody.offsetHeight > maxHeight && currentBody.childNodes.length > 1) {
+      // Move this block to next page
+      currentBody.removeChild(block);
+      pageIndex++;
+      createPage();
+      currentBody.appendChild(block);
+    }
+  }
+
+  // Rebind draggable events to the newly created elements
+  bindDraggables();
+
+  // Fit container scale
+  fitLetterPreview();
+}
+
+function syncLetterHeight() {
+  // Now obsolete, pagination is handled inside updateLetter()
+}
+
+function updateLetterBg() {
+  const useSigned = document.getElementById('let-use-signed-bg') && document.getElementById('let-use-signed-bg').checked;
+  const imgEl = document.getElementById('lh-bg-img');
+  if (!imgEl) return;
+
+  const baseName = useSigned ? 'img/letterhead-signed' : 'img/letterhead';
+  const exts = ['.jpeg', '.jpg', '.png'];
+  let currentTry = 0;
+
+  function tryNextExt() {
+    if (currentTry >= exts.length) {
+      imgEl.src = `https://via.placeholder.com/794x1123.png?text=Missing+${baseName}+(jpg/png/jpeg)`;
+      return;
+    }
+    const attempt = baseName + exts[currentTry];
+    currentTry++;
+
+    const tempImg = new Image();
+    tempImg.onload = () => { imgEl.src = attempt; updateLetter(); };
+    tempImg.onerror = tryNextExt;
+    tempImg.src = attempt;
+  }
+
+  tryNextExt();
+}
+
+const LETTER_TEMPLATES = {
+  sponsorship_schools: {
+    salutation: 'THE PRINCIPAL,',
+    subject: 'PARTNER WITH REFA SEASON 2: EMPOWERING YOUTH THROUGH SCRIPTURE & EXCELLENCE',
+    body: `<p>Dear [Principal / Director's Name],</p>
+<p>Greetings in the precious name of our Lord Jesus Christ.</p>
+<p>I am writing on behalf of <strong>Refiners of Faith Academy (REFA)</strong>, an NGO dedicated to inspiring youth to systematically study, memorize, and live out the Word of God.</p>
+<p>Following the remarkable success of Season 1—which gathered over 60 youth contestants and filled our church auditorium—we are thrilled to announce <strong>REFA Season 2: "Words That Last"</strong>, launching this August.</p>
+<p>This season introduces <strong>The Word League</strong>: a multi-week reality TV-style Bible championship featuring 100 screened contestants aged 10–15, organized into 10 mentored teams, competing before thousands of live and online audience members.</p>
+<p>Because your institution stands for educational and moral excellence, we would be honored to have you as an <strong>Official Education Partner</strong> for Season 2.</p>
+<p><strong>What this partnership offers your institution:</strong></p>
+<ul>
+<li><strong>Brand Visibility:</strong> Direct exposure to over 5,000 live attendees and 50,000+ digital viewers.</li>
+<li><strong>Youth Leadership Alignment:</strong> Position your institution at the forefront of youth spiritual and academic development.</li>
+<li><strong>On-Stage & Digital Recognition:</strong> Premium banner placement, live MC mentions, and dedicated social media spotlights.</li>
+</ul>
+<p>Attached is our official Sponsorship Proposal outlining the partnership tiers (Title, Gold, Silver, and Community Partner).</p>
+<p>We would love to schedule a brief 10-minute call or meeting this week to discuss how we can tailor this partnership to benefit your institution.</p>
+<p>Warm regards,</p>
+
+<hr>
+
+<h2>🏆 SPONSORSHIP TIERS & BENEFITS</h2>
+
+<table style="width:100%; border-collapse: collapse; margin: 20px 0; font-size: 12px; border: 1px solid #ccc;">
+<thead>
+<tr style="background:#f4f4f4;">
+<th style="padding:8px; border: 1px solid #ccc; text-align:left;">Benefit / Deliverable</th>
+<th style="padding:8px; border: 1px solid #ccc; text-align:center;">TITLE (₦1M)</th>
+<th style="padding:8px; border: 1px solid #ccc; text-align:center;">GOLD (₦500k)</th>
+<th style="padding:8px; border: 1px solid #ccc; text-align:center;">SILVER (₦250k)</th>
+<th style="padding:8px; border: 1px solid #ccc; text-align:center;">COMMUNITY (₦100k)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="padding:8px; border: 1px solid #ccc;"><strong>Main Stage Branding</strong></td>
+<td style="padding:8px; border: 1px solid #ccc; text-align:center;">Prime Center Stage</td>
+<td style="padding:8px; border: 1px solid #ccc; text-align:center;">Side Stage Banner</td>
+<td style="padding:8px; border: 1px solid #ccc; text-align:center;">Event Backdrop Logo</td>
+<td style="padding:8px; border: 1px solid #ccc; text-align:center;">Program Listing</td>
+</tr>
+<tr>
+<td style="padding:8px; border: 1px solid #ccc;"><strong>Digital Voting Portal</strong></td>
+<td style="padding:8px; border: 1px solid #ccc; text-align:center;">Header Banner</td>
+<td style="padding:8px; border: 1px solid #ccc; text-align:center;">Featured Logo</td>
+<td style="padding:8px; border: 1px solid #ccc; text-align:center;">Supporter List</td>
+<td style="padding:8px; border: 1px solid #ccc; text-align:center;">Name Listed</td>
+</tr>
+<tr style="border-bottom:1px solid #ccc;">
+<td style="padding:8px; border: 1px solid #ccc;"><strong>Live Stream Inclusion</strong></td>
+<td style="padding:8px; border: 1px solid #ccc; text-align:center;">Watermark + 30s Ad</td>
+<td style="padding:8px; border: 1px solid #ccc; text-align:center;">Lower-Third Logo</td>
+<td style="padding:8px; border: 1px solid #ccc; text-align:center;">Verbal MC Shoutout</td>
+<td style="padding:8px; border: 1px solid #ccc; text-align:center;">Rolling Credits</td>
+</tr>
+</tbody>
+</table>
+
+<hr>
+
+<h2>📝 SPONSORSHIP AGREEMENT FORM</h2>
+
+<p><strong>Sponsor Information:</strong><br>
+Organization Name: __________________________________________________<br>
+Contact Person: ______________________ Position/Title: ___________________<br>
+Phone: ______________________________ Email: ________________________</p>
+
+<p><strong>Payment & Delivery Terms:</strong><br>
+1. 50% commitment deposit due upon signing.<br>
+2. High-resolution brand logo to be provided upon signing.</p>
+
+<p><br>____________________________________<br>
+<strong>Sponsor Representative & Date</strong></p>`
+  },
+  sponsorship_business: {
+    salutation: 'THE MANAGING DIRECTOR,',
+    subject: 'SPONSORSHIP OPPORTUNITY: REACH 50,000+ CHRISTIAN FAMILIES AT REFA SEASON 2',
+    body: `<p>Dear [Business Owner / Marketing Lead],</p>
+<p>Is your brand looking to connect deeply with Christian families, parents, and youth in a meaningful, values-driven environment?</p>
+<p><strong>Refiners of Faith Academy (REFA)</strong> invites your esteemed organization to partner with us for <strong>Season 2 of the REFA Bible Recitation Championship ("Words That Last")</strong>.</p>
+<p>Season 2 is structured as a high-engagement, multi-week competition featuring:</p>
+<ul>
+<li><strong>100 Contestants</strong> (ages 10–15) across 10 teams.</li>
+<li><strong>3 Live Stage Events</strong> at the Church Auditorium (Free public admission).</li>
+<li><strong>Nationwide Online Voting & Social Media Campaign</strong> projected to generate 50,000+ impressions and 20,000+ digital interactions.</li>
+</ul>
+<p>By sponsoring REFA Season 2, your brand will gain prominent branding across our live stream, stage backdrops, event programs, and digital voting portal.</p>
+<p>Please find our complete <strong>Sponsorship Tiers</strong> attached. Packages start from ₦100,000 up to Title Sponsorship at ₦1,000,000.</p>
+<p>We welcome the opportunity to discuss how your organization can feature prominently in this season's journey.</p>
+<p>Best regards,</p>
+
+<hr>
+
+<h2>🏆 SPONSORSHIP TIERS & BENEFITS</h2>
+
+<table style="width:100%; border-collapse: collapse; margin: 20px 0; font-size: 12px; border: 1px solid #ccc;">
+<thead>
+<tr style="background:#f4f4f4;">
+<th style="padding:8px; border: 1px solid #ccc; text-align:left;">Benefit / Deliverable</th>
+<th style="padding:8px; border: 1px solid #ccc; text-align:center;">TITLE (₦1M)</th>
+<th style="padding:8px; border: 1px solid #ccc; text-align:center;">GOLD (₦500k)</th>
+<th style="padding:8px; border: 1px solid #ccc; text-align:center;">SILVER (₦250k)</th>
+<th style="padding:8px; border: 1px solid #ccc; text-align:center;">COMMUNITY (₦100k)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="padding:8px; border: 1px solid #ccc;"><strong>Main Stage Branding</strong></td>
+<td style="padding:8px; border: 1px solid #ccc; text-align:center;">Prime Center Stage</td>
+<td style="padding:8px; border: 1px solid #ccc; text-align:center;">Side Stage Banner</td>
+<td style="padding:8px; border: 1px solid #ccc; text-align:center;">Event Backdrop Logo</td>
+<td style="padding:8px; border: 1px solid #ccc; text-align:center;">Program Listing</td>
+</tr>
+<tr>
+<td style="padding:8px; border: 1px solid #ccc;"><strong>Digital Voting Portal</strong></td>
+<td style="padding:8px; border: 1px solid #ccc; text-align:center;">Header Banner</td>
+<td style="padding:8px; border: 1px solid #ccc; text-align:center;">Featured Logo</td>
+<td style="padding:8px; border: 1px solid #ccc; text-align:center;">Supporter List</td>
+<td style="padding:8px; border: 1px solid #ccc; text-align:center;">Name Listed</td>
+</tr>
+<tr style="border-bottom:1px solid #ccc;">
+<td style="padding:8px; border: 1px solid #ccc;"><strong>Live Stream Inclusion</strong></td>
+<td style="padding:8px; border: 1px solid #ccc; text-align:center;">Watermark + 30s Ad</td>
+<td style="padding:8px; border: 1px solid #ccc; text-align:center;">Lower-Third Logo</td>
+<td style="padding:8px; border: 1px solid #ccc; text-align:center;">Verbal MC Shoutout</td>
+<td style="padding:8px; border: 1px solid #ccc; text-align:center;">Rolling Credits</td>
+</tr>
+</tbody>
+</table>
+
+<hr>
+
+<h2>📝 SPONSORSHIP AGREEMENT FORM</h2>
+
+<p><strong>Sponsor Information:</strong><br>
+Organization Name: __________________________________________________<br>
+Contact Person: ______________________ Position/Title: ___________________<br>
+Phone: ______________________________ Email: ________________________</p>
+
+<p><strong>Payment & Delivery Terms:</strong><br>
+1. 50% commitment deposit due upon signing.<br>
+2. High-resolution brand logo to be provided upon signing.</p>
+
+<p><br>____________________________________<br>
+<strong>Sponsor Representative & Date</strong></p>`
+  }
+};
+
+function editTemplate(templateId) {
+  const tpl = LETTER_TEMPLATES[templateId];
+  if (tpl) {
+    document.getElementById('let-our-ref').value = 'REFA/2026/SP-01';
+    document.getElementById('let-your-ref').value = '';
+    // Auto-fill today's date
+    const d = new Date();
+    const options = { day: 'numeric', month: 'long', year: 'numeric' };
+    document.getElementById('let-date').value = d.toLocaleDateString('en-GB', options);
+
+    document.getElementById('let-salutation').value = tpl.salutation;
+    document.getElementById('let-subject').value = tpl.subject;
+    document.getElementById('let-body').innerHTML = tpl.body;
+
+    updateLetter();
+  }
+  goTo('letters');
+}
+
+// Letter Page Scaling Logic & Drag and Drop
+let letterScale = 1;
+let selectedElement = null;
+let isDraggingLetterElement = false;
+let dragStartX = 0, dragStartY = 0, dragInitialLeft = 0, dragInitialTop = 0;
+
+function fitLetterPreview() {
+  const wrapper = document.querySelector('.letter-page-wrapper');
+  const outer = document.getElementById('letter-scale-outer');
+  const previewContainer = document.querySelector('.letter-preview-container');
+
+  if (!wrapper || !outer || !previewContainer) return;
+
+  const pages = wrapper.querySelectorAll('.letter-page');
+  const pageCount = pages.length || 1;
+  const gap = 20;
+  const unscaledWidth = 794;
+  const unscaledHeight = (1123 * pageCount) + (gap * (pageCount - 1));
+
+  // Determine available width (leaving 60px total padding)
+  const availableWidth = Math.max(200, previewContainer.clientWidth - 60);
+
+  letterScale = Math.min(1, availableWidth / unscaledWidth);
+
+  // Update outer wrapper bounding dimensions to scaled box size
+  outer.style.width = `${unscaledWidth * letterScale}px`;
+  outer.style.height = `${unscaledHeight * letterScale}px`;
+
+  // Scale wrapper anchored at top-left
+  wrapper.style.transform = `scale(${letterScale})`;
+  wrapper.style.transformOrigin = '0 0';
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  updateLetterBg();
+
+  const previewContainer = document.querySelector('.letter-preview-container');
+  if (previewContainer) {
+    const resizeObserver = new ResizeObserver(() => {
+      fitLetterPreview();
+    });
+    resizeObserver.observe(previewContainer);
+
+    bindDraggables();
+  }
+});
+
+function bindDraggables() {
+  const draggables = document.querySelectorAll('.draggable');
+
+  draggables.forEach(el => {
+    if (el.dataset.dragBound) return;
+    el.dataset.dragBound = 'true';
+
+    el.addEventListener('mousedown', (e) => {
+      isDraggingLetterElement = true;
+      selectedElement = el;
+
+      document.querySelectorAll('.draggable').forEach(d => d.classList.remove('active-element'));
+      el.classList.add('active-element');
+
+      syncStylePanel();
+
+      dragStartX = e.clientX;
+      dragStartY = e.clientY;
+
+      const style = window.getComputedStyle(el);
+      dragInitialLeft = parseFloat(style.left) || 0;
+      dragInitialTop = parseFloat(style.top) || 0;
+
+      e.stopPropagation();
+    });
+  });
+
+  if (!window.draggablesBound) {
+    window.draggablesBound = true;
+    document.addEventListener('mousemove', (e) => {
+      if (!isDraggingLetterElement || !selectedElement) return;
+
+      const dx = (e.clientX - dragStartX) / letterScale;
+      const dy = (e.clientY - dragStartY) / letterScale;
+
+      selectedElement.style.left = `${dragInitialLeft + dx}px`;
+      selectedElement.style.top = `${dragInitialTop + dy}px`;
+    });
+
+    document.addEventListener('mouseup', () => {
+      if (isDraggingLetterElement) {
+        savePositions();
+      }
+      isDraggingLetterElement = false;
+    });
+
+    document.addEventListener('mousedown', (e) => {
+      if (!e.target.closest('.draggable') && !e.target.closest('.letter-editor')) {
+        document.querySelectorAll('.draggable').forEach(d => d.classList.remove('active-element'));
+        selectedElement = null;
+      }
+    });
+  }
+}
+
+// Sync the styling options sidebar to the currently selected element
+function syncStylePanel() {
+  if (!selectedElement) return;
+  const style = window.getComputedStyle(selectedElement);
+
+  const fontSelect = document.getElementById('style-font');
+  if (fontSelect) {
+    // try to match font family
+    const ff = style.fontFamily;
+    for (let i = 0; i < fontSelect.options.length; i++) {
+      if (fontSelect.options[i].value.includes(ff.replace(/['"]/g, '').split(',')[0])) {
+        fontSelect.selectedIndex = i;
+        break;
+      }
+    }
+  }
+
+  const sizeInput = document.getElementById('style-size');
+  if (sizeInput) sizeInput.value = parseFloat(style.fontSize) || 14;
+
+  const boldCheck = document.getElementById('style-bold');
+  if (boldCheck) boldCheck.checked = (style.fontWeight === '700' || style.fontWeight === 'bold');
+
+  const italicCheck = document.getElementById('style-italic');
+  if (italicCheck) italicCheck.checked = (style.fontStyle === 'italic');
+
+  const underlineCheck = document.getElementById('style-underline');
+  if (underlineCheck) underlineCheck.checked = (style.textDecorationLine === 'underline');
+}
+
+// Apply styles from the sidebar to the selected element
+function applyStyle(prop, value) {
+  if (!selectedElement) {
+    alert("Please click on a text element on the letter first to select it.");
+    return;
+  }
+
+  // Specific fix for hex colors vs rgb
+  if (prop === 'color') {
+    selectedElement.style.color = value;
+  } else {
+    selectedElement.style[prop] = value;
+  }
+
+  savePositions();
+}
