@@ -355,7 +355,7 @@ What this partnership offers [School Name]:
 • Youth Leadership Alignment: Position your institution at the forefront of youth spiritual and academic development.
 • On-Stage & Digital Recognition: Premium banner placement, live MC mentions, and dedicated social media spotlights.
 
-Attached is our official Sponsorship Proposal outlining the partnership tiers (Title, Gold, Silver, and Community Partner). 
+Attached is our official Sponsorship Proposal outlining the partnership tiers (Title, Gold, Silver, Community, and Individual Supporter). 
 
 We would love to schedule a brief 10-minute call or meeting this week to discuss how we can tailor this partnership to benefit your institution.
 
@@ -368,7 +368,7 @@ Phone: [Insert Phone Number] | Email: [Insert Email]
           <button onclick="copyToClipboard(document.getElementById('letter-template-a').innerText, this)" style="margin-top:8px;background:var(--navy);color:var(--gold);border:none;padding:6px 14px;border-radius:4px;font-size:11px;font-weight:bold;cursor:pointer;">📋 Copy Template A</button>
         </div>
 
-        <div>
+        <div style="margin-bottom:20px;">
           <h5 style="color:var(--navy);font-size:14px;margin-bottom:6px;">Template B: For Faith-Based Businesses, Bookstores & Family Brands</h5>
           <div style="font-size:12px;color:var(--text-muted);margin-bottom:6px;font-weight:bold;">Subject: Sponsorship Opportunity: Reach 50,000+ Christian Families at REFA Season 2</div>
           <div style="background:#F8F9FB;padding:16px;border-radius:8px;font-size:13px;line-height:1.7;border-left:4px solid var(--primary);white-space:pre-line;color:var(--text-main);" id="letter-template-b">
@@ -385,7 +385,7 @@ Season 2 is structured as a high-engagement, multi-week competition featuring:
 
 By sponsoring REFA Season 2, [Company Name] will gain prominent branding across our live stream, stage backdrops, event programs, and digital voting portal.
 
-Please find our complete Sponsorship Tiers attached. Packages start from ₦100,000 up to Title Sponsorship at ₦1,000,000.
+Please find our complete Sponsorship Tiers attached. Packages start from ₦50,000 up to Title Sponsorship at ₦1,000,000.
 
 We welcome the opportunity to discuss how [Company Name] can feature prominently in this season's journey.
 
@@ -395,6 +395,42 @@ Best regards,
 REFA Season 2 Production Team
           </div>
           <button onclick="copyToClipboard(document.getElementById('letter-template-b').innerText, this)" style="margin-top:8px;background:var(--navy);color:var(--gold);border:none;padding:6px 14px;border-radius:4px;font-size:11px;font-weight:bold;cursor:pointer;">📋 Copy Template B</button>
+        </div>
+
+        <div>
+          <h5 style="color:var(--navy);font-size:14px;margin-bottom:6px;">Template C: For Individual Patrons & Society Builders (Appeal to Conscience)</h5>
+          <div style="font-size:12px;color:var(--text-muted);margin-bottom:6px;font-weight:bold;">Subject: An Appeal for Our Youth & Society: Partner with REFA Season 2 ("Words That Last")</div>
+          <div style="background:#F8F9FB;padding:16px;border-radius:8px;font-size:13px;line-height:1.7;border-left:4px solid #059669;white-space:pre-line;color:var(--text-main);" id="letter-template-c">
+Dear [Patron / Friend's Name],
+
+Greetings in the grace and peace of our Lord Jesus Christ.
+
+In a time when our young generation is constantly exposed to negative influences, raising children who are firmly rooted in godly values and moral integrity is one of the most urgent responsibilities we share.
+
+Refiners of Faith Academy (REFA) was born out of a deep burden to see our youth (ages 10–15) fall in love with the Word of God. We believe that when young minds are filled with divine truth, they become the leaders who will uplift our families and rebuild the moral fabric of our society.
+
+This August, we are hosting REFA Season 2: "Words That Last". It is a multi-week Bible Recitation Championship that will engage 100 children, taking them through rigorous scripture study, mentorship, and a platform to declare God's Word before thousands.
+
+We cannot do this alone. As someone who cares deeply about the spiritual foundation of our society, we are appealing to your heart to support this vision. We need partners who will stand with us to build these children up.
+
+Your generous seed will go directly towards:
+• Equipping the Children: Providing Bibles, study manuals, uniforms, and mentorship materials for all 100 contestants.
+• The Experience: Hosting a safe, excellent, and inspiring environment for the children to compete and shine.
+• Scholarships & Rewards: Honoring their hard work and encouraging a lifelong commitment to God's Word.
+
+You can partner with us as a Society Builder with a sponsorship seed of ₦50,000, ₦100,000, or any amount the Lord lays on your heart. Every seed sown is an eternal investment in the character of our youth and the future of our nation.
+
+To make your partnership seed, please use the account details below:
+
+<strong>Account Name:</strong> <strong>Refiners of Faith Academy</strong>
+<strong>Account Number:</strong> <strong>1027784775</strong>
+<strong>Bank:</strong> <strong>UBA</strong>
+
+We would be deeply honored to have you as a champion for our young generation.
+
+With immense gratitude and blessings,
+          </div>
+          <button onclick="copyToClipboard(document.getElementById('letter-template-c').innerText, this)" style="margin-top:8px;background:var(--navy);color:var(--gold);border:none;padding:6px 14px;border-radius:4px;font-size:11px;font-weight:bold;cursor:pointer;">📋 Copy Template C</button>
         </div>
       </div>
 
@@ -431,12 +467,14 @@ REFA Season 2 Production Team
                 <th style="padding:10px;text-align:center;background:#D4AF37;color:var(--navy);">GOLD SPONSOR<br/>(₦500,000)</th>
                 <th style="padding:10px;text-align:center;background:#475569;">SILVER SPONSOR<br/>(₦250,000)</th>
                 <th style="padding:10px;text-align:center;background:#1E293B;">COMMUNITY<br/>(₦100,000)</th>
+                <th style="padding:10px;text-align:center;background:#059669;">INDIVIDUAL<br/>(₦50,000)</th>
               </tr>
             </thead>
             <tbody>
               <tr style="border-bottom:1px solid #E2E8F0;">
                 <td style="padding:10px;font-weight:bold;">Naming Rights</td>
                 <td style="padding:10px;text-align:center;background:#FEF3C7;font-weight:bold;">"REFA S2 powered by [Brand]"</td>
+                <td style="padding:10px;text-align:center;">—</td>
                 <td style="padding:10px;text-align:center;">—</td>
                 <td style="padding:10px;text-align:center;">—</td>
                 <td style="padding:10px;text-align:center;">—</td>
@@ -447,12 +485,14 @@ REFA Season 2 Production Team
                 <td style="padding:10px;text-align:center;">Side Stage Banner</td>
                 <td style="padding:10px;text-align:center;">Event Backdrop Logo</td>
                 <td style="padding:10px;text-align:center;">Program Book Listing</td>
+                <td style="padding:10px;text-align:center;">Supporter Roll Listing</td>
               </tr>
               <tr style="border-bottom:1px solid #E2E8F0;">
                 <td style="padding:10px;font-weight:bold;">Digital Voting Portal</td>
                 <td style="padding:10px;text-align:center;">Header Banner Placement</td>
                 <td style="padding:10px;text-align:center;">Featured Logo on Page</td>
                 <td style="padding:10px;text-align:center;">Logo on Supporter List</td>
+                <td style="padding:10px;text-align:center;">Name Listed</td>
                 <td style="padding:10px;text-align:center;">Name Listed</td>
               </tr>
               <tr style="border-bottom:1px solid #E2E8F0;">
@@ -461,6 +501,7 @@ REFA Season 2 Production Team
                 <td style="padding:10px;text-align:center;">Lower-Third Logo Overlay</td>
                 <td style="padding:10px;text-align:center;">Verbal MC Mention</td>
                 <td style="padding:10px;text-align:center;">Rolling End Credits</td>
+                <td style="padding:10px;text-align:center;">Special Mention Credits</td>
               </tr>
               <tr style="border-bottom:1px solid #E2E8F0;">
                 <td style="padding:10px;font-weight:bold;">Social Media Features</td>
@@ -468,6 +509,7 @@ REFA Season 2 Production Team
                 <td style="padding:10px;text-align:center;">2 Dedicated Posts</td>
                 <td style="padding:10px;text-align:center;">1 Group Sponsor Post</td>
                 <td style="padding:10px;text-align:center;">Thank You Post</td>
+                <td style="padding:10px;text-align:center;">Thank You Post / E-Cert</td>
               </tr>
               <tr>
                 <td style="padding:10px;font-weight:bold;">VIP Seating (Grand Final)</td>
@@ -475,6 +517,7 @@ REFA Season 2 Production Team
                 <td style="padding:10px;text-align:center;">Reserved (6 Seats)</td>
                 <td style="padding:10px;text-align:center;">Reserved (2 Seats)</td>
                 <td style="padding:10px;text-align:center;">Regular Seating</td>
+                <td style="padding:10px;text-align:center;">Reserved Guest Seat</td>
               </tr>
             </tbody>
           </table>
@@ -485,13 +528,14 @@ REFA Season 2 Production Team
         <h4 style="color:var(--navy);font-size:17px;border-bottom:2px solid var(--gold);padding-bottom:6px;margin-bottom:14px;">📝 4. OFFICIAL SPONSORSHIP AGREEMENT FORM</h4>
         <div style="background:#FFFBEB;padding:18px;border-radius:8px;border:1px solid #F59E0B;font-size:13px;line-height:1.8;">
           <strong>SPONSOR INFORMATION:</strong><br/>
-          Organization Name: __________________________________________________<br/>
+          Organization / Individual Name: __________________________________________________<br/>
           Contact Person: ______________________ Position/Title: ___________________<br/>
           Phone: ______________________________ Email: ________________________<br/><br/>
           
           <strong>SELECTED SPONSORSHIP TIER:</strong><br/>
           [ ] Title Sponsor (₦1,000,000) &nbsp;&nbsp;&nbsp; [ ] Gold Sponsor (₦500,000)<br/>
           [ ] Silver Sponsor (₦250,000) &nbsp;&nbsp;&nbsp; [ ] Community Supporter (₦100,000)<br/>
+          [ ] Individual Supporter / Society Builder (₦50,000)<br/>
           [ ] Custom In-Kind Partnership (Prizes, Printing, Media, Equipment)<br/><br/>
           
           <strong>TERMS:</strong> 50% commitment deposit due upon signing; balance due on or before August 5, 2026.<br/><br/>
@@ -1140,7 +1184,7 @@ const LETTER_TEMPLATES = {
 <li><strong>Youth Leadership Alignment:</strong> Position your institution at the forefront of youth spiritual and academic development.</li>
 <li><strong>On-Stage & Digital Recognition:</strong> Premium banner placement, live MC mentions, and dedicated social media spotlights.</li>
 </ul>
-<p>Attached is our official Sponsorship Proposal outlining the partnership tiers (Title, Gold, Silver, and Community Partner).</p>
+<p>Attached is our official Sponsorship Proposal outlining the partnership tiers (Title, Gold, Silver, Community, and Individual Supporter).</p>
 <p>We would love to schedule a brief 10-minute call or meeting this week to discuss how we can tailor this partnership to benefit your institution.</p>
 <p>Warm regards,</p>
 
@@ -1156,6 +1200,7 @@ const LETTER_TEMPLATES = {
 <th style="padding:8px; border: 1px solid #ccc; text-align:center;">GOLD (₦500k)</th>
 <th style="padding:8px; border: 1px solid #ccc; text-align:center;">SILVER (₦250k)</th>
 <th style="padding:8px; border: 1px solid #ccc; text-align:center;">COMMUNITY (₦100k)</th>
+<th style="padding:8px; border: 1px solid #ccc; text-align:center;">INDIVIDUAL (₦50k)</th>
 </tr>
 </thead>
 <tbody>
@@ -1165,12 +1210,14 @@ const LETTER_TEMPLATES = {
 <td style="padding:8px; border: 1px solid #ccc; text-align:center;">Side Stage Banner</td>
 <td style="padding:8px; border: 1px solid #ccc; text-align:center;">Event Backdrop Logo</td>
 <td style="padding:8px; border: 1px solid #ccc; text-align:center;">Program Listing</td>
+<td style="padding:8px; border: 1px solid #ccc; text-align:center;">Supporter Roll</td>
 </tr>
 <tr>
 <td style="padding:8px; border: 1px solid #ccc;"><strong>Digital Voting Portal</strong></td>
 <td style="padding:8px; border: 1px solid #ccc; text-align:center;">Header Banner</td>
 <td style="padding:8px; border: 1px solid #ccc; text-align:center;">Featured Logo</td>
 <td style="padding:8px; border: 1px solid #ccc; text-align:center;">Supporter List</td>
+<td style="padding:8px; border: 1px solid #ccc; text-align:center;">Name Listed</td>
 <td style="padding:8px; border: 1px solid #ccc; text-align:center;">Name Listed</td>
 </tr>
 <tr style="border-bottom:1px solid #ccc;">
@@ -1179,6 +1226,7 @@ const LETTER_TEMPLATES = {
 <td style="padding:8px; border: 1px solid #ccc; text-align:center;">Lower-Third Logo</td>
 <td style="padding:8px; border: 1px solid #ccc; text-align:center;">Verbal MC Shoutout</td>
 <td style="padding:8px; border: 1px solid #ccc; text-align:center;">Rolling Credits</td>
+<td style="padding:8px; border: 1px solid #ccc; text-align:center;">Special Mention</td>
 </tr>
 </tbody>
 </table>
@@ -1188,13 +1236,13 @@ const LETTER_TEMPLATES = {
 <h2>📝 SPONSORSHIP AGREEMENT FORM</h2>
 
 <p><strong>Sponsor Information:</strong><br>
-Organization Name: __________________________________________________<br>
+Organization / Individual Name: __________________________________________________<br>
 Contact Person: ______________________ Position/Title: ___________________<br>
 Phone: ______________________________ Email: ________________________</p>
 
 <p><strong>Payment & Delivery Terms:</strong><br>
 1. 50% commitment deposit due upon signing.<br>
-2. High-resolution brand logo to be provided upon signing.</p>
+2. High-resolution brand logo or donor name to be provided upon signing.</p>
 
 <p><br>____________________________________<br>
 <strong>Sponsor Representative & Date</strong></p>`
@@ -1212,7 +1260,7 @@ Phone: ______________________________ Email: ________________________</p>
 <li><strong>Nationwide Online Voting & Social Media Campaign</strong> projected to generate 50,000+ impressions and 20,000+ digital interactions.</li>
 </ul>
 <p>By sponsoring REFA Season 2, your brand will gain prominent branding across our live stream, stage backdrops, event programs, and digital voting portal.</p>
-<p>Please find our complete <strong>Sponsorship Tiers</strong> attached. Packages start from ₦100,000 up to Title Sponsorship at ₦1,000,000.</p>
+<p>Please find our complete <strong>Sponsorship Tiers</strong> attached. Packages start from ₦50,000 up to Title Sponsorship at ₦1,000,000.</p>
 <p>We welcome the opportunity to discuss how your organization can feature prominently in this season's journey.</p>
 <p>Best regards,</p>
 
@@ -1228,6 +1276,7 @@ Phone: ______________________________ Email: ________________________</p>
 <th style="padding:8px; border: 1px solid #ccc; text-align:center;">GOLD (₦500k)</th>
 <th style="padding:8px; border: 1px solid #ccc; text-align:center;">SILVER (₦250k)</th>
 <th style="padding:8px; border: 1px solid #ccc; text-align:center;">COMMUNITY (₦100k)</th>
+<th style="padding:8px; border: 1px solid #ccc; text-align:center;">INDIVIDUAL (₦50k)</th>
 </tr>
 </thead>
 <tbody>
@@ -1237,12 +1286,14 @@ Phone: ______________________________ Email: ________________________</p>
 <td style="padding:8px; border: 1px solid #ccc; text-align:center;">Side Stage Banner</td>
 <td style="padding:8px; border: 1px solid #ccc; text-align:center;">Event Backdrop Logo</td>
 <td style="padding:8px; border: 1px solid #ccc; text-align:center;">Program Listing</td>
+<td style="padding:8px; border: 1px solid #ccc; text-align:center;">Supporter Roll</td>
 </tr>
 <tr>
 <td style="padding:8px; border: 1px solid #ccc;"><strong>Digital Voting Portal</strong></td>
 <td style="padding:8px; border: 1px solid #ccc; text-align:center;">Header Banner</td>
 <td style="padding:8px; border: 1px solid #ccc; text-align:center;">Featured Logo</td>
 <td style="padding:8px; border: 1px solid #ccc; text-align:center;">Supporter List</td>
+<td style="padding:8px; border: 1px solid #ccc; text-align:center;">Name Listed</td>
 <td style="padding:8px; border: 1px solid #ccc; text-align:center;">Name Listed</td>
 </tr>
 <tr style="border-bottom:1px solid #ccc;">
@@ -1251,6 +1302,7 @@ Phone: ______________________________ Email: ________________________</p>
 <td style="padding:8px; border: 1px solid #ccc; text-align:center;">Lower-Third Logo</td>
 <td style="padding:8px; border: 1px solid #ccc; text-align:center;">Verbal MC Shoutout</td>
 <td style="padding:8px; border: 1px solid #ccc; text-align:center;">Rolling Credits</td>
+<td style="padding:8px; border: 1px solid #ccc; text-align:center;">Special Mention</td>
 </tr>
 </tbody>
 </table>
@@ -1260,16 +1312,39 @@ Phone: ______________________________ Email: ________________________</p>
 <h2>📝 SPONSORSHIP AGREEMENT FORM</h2>
 
 <p><strong>Sponsor Information:</strong><br>
-Organization Name: __________________________________________________<br>
+Organization / Individual Name: __________________________________________________<br>
 Contact Person: ______________________ Position/Title: ___________________<br>
 Phone: ______________________________ Email: ________________________</p>
 
 <p><strong>Payment & Delivery Terms:</strong><br>
 1. 50% commitment deposit due upon signing.<br>
-2. High-resolution brand logo to be provided upon signing.</p>
+2. High-resolution brand logo or donor name to be provided upon signing.</p>
 
 <p><br>____________________________________<br>
 <strong>Sponsor Representative & Date</strong></p>`
+  },
+  sponsorship_individual: {
+    salutation: 'DEAR DISTINGUISHED FRIEND OF YOUTH,',
+    subject: 'AN APPEAL FOR OUR YOUTH & SOCIETY: PARTNER WITH REFA SEASON 2 ("WORDS THAT LAST")',
+    body: `<p>Dear [Patron / Friend's Name],</p>
+<p>Greetings in the grace and peace of our Lord Jesus Christ.</p>
+<p>In a time when our young generation is constantly exposed to negative influences, raising children who are firmly rooted in godly values and moral integrity is one of the most urgent responsibilities we share.</p>
+<p><strong>Refiners of Faith Academy (REFA)</strong> was born out of a deep burden to see our youth (ages 10–15) fall in love with the Word of God. We believe that when young minds are filled with divine truth, they become the leaders who will uplift our families and rebuild the moral fabric of our society.</p>
+<p>This August, we are hosting <strong>REFA Season 2: "Words That Last"</strong>. It is a multi-week Bible Recitation Championship that will engage 100 children, taking them through rigorous scripture study, mentorship, and a platform to declare God's Word before thousands.</p>
+<p>We cannot do this alone. As someone who cares deeply about the spiritual foundation of our society, we are appealing to your heart to support this vision. We need partners who will stand with us to build these children up.</p>
+<p><strong>Your generous seed will go directly towards:</strong></p>
+<ul>
+<li><strong>Equipping the Children:</strong> Providing Bibles, study manuals, uniforms, and mentorship materials for all 100 contestants.</li>
+<li><strong>The Experience:</strong> Hosting a safe, excellent, and inspiring environment for the children to compete and shine.</li>
+<li><strong>Scholarships & Rewards:</strong> Honoring their hard work and encouraging a lifelong commitment to God's Word.</li>
+</ul>
+<p>You can partner with us as a Society Builder with a sponsorship seed of <strong>₦50,000, ₦100,000, or any amount the Lord lays on your heart</strong>. Every seed sown is an eternal investment in the character of our youth and the future of our nation.</p>
+<p>To make your partnership seed, please use the account details below:</p>
+<p><strong>Account Name:</strong> <strong>Refiners of Faith Academy</strong><br>
+<strong>Account Number:</strong> <strong>1027784775</strong><br>
+<strong>Bank:</strong> <strong>UBA</strong></p>
+<p>We would be deeply honored to have you as a champion for our young generation.</p>
+<p>With immense gratitude and blessings,</p>`
   }
 };
 
