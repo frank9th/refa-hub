@@ -157,10 +157,184 @@ if (window.REFA_FIREBASE) {
   initGlobalTaskSync();
 }
 
+// --- AUTHENTICATION & ROLE-BASED ACCESS CONTROL (RBAC) ---
+const AUTH_SESSION_KEY = 'refa_user_session_v1';
+
+function getAuthSession() {
+  try {
+    return JSON.parse(sessionStorage.getItem(AUTH_SESSION_KEY) || localStorage.getItem(AUTH_SESSION_KEY) || 'null');
+  } catch (e) {
+    return null;
+  }
+}
+
+function setAuthSession(sessionData) {
+  try {
+    sessionStorage.setItem(AUTH_SESSION_KEY, JSON.stringify(sessionData));
+    localStorage.setItem(AUTH_SESSION_KEY, JSON.stringify(sessionData));
+  } catch (e) {}
+}
+
+function clearAuthSession() {
+  try {
+    sessionStorage.removeItem(AUTH_SESSION_KEY);
+    localStorage.removeItem(AUTH_SESSION_KEY);
+  } catch (e) {}
+}
+
+function checkAuthSession() {
+  const session = getAuthSession();
+  const overlay = document.getElementById('auth-lock-overlay');
+  const userBadge = document.getElementById('sidebar-user-badge');
+  const nameEl = document.getElementById('user-display-name');
+  const roleEl = document.getElementById('user-display-role');
+
+  if (!session || !session.role) {
+    if (overlay) overlay.classList.remove('hidden');
+    if (userBadge) userBadge.style.display = 'none';
+    return false;
+  }
+
+  if (overlay) overlay.classList.add('hidden');
+  if (userBadge) userBadge.style.display = 'flex';
+  if (nameEl) nameEl.textContent = session.memberName || 'Member';
+  if (roleEl) roleEl.textContent = session.title || session.role.toUpperCase();
+
+  updateNavForRole(session);
+  return true;
+}
+
+async function handlePassKeyLogin(event) {
+  if (event) event.preventDefault();
+  const nameInput = document.getElementById('auth-member-name');
+  const keyInput = document.getElementById('auth-passkey');
+  const btn = document.getElementById('auth-submit-btn');
+  const errEl = document.getElementById('auth-error-msg');
+
+  const name = nameInput ? nameInput.value.trim() : '';
+  const key = keyInput ? keyInput.value.trim() : '';
+
+  if (!name || !key) {
+    if (errEl) {
+      errEl.textContent = 'Please enter both your member name and pass key.';
+      errEl.style.display = 'block';
+    }
+    return;
+  }
+
+  if (btn) {
+    btn.disabled = true;
+    btn.innerHTML = '⌛ Validating Key...';
+  }
+  if (errEl) errEl.style.display = 'none';
+
+  let result = { success: false, message: 'Firebase authentication not ready.' };
+
+  if (window.REFA_FIREBASE && window.REFA_FIREBASE.validatePassKey) {
+    result = await window.REFA_FIREBASE.validatePassKey(name, key);
+  } else {
+    const cleanKey = key.toUpperCase();
+    const FALLBACK_KEYS = {
+      'REFA-ADMIN-2026': { key: 'REFA-ADMIN-2026', role: 'admin', title: 'Executive Admin', allowedPages: ["dashboard", "tasks", "strategy", "voting", "sponsors", "letters", "accounts", "media", "studio", "timeline", "countdown", "parents", "operations", "revenue", "teams", "social", "sponsorship"] },
+      'REFA-MEDIA-2026': { key: 'REFA-MEDIA-2026', role: 'media', title: 'Media & Studio Lead', allowedPages: ["dashboard", "tasks", "media", "studio", "strategy", "timeline", "countdown", "social"] },
+      'REFA-TEAM-2026': { key: 'REFA-TEAM-2026', role: 'ops', title: 'Operations & Mentor', allowedPages: ["dashboard", "tasks", "voting", "strategy", "timeline", "countdown", "parents", "teams"] },
+      'REFA-GUEST-2026': { key: 'REFA-GUEST-2026', role: 'viewer', title: 'Guest Visitor', allowedPages: ["dashboard", "timeline", "countdown"] }
+    };
+    if (FALLBACK_KEYS[cleanKey]) {
+      result = { success: true, roleData: { ...FALLBACK_KEYS[cleanKey], memberName: name } };
+    } else {
+      result = { success: false, message: 'Invalid Pass Key.' };
+    }
+  }
+
+  if (btn) {
+    btn.disabled = false;
+    btn.innerHTML = '🔐 Unlock Hub Access';
+  }
+
+  if (result.success && result.roleData) {
+    setAuthSession(result.roleData);
+    checkAuthSession();
+  } else {
+    if (errEl) {
+      errEl.textContent = result.message || 'Login failed. Invalid key or limit reached.';
+      errEl.style.display = 'block';
+    }
+  }
+}
+
+function handleLogout() {
+  clearAuthSession();
+  const nameInput = document.getElementById('auth-member-name');
+  const keyInput = document.getElementById('auth-passkey');
+  const errEl = document.getElementById('auth-error-msg');
+  if (nameInput) nameInput.value = '';
+  if (keyInput) keyInput.value = '';
+  if (errEl) errEl.style.display = 'none';
+  checkAuthSession();
+}
+
+function updateNavForRole(session) {
+  if (!session) return;
+  const allowed = session.allowedPages || [];
+  const isAdmin = session.role === 'admin';
+
+  const NAV_PAGE_MAP = {
+    'nav-dashboard': 'dashboard',
+    'nav-timeline': 'timeline',
+    'nav-countdown': 'countdown',
+    'nav-letters': 'letters',
+    'nav-accounts': 'accounts',
+    'nav-tasks': 'tasks',
+    'nav-studio': 'studio',
+    'nav-voting': 'voting',
+    'nav-parents': 'parents',
+    'nav-operations': 'operations',
+    'nav-revenue': 'revenue',
+    'nav-teams': 'teams',
+    'nav-social': 'social',
+    'nav-sponsorship': 'sponsorship'
+  };
+
+  Object.keys(NAV_PAGE_MAP).forEach(navId => {
+    const pageId = NAV_PAGE_MAP[navId];
+    const navEl = document.getElementById(navId);
+    if (!navEl) return;
+    if (isAdmin || allowed.includes(pageId) || pageId === 'dashboard') {
+      navEl.classList.remove('role-hidden');
+    } else {
+      navEl.classList.add('role-hidden');
+    }
+  });
+
+  const activePageEl = document.querySelector('.page.active');
+  if (activePageEl) {
+    const pageId = activePageEl.id.replace('page-', '');
+    if (!isAdmin && !allowed.includes(pageId) && pageId !== 'dashboard') {
+      goTo('dashboard');
+    }
+  }
+}
+
 function goTo(id) {
+  const session = getAuthSession();
+  if (!session) {
+    checkAuthSession();
+    return;
+  }
+
+  const allowed = session.allowedPages || [];
+  const isAdmin = session.role === 'admin';
+
+  if (!isAdmin && !allowed.includes(id) && id !== 'dashboard') {
+    alert(`Access Restricted: Your role (${session.title || session.role}) does not have permission to access this section.`);
+    return;
+  }
+
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-  document.getElementById('page-' + id).classList.add('active');
+  const targetPage = document.getElementById('page-' + id);
+  if (targetPage) targetPage.classList.add('active');
   const navItem = document.getElementById('nav-' + id);
   if (navItem) navItem.classList.add('active');
 
@@ -1042,6 +1216,7 @@ function closeKitModal(e) {
 }
 
 document.addEventListener('DOMContentLoaded', function () {
+  checkAuthSession();
   renderDashboard();
   renderDashboardProgress();
   renderTasks();

@@ -4,12 +4,14 @@ import {
   enableIndexedDbPersistence, 
   collection, 
   doc, 
+  getDoc,
+  getDocs,
   onSnapshot, 
   setDoc, 
   updateDoc, 
   deleteDoc,
-  getDocs,
   writeBatch,
+  increment,
   serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
@@ -38,6 +40,91 @@ enableIndexedDbPersistence(db).catch((err) => {
 });
 
 /**
+ * Validate a Pass Key against Firestore.
+ * Checks key active status, max usage limit, and records login.
+ * @param {string} name - Name of member
+ * @param {string} keyInput - Entered Pass Key
+ * @returns {Promise<{success: boolean, message?: string, roleData?: object}>}
+ */
+async function validatePassKey(name, keyInput) {
+  const cleanKey = (keyInput || '').trim().toUpperCase();
+  if (!cleanKey) {
+    return { success: false, message: 'Pass key cannot be empty.' };
+  }
+
+  try {
+    const keyDocRef = doc(db, "passkeys", cleanKey);
+    const docSnap = await getDoc(keyDocRef);
+
+    if (!docSnap.exists()) {
+      return { success: false, message: 'Invalid Pass Key. Access denied.' };
+    }
+
+    const data = docSnap.data();
+    if (data.active === false) {
+      return { success: false, message: 'This Pass Key has been deactivated by administrator.' };
+    }
+
+    const currentUses = Number(data.currentUses || 0);
+    const maxUses = Number(data.maxUses || 0);
+
+    if (maxUses > 0 && currentUses >= maxUses) {
+      return { 
+        success: false, 
+        message: `Pass key usage limit reached! (Max allowed users: ${maxUses}). Please contact administrator.` 
+      };
+    }
+
+    // Increment currentUses counter in Firestore
+    await updateDoc(keyDocRef, {
+      currentUses: increment(1),
+      lastUsedAt: serverTimestamp()
+    });
+
+    // Log session document in 'user_sessions'
+    try {
+      const sessionDocRef = doc(collection(db, "user_sessions"));
+      await setDoc(sessionDocRef, {
+        memberName: name || 'Anonymous Member',
+        passKey: cleanKey,
+        role: data.role,
+        title: data.title,
+        loginTime: serverTimestamp()
+      });
+    } catch (e) {
+      console.warn("Log session error:", e);
+    }
+
+    return {
+      success: true,
+      roleData: {
+        key: cleanKey,
+        memberName: name || 'Team Member',
+        role: data.role,
+        title: data.title,
+        allowedPages: data.allowedPages || []
+      }
+    };
+  } catch (err) {
+    console.error("PassKey validation error:", err);
+    // Offline local fallback if network error
+    const FALLBACK_KEYS = {
+      'REFA-ADMIN-2026': { key: 'REFA-ADMIN-2026', role: 'admin', title: 'Executive Admin', allowedPages: ["dashboard", "tasks", "strategy", "voting", "sponsors", "letters", "accounts", "media", "studio"] },
+      'REFA-MEDIA-2026': { key: 'REFA-MEDIA-2026', role: 'media', title: 'Media & Studio Lead', allowedPages: ["dashboard", "tasks", "media", "studio", "strategy"] },
+      'REFA-TEAM-2026': { key: 'REFA-TEAM-2026', role: 'ops', title: 'Operations & Mentor', allowedPages: ["dashboard", "tasks", "voting", "strategy"] },
+      'REFA-GUEST-2026': { key: 'REFA-GUEST-2026', role: 'viewer', title: 'Guest Visitor', allowedPages: ["dashboard"] }
+    };
+    if (FALLBACK_KEYS[cleanKey]) {
+      return {
+        success: true,
+        roleData: { ...FALLBACK_KEYS[cleanKey], memberName: name || 'Team Member' }
+      };
+    }
+    return { success: false, message: 'Database connection error and key not found locally.' };
+  }
+}
+
+/**
  * Seed all initial tasks into Firestore if the tasks collection is empty.
  * @param {Array} phases - Array of phase objects containing task definitions.
  */
@@ -46,14 +133,10 @@ async function seedTasksIfEmpty(phases) {
     const tasksColRef = collection(db, "tasks");
     const snapshot = await getDocs(tasksColRef);
     if (!snapshot.empty) {
-      console.log(`[Firebase DB] Tasks collection already contains ${snapshot.size} documents. Skipping seed.`);
       return false;
     }
 
-    console.log("[Firebase DB] Tasks collection is empty. Seeding initial REFA tasks to global DB...");
     const batch = writeBatch(db);
-
-    let count = 0;
     phases.forEach(phase => {
       phase.tasks.forEach(t => {
         const taskDocRef = doc(db, "tasks", t.id);
@@ -67,12 +150,10 @@ async function seedTasksIfEmpty(phases) {
           completedBy: null,
           updatedAt: serverTimestamp()
         });
-        count++;
       });
     });
 
     await batch.commit();
-    console.log(`[Firebase DB] Successfully seeded ${count} tasks to global Cloud Firestore database.`);
     return true;
   } catch (err) {
     console.error("[Firebase DB] Error seeding tasks:", err);
@@ -132,6 +213,7 @@ window.REFA_FIREBASE = {
   seedTasksIfEmpty,
   subscribeToTasks,
   updateTaskInDb,
+  validatePassKey,
   signIn: (email, password) => signInWithEmailAndPassword(auth, email, password),
   signOut: () => signOut(auth),
   onAuthStateChanged: (callback) => onAuthStateChanged(auth, callback)

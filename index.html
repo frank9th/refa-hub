@@ -14,11 +14,41 @@
   <link rel="stylesheet" href="css/styles.css" />
 </head>
 <body>
+<!-- ROLE-BASED AUTH LOCK OVERLAY -->
+<div id="auth-lock-overlay">
+  <div class="auth-card">
+    <div class="auth-logo">REFA HUB 2026</div>
+    <div class="auth-subtitle">Season 2 Championship Command Center</div>
+    <form id="auth-login-form" onsubmit="handlePassKeyLogin(event); return false;">
+      <div class="auth-form-group">
+        <label for="auth-member-name">Member Name</label>
+        <input type="text" id="auth-member-name" class="auth-input" placeholder="e.g. Pastor David / Media Team" required autocomplete="off" />
+      </div>
+      <div class="auth-form-group">
+        <label for="auth-passkey">Role Pass Key</label>
+        <input type="password" id="auth-passkey" class="auth-input" placeholder="Enter assigned Pass Key" required autocomplete="off" />
+      </div>
+      <button type="submit" class="auth-submit-btn" id="auth-submit-btn">🔐 Unlock Hub Access</button>
+      <div class="auth-error-msg" id="auth-error-msg"></div>
+    </form>
+    <div class="auth-passkey-hint">
+      Pass keys are role-based and access-restricted. Contact system admin if key usage limit is reached.
+    </div>
+  </div>
+</div>
+
 <aside id="sidebar">
   <div class="sidebar-brand">
     <div class="s2-badge">Season 2</div>
     <h1>REFA<br/>Championship</h1>
     <p>Words That Last &middot; 2026</p>
+  </div>
+  <div id="sidebar-user-badge" style="padding: 10px 14px; background: rgba(255,255,255,0.06); border-radius: 12px; margin: 0 16px 16px 16px; border: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: space-between;">
+    <div>
+      <div id="user-display-name" style="font-weight: 700; font-size: 13px; color: #FFF;">Member</div>
+      <div id="user-display-role" style="font-size: 11px; color: #A5B4FC; font-weight: 600;">Role Access</div>
+    </div>
+    <button onclick="handleLogout()" class="user-logout-btn">Logout</button>
   </div>
   <nav>
     <div class="nav-section-label">Overview</div>

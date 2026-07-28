@@ -393,9 +393,172 @@ summary::-webkit-details-marker { display: none; }
   .draggable { border: none !important; background: transparent !important; padding: 0 !important; }
 }
 
-/* Mobile Responsiveness */
-@media (max-width: 900px) {
-  .letter-layout { grid-template-columns: 1fr; gap: 20px; }
-  .letter-editor { position: static; }
-  .letter-preview-container { padding: 15px; }
+  @media (max-width: 900px) {
+    .letter-layout { grid-template-columns: 1fr; gap: 20px; }
+    .letter-editor { position: static; }
+    .letter-preview-container { padding: 15px; }
+  }
+}
+
+/* ==========================================================================
+   ROLE-BASED AUTHENTICATION & LOCK SCREEN STYLES
+   ========================================================================== */
+#auth-lock-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(15, 23, 42, 0.94);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  z-index: 99999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  opacity: 1;
+  transition: opacity 0.3s ease;
+}
+
+#auth-lock-overlay.hidden {
+  display: none !important;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.auth-card {
+  background: linear-gradient(135deg, #1E1B4B 0%, #0F172A 100%);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 20px;
+  width: 100%;
+  max-width: 440px;
+  padding: 36px 32px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8), 0 0 40px rgba(124, 58, 237, 0.25);
+  color: #FFFFFF;
+  text-align: center;
+}
+
+.auth-logo {
+  font-size: 32px;
+  font-weight: 900;
+  letter-spacing: -0.5px;
+  background: linear-gradient(135deg, #F43F5E, #FB923C, #FBBF24);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 4px;
+}
+
+.auth-subtitle {
+  font-size: 13px;
+  color: #94A3B8;
+  margin-bottom: 28px;
+  font-weight: 500;
+}
+
+.auth-form-group {
+  text-align: left;
+  margin-bottom: 18px;
+}
+
+.auth-form-group label {
+  display: block;
+  font-size: 12px;
+  font-weight: 700;
+  color: #CBD5E1;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 6px;
+}
+
+.auth-input {
+  width: 100%;
+  padding: 13px 16px;
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 10px;
+  color: #FFFFFF;
+  font-size: 14px;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.auth-input:focus {
+  border-color: #8B5CF6;
+  background: rgba(255, 255, 255, 0.12);
+  box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.3);
+}
+
+.auth-submit-btn {
+  width: 100%;
+  padding: 14px;
+  background: linear-gradient(135deg, #6366F1, #8B5CF6);
+  border: none;
+  border-radius: 10px;
+  color: #FFFFFF;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 14px rgba(99, 102, 241, 0.4);
+}
+
+.auth-submit-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(99, 102, 241, 0.6);
+  background: linear-gradient(135deg, #4F46E5, #7C3AED);
+}
+
+.auth-error-msg {
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  color: #FCA5A5;
+  font-size: 13px;
+  padding: 10px 14px;
+  border-radius: 8px;
+  margin-top: 16px;
+  display: none;
+  text-align: left;
+}
+
+.auth-passkey-hint {
+  font-size: 11px;
+  color: #64748B;
+  margin-top: 20px;
+  line-height: 1.4;
+}
+
+.user-role-badge {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #E2E8F0;
+}
+
+.user-logout-btn {
+  background: rgba(239, 68, 68, 0.2);
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  color: #F87171;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.user-logout-btn:hover {
+  background: #EF4444;
+  color: #FFFFFF;
+}
+
+.role-hidden {
+  display: none !important;
 }
