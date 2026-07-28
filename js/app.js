@@ -115,11 +115,89 @@ const GOALS_DATA = [
   { label: 'Brand Mission', value: "Nigeria's #1 Youth Bible Championship", icon: '🏆' }
 ];
 
-const CURRENT_PHASE_DATA = {
-  date: 'July 22, 2026 — PRE-AUDITION URGENCY WEEK',
-  title: 'Pre-Audition Setup — Audition is 10 Days Away',
-  desc: 'Audition is August 1. Voting platform, social media handles, application form, and sponsorship outreach must all be completed this week. Every day matters.'
-};
+function getDynamicCurrentPhaseData() {
+  const now = new Date();
+  const options = { month: 'long', day: 'numeric', year: 'numeric' };
+  const formattedToday = now.toLocaleDateString('en-US', options);
+
+  const year = 2026;
+  const auditionDate = new Date(year, 7, 1);    // Aug 1, 2026
+  const stage1Date = new Date(year, 7, 9);      // Aug 9, 2026
+  const stage2Date = new Date(year, 7, 16);     // Aug 16, 2026
+  const finalDate = new Date(year, 8, 6);       // Sep 6, 2026
+
+  function getDaysUntil(targetDate) {
+    const todayMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const targetMidnight = new Date(targetDate.getFullYear(), targetDate.getMonth(), targetDate.getDate());
+    const diffTime = targetMidnight - todayMidnight;
+    return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  }
+
+  const daysToAudition = getDaysUntil(auditionDate);
+  const daysToStage1 = getDaysUntil(stage1Date);
+  const daysToStage2 = getDaysUntil(stage2Date);
+  const daysToFinal = getDaysUntil(finalDate);
+
+  if (daysToAudition > 0) {
+    const dayStr = daysToAudition === 1 ? '1 Day' : daysToAudition + ' Days';
+    return {
+      date: formattedToday + ' — PRE-AUDITION URGENCY',
+      title: 'Pre-Audition Setup — Audition is ' + dayStr + ' Away',
+      desc: 'Audition is August 1, 2026. Only ' + dayStr + ' remaining. Voting platform, social media handles, contestant application forms, and mentor briefing must all be completed.'
+    };
+  } else if (daysToAudition === 0) {
+    return {
+      date: formattedToday + ' — AUDITION DAY LIVE',
+      title: 'Audition / Screening Day — TODAY!',
+      desc: 'Audition Day is live today! Set up screening stations, manage registration, brief judges, and assign the 100 accepted contestants into 10 teams.'
+    };
+  } else if (daysToStage1 > 0) {
+    const dayStr = daysToStage1 === 1 ? '1 Day' : daysToStage1 + ' Days';
+    return {
+      date: formattedToday + ' — PROFILE WEEK BUILD-UP',
+      title: 'Profile Week — Stage 1 is ' + dayStr + ' Away',
+      desc: 'Stage 1 (The Proving Ground) is August 9, 2026. ' + dayStr + ' remaining. Introduce mentors, reveal teams, launch Round 1 voting, and publish contestant spotlight clips.'
+    };
+  } else if (daysToStage1 === 0) {
+    return {
+      date: formattedToday + ' — STAGE 1 LIVE',
+      title: 'Stage 1: The Proving Ground — TODAY!',
+      desc: 'Stage 1 is live today! 60 scriptures in 2 minutes per contestant. Live stream active, judges scoring accuracy, and live leaderboard announcement.'
+    };
+  } else if (daysToStage2 > 0) {
+    const dayStr = daysToStage2 === 1 ? '1 Day' : daysToStage2 + ' Days';
+    return {
+      date: formattedToday + ' — POST-STAGE 1 WINDOW',
+      title: 'Post-Stage 1 Content — Stage 2 is ' + dayStr + ' Away',
+      desc: 'Stage 2 (The Refinement) is August 16, 2026. ' + dayStr + ' remaining. Publish Stage 1 highlights reel, update leaderboard, and open Voting Round 2.'
+    };
+  } else if (daysToStage2 === 0) {
+    return {
+      date: formattedToday + ' — STAGE 2 LIVE',
+      title: 'Stage 2: The Refinement — TODAY!',
+      desc: 'Stage 2 is live today! Duet challenges, cross-examination format, live stream updates, and team immunity score tracking.'
+    };
+  } else if (daysToFinal > 0) {
+    const dayStr = daysToFinal === 1 ? '1 Day' : daysToFinal + ' Days';
+    return {
+      date: formattedToday + ' — CHAMPIONSHIP BUILD-UP',
+      title: 'Final Build-Up — Grand Final is ' + dayStr + ' Away',
+      desc: 'Grand Final (The Last Word) is September 6, 2026. ' + dayStr + ' remaining. Championship voting open, finalist spotlights, and VIP red carpet setup.'
+    };
+  } else if (daysToFinal === 0) {
+    return {
+      date: formattedToday + ' — GRAND FINAL DAY',
+      title: 'Grand Final: The Last Word — TODAY!',
+      desc: 'Championship Night is live today! Red carpet arrival, live worship opening, 3 championship rounds, and full awards ceremony.'
+    };
+  } else {
+    return {
+      date: formattedToday + ' — SEASON COMPLETE',
+      title: 'REFA Season 2 — Completed 🎉',
+      desc: 'Season 2 is officially complete! Thank you to all contestants, mentors, parents, and sponsors.'
+    };
+  }
+}
 
 const STORAGE_KEY = 'refa_s2_tasks_v1';
 let checked = {};
@@ -496,12 +574,13 @@ function renderDashboardProgress() {
 }
 
 function renderDashboard() {
+  const currentPhase = getDynamicCurrentPhaseData();
   const cpDate = document.getElementById('cp-date');
   const cpTitle = document.getElementById('cp-title');
   const cpDesc = document.getElementById('cp-desc');
-  if (cpDate) cpDate.textContent = CURRENT_PHASE_DATA.date;
-  if (cpTitle) cpTitle.textContent = CURRENT_PHASE_DATA.title;
-  if (cpDesc) cpDesc.textContent = CURRENT_PHASE_DATA.desc;
+  if (cpDate) cpDate.textContent = currentPhase.date;
+  if (cpTitle) cpTitle.textContent = currentPhase.title;
+  if (cpDesc) cpDesc.textContent = currentPhase.desc;
   const goalsList = document.getElementById('goals-list');
   if (goalsList) {
     goalsList.innerHTML = GOALS_DATA.map(g =>
