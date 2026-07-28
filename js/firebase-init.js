@@ -109,10 +109,10 @@ async function validatePassKey(name, keyInput) {
     console.error("PassKey validation error:", err);
     // Offline local fallback if network error
     const FALLBACK_KEYS = {
-      'REFA-ADMIN-2026': { key: 'REFA-ADMIN-2026', role: 'admin', title: 'Executive Admin', allowedPages: ["dashboard", "tasks", "strategy", "voting", "sponsors", "letters", "accounts", "media", "studio"] },
-      'REFA-MEDIA-2026': { key: 'REFA-MEDIA-2026', role: 'media', title: 'Media & Studio Lead', allowedPages: ["dashboard", "tasks", "media", "studio", "strategy"] },
-      'REFA-TEAM-2026': { key: 'REFA-TEAM-2026', role: 'ops', title: 'Operations & Mentor', allowedPages: ["dashboard", "tasks", "voting", "strategy"] },
-      'REFA-GUEST-2026': { key: 'REFA-GUEST-2026', role: 'viewer', title: 'Guest Visitor', allowedPages: ["dashboard"] }
+      'REFA-ADMIN-2026': { key: 'REFA-ADMIN-2026', role: 'admin', title: 'Executive Admin', allowedPages: ["dashboard", "tasks", "strategy", "voting", "sponsors", "letters", "accounts", "media", "studio", "timeline", "countdown", "parents", "operations", "revenue", "teams", "social", "sponsorship"] },
+      'REFA-MEDIA-2026': { key: 'REFA-MEDIA-2026', role: 'media', title: 'Media & Studio Lead', allowedPages: ["dashboard", "tasks", "media", "studio", "strategy", "timeline", "countdown", "social"] },
+      'REFA-TEAM-2026': { key: 'REFA-TEAM-2026', role: 'ops', title: 'Operations & Mentor', allowedPages: ["dashboard", "tasks", "voting", "strategy", "timeline", "countdown", "parents", "teams"] },
+      'REFA-GUEST-2026': { key: 'REFA-GUEST-2026', role: 'viewer', title: 'Guest Visitor', allowedPages: ["dashboard", "timeline", "countdown"] }
     };
     if (FALLBACK_KEYS[cleanKey]) {
       return {
@@ -200,6 +200,109 @@ async function updateTaskInDb(taskId, isCompleted, userName = 'Team Member') {
   }
 }
 
+// --- TEAMS GLOBAL STATE HELPERS ---
+function subscribeToTeams(callback) {
+  const colRef = collection(db, "teams");
+  return onSnapshot(colRef, (snapshot) => {
+    const teamsList = [];
+    snapshot.forEach(docSnap => {
+      teamsList.push({ id: docSnap.id, ...docSnap.data() });
+    });
+    teamsList.sort((a, b) => (a.num || 0) - (b.num || 0));
+    callback(teamsList);
+  }, (err) => console.error("[Firebase DB] Teams sync error:", err));
+}
+
+async function addTeamToDb(teamData) {
+  try {
+    const teamId = teamData.id || `team-${Date.now()}`;
+    const docRef = doc(db, "teams", teamId);
+    await setDoc(docRef, {
+      ...teamData,
+      id: teamId,
+      createdAt: serverTimestamp()
+    }, { merge: true });
+    return { success: true, id: teamId };
+  } catch (err) {
+    console.error("Error adding team:", err);
+    return { success: false, error: err.message };
+  }
+}
+
+async function deleteTeamFromDb(teamId) {
+  try {
+    await deleteDoc(doc(db, "teams", teamId));
+    return { success: true };
+  } catch (err) {
+    console.error("Error deleting team:", err);
+    return { success: false, error: err.message };
+  }
+}
+
+// --- CONTENT SCHEDULE GLOBAL STATE HELPERS ---
+function subscribeToContentSchedule(callback) {
+  const colRef = collection(db, "content_schedule");
+  return onSnapshot(colRef, (snapshot) => {
+    const items = [];
+    snapshot.forEach(docSnap => {
+      items.push({ id: docSnap.id, ...docSnap.data() });
+    });
+    items.sort((a, b) => new Date(a.scheduledDate || 0) - new Date(b.scheduledDate || 0));
+    callback(items);
+  }, (err) => console.error("[Firebase DB] Content schedule sync error:", err));
+}
+
+async function addContentScheduleToDb(contentData) {
+  try {
+    const itemId = contentData.id || `post-${Date.now()}`;
+    const docRef = doc(db, "content_schedule", itemId);
+    await setDoc(docRef, {
+      ...contentData,
+      id: itemId,
+      createdAt: serverTimestamp()
+    }, { merge: true });
+    return { success: true, id: itemId };
+  } catch (err) {
+    console.error("Error scheduling content:", err);
+    return { success: false, error: err.message };
+  }
+}
+
+async function deleteContentScheduleFromDb(itemId) {
+  try {
+    await deleteDoc(doc(db, "content_schedule", itemId));
+    return { success: true };
+  } catch (err) {
+    console.error("Error deleting content schedule item:", err);
+    return { success: false, error: err.message };
+  }
+}
+
+// --- MEDIA UPLOADS GLOBAL STATE HELPERS ---
+function subscribeToMediaUploads(callback) {
+  const colRef = collection(db, "media_uploads");
+  return onSnapshot(colRef, (snapshot) => {
+    const uploads = [];
+    snapshot.forEach(docSnap => {
+      uploads.push({ id: docSnap.id, ...docSnap.data() });
+    });
+    callback(uploads);
+  }, (err) => console.error("[Firebase DB] Media uploads sync error:", err));
+}
+
+async function recordMediaUploadInDb(fileMeta) {
+  try {
+    const docId = fileMeta.name ? fileMeta.name.replace(/[^a-zA-Z0-9_\-]/g, '_') : `file-${Date.now()}`;
+    const docRef = doc(db, "media_uploads", docId);
+    await setDoc(docRef, {
+      ...fileMeta,
+      updatedAt: serverTimestamp()
+    }, { merge: true });
+  } catch (err) {
+    console.error("Error recording media upload:", err);
+  }
+}
+
 // Expose Firebase and methods to window for classic JS app
 window.REFA_FIREBASE = {
   db,
@@ -214,6 +317,14 @@ window.REFA_FIREBASE = {
   subscribeToTasks,
   updateTaskInDb,
   validatePassKey,
+  subscribeToTeams,
+  addTeamToDb,
+  deleteTeamFromDb,
+  subscribeToContentSchedule,
+  addContentScheduleToDb,
+  deleteContentScheduleFromDb,
+  subscribeToMediaUploads,
+  recordMediaUploadInDb,
   signIn: (email, password) => signInWithEmailAndPassword(auth, email, password),
   signOut: () => signOut(auth),
   onAuthStateChanged: (callback) => onAuthStateChanged(auth, callback)

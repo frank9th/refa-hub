@@ -205,6 +205,38 @@ try { checked = JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; } catch (e)
 
 function save() { localStorage.setItem(STORAGE_KEY, JSON.stringify(checked)); }
 
+let currentTeams = [...TEAMS_DATA];
+let currentContentSchedule = [];
+
+function initGlobalStateSubscriptions() {
+  if (!window.REFA_FIREBASE) return;
+  const { subscribeToTeams, subscribeToContentSchedule, subscribeToMediaUploads } = window.REFA_FIREBASE;
+
+  if (subscribeToTeams) {
+    subscribeToTeams((remoteTeams) => {
+      if (remoteTeams && remoteTeams.length > 0) {
+        currentTeams = remoteTeams;
+      }
+      renderTeams();
+    });
+  }
+
+  if (subscribeToContentSchedule) {
+    subscribeToContentSchedule((scheduleItems) => {
+      currentContentSchedule = scheduleItems;
+      renderContentSchedule();
+    });
+  }
+
+  if (subscribeToMediaUploads) {
+    subscribeToMediaUploads((uploads) => {
+      if (typeof fetchUploadedFiles === 'function') {
+        fetchUploadedFiles();
+      }
+    });
+  }
+}
+
 function initGlobalTaskSync() {
   if (!window.REFA_FIREBASE) return;
   const { seedTasksIfEmpty, subscribeToTasks } = window.REFA_FIREBASE;
@@ -225,6 +257,7 @@ function initGlobalTaskSync() {
       }
     });
   }
+  initGlobalStateSubscriptions();
 }
 
 window.addEventListener('firebase-ready', () => {
@@ -594,14 +627,210 @@ function renderDashboard() {
 
 function renderTeams() {
   const grid = document.getElementById('teams-grid');
+  const countBadge = document.getElementById('teams-count-badge');
+  if (countBadge) {
+    countBadge.textContent = `${currentTeams.length} Active Teams`;
+  }
   if (!grid) return;
-  grid.innerHTML = TEAMS_DATA.map(t =>
-    '<div class="team-card" style="background:linear-gradient(135deg,' + t.color + ',' + t.color + 'CC);">' +
-    '<div class="team-num">TEAM ' + t.num + '</div>' +
-    '<div class="team-name">' + t.name + '</div>' +
-    '<div class="team-color-label">10 members + 1 mentor</div>' +
-    '</div>'
-  ).join('');
+
+  const session = getAuthSession();
+  const canManage = session && (session.role === 'admin' || session.role === 'ops');
+
+  grid.innerHTML = currentTeams.map(t => {
+    const mentorStr = t.mentor ? `Mentor: ${t.mentor}` : '10 members + 1 mentor';
+    const deleteBtn = canManage ? `<button onclick="handleDeleteTeam('${t.id}')" title="Delete Team" style="position:absolute; top:8px; right:8px; background:rgba(0,0,0,0.3); color:white; border:none; border-radius:50%; width:24px; height:24px; font-size:12px; cursor:pointer; display:flex; align-items:center; justify-content:center;">✕</button>` : '';
+
+    return `
+      <div class="team-card" style="background:linear-gradient(135deg, ${t.color || '#1A3A8F'}, ${t.color || '#1A3A8F'}CC); position:relative;">
+        ${deleteBtn}
+        <div class="team-num">TEAM ${t.num || ''}</div>
+        <div class="team-name">${t.name}</div>
+        <div class="team-color-label">${mentorStr}</div>
+      </div>
+    `;
+  }).join('');
+}
+
+function openAddTeamModal() {
+  const session = getAuthSession();
+  if (session && session.role !== 'admin' && session.role !== 'ops') {
+    alert("Access Restricted: Only Administrators and Operations Leads can add teams.");
+    return;
+  }
+  const modal = document.getElementById('add-team-modal');
+  if (modal) modal.style.display = 'flex';
+}
+
+function closeAddTeamModal(e) {
+  if (!e || e.target === document.getElementById('add-team-modal') || e.target.classList.contains('modal-close')) {
+    const modal = document.getElementById('add-team-modal');
+    if (modal) modal.style.display = 'none';
+  }
+}
+
+async function handleCreateTeam(event) {
+  if (event) event.preventDefault();
+  const nameInput = document.getElementById('new-team-name');
+  const numInput = document.getElementById('new-team-num');
+  const colorInput = document.getElementById('new-team-color');
+  const mentorInput = document.getElementById('new-team-mentor');
+  const countInput = document.getElementById('new-team-count');
+
+  const name = nameInput ? nameInput.value.trim() : '';
+  const num = numInput ? parseInt(numInput.value) || (currentTeams.length + 1) : currentTeams.length + 1;
+  const color = colorInput ? colorInput.value : '#1A3A8F';
+  const mentor = mentorInput ? mentorInput.value.trim() : 'Unassigned';
+  const memberCount = countInput ? parseInt(countInput.value) || 10 : 10;
+
+  if (!name) {
+    alert("Please enter a team name.");
+    return;
+  }
+
+  const teamData = {
+    id: `team-${Date.now()}`,
+    name,
+    num,
+    color,
+    mentor,
+    memberCount
+  };
+
+  if (window.REFA_FIREBASE && window.REFA_FIREBASE.addTeamToDb) {
+    const res = await window.REFA_FIREBASE.addTeamToDb(teamData);
+    if (!res.success) {
+      alert("Error adding team: " + res.error);
+      return;
+    }
+  } else {
+    currentTeams.push(teamData);
+    renderTeams();
+  }
+
+  closeAddTeamModal();
+  if (nameInput) nameInput.value = '';
+  if (mentorInput) mentorInput.value = '';
+}
+
+async function handleDeleteTeam(teamId) {
+  if (!confirm("Are you sure you want to delete this team from the global directory?")) return;
+
+  if (window.REFA_FIREBASE && window.REFA_FIREBASE.deleteTeamFromDb) {
+    await window.REFA_FIREBASE.deleteTeamFromDb(teamId);
+  } else {
+    currentTeams = currentTeams.filter(t => t.id !== teamId);
+    renderTeams();
+  }
+}
+
+function renderContentSchedule() {
+  const queueList = document.getElementById('social-queue-list');
+  if (!queueList) return;
+
+  if (!currentContentSchedule || currentContentSchedule.length === 0) {
+    queueList.innerHTML = `
+      <div style="text-align:center; padding:30px; background:#F8F9FB; border-radius:12px; color:var(--text-muted);">
+        <div style="font-size:32px; margin-bottom:8px;">📅</div>
+        <p>No scheduled content posts yet. Click <strong>+ Schedule Post</strong> to add your first post!</p>
+      </div>
+    `;
+    return;
+  }
+
+  const platformIcons = {
+    'Instagram': '📸',
+    'Instagram Reels': '📸',
+    'YouTube': '▶️',
+    'TikTok': '🎵',
+    'Facebook': '📘',
+    'X (Twitter)': '🐦',
+    'All Platforms': '🌐'
+  };
+
+  const session = getAuthSession();
+  const canManage = session && (session.role === 'admin' || session.role === 'media' || session.role === 'ops');
+
+  queueList.innerHTML = `
+    <div style="display:flex; flex-direction:column; gap:12px;">
+      ${currentContentSchedule.map(item => {
+        const icon = platformIcons[item.platform] || '📝';
+        const deleteBtn = canManage ? `<button onclick="handleDeleteContent('${item.id}')" style="background:#FEE2E2; color:#DC2626; border:none; padding:4px 10px; border-radius:6px; font-size:11px; font-weight:bold; cursor:pointer;">Delete</button>` : '';
+
+        return `
+          <div style="background:white; border:1px solid #E2E8F0; border-radius:12px; padding:16px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; box-shadow:0 2px 6px rgba(0,0,0,0.03);">
+            <div>
+              <div style="display:flex; align-items:center; gap:8px; margin-bottom:4px;">
+                <span style="font-size:16px;">${icon}</span>
+                <strong style="font-size:14px; color:var(--navy);">${item.title}</strong>
+                <span style="font-size:10px; font-weight:700; background:#EDE9FE; color:#6D28D9; padding:2px 8px; border-radius:4px;">${item.platform || 'Social'}</span>
+              </div>
+              <div style="font-size:12px; color:var(--text-muted); display:flex; gap:16px; flex-wrap:wrap;">
+                <span>📅 Date: <strong>${item.scheduledDate || 'TBD'}</strong> ${item.scheduledTime ? `at ${item.scheduledTime}` : ''}</span>
+                <span>👤 Assignee: <strong>${item.assignee || 'Media Team'}</strong></span>
+                <span>Status: <strong style="color:${item.status === 'Published' ? '#059669' : '#D97706'}">${item.status || 'Scheduled'}</strong></span>
+              </div>
+              ${item.notes ? `<p style="font-size:11.5px; color:#475569; margin-top:6px; font-style:italic;">"${item.notes}"</p>` : ''}
+            </div>
+            <div>
+              ${deleteBtn}
+            </div>
+          </div>
+        `;
+      }).join('')}
+    </div>
+  `;
+}
+
+async function addSocialPost() {
+  const titleInput = document.getElementById('sp-title');
+  const platformInput = document.getElementById('sp-platform');
+  const assigneeInput = document.getElementById('sp-assignee');
+  const dateInput = document.getElementById('sp-date');
+
+  const title = titleInput ? titleInput.value.trim() : '';
+  const platform = platformInput ? platformInput.value : 'All Platforms';
+  const assignee = assigneeInput ? assigneeInput.value.trim() : 'Media Team';
+  const scheduledDate = dateInput ? dateInput.value : '';
+
+  if (!title) {
+    alert("Please enter a post title.");
+    return;
+  }
+
+  const postData = {
+    id: `post-${Date.now()}`,
+    title,
+    platform,
+    assignee,
+    scheduledDate: scheduledDate || new Date().toISOString().split('T')[0],
+    status: 'Scheduled',
+    notes: 'Created via Global Content Scheduler'
+  };
+
+  if (window.REFA_FIREBASE && window.REFA_FIREBASE.addContentScheduleToDb) {
+    await window.REFA_FIREBASE.addContentScheduleToDb(postData);
+  } else {
+    currentContentSchedule.push(postData);
+    renderContentSchedule();
+  }
+
+  alert("Content post scheduled and synced globally!");
+  if (titleInput) titleInput.value = '';
+  if (assigneeInput) assigneeInput.value = '';
+  if (typeof switchSocialSubTab === 'function') {
+    switchSocialSubTab('queue');
+  }
+}
+
+async function handleDeleteContent(itemId) {
+  if (!confirm("Delete this scheduled content post from the global calendar?")) return;
+
+  if (window.REFA_FIREBASE && window.REFA_FIREBASE.deleteContentScheduleFromDb) {
+    await window.REFA_FIREBASE.deleteContentScheduleFromDb(itemId);
+  } else {
+    currentContentSchedule = currentContentSchedule.filter(i => i.id !== itemId);
+    renderContentSchedule();
+  }
 }
 
 /* INTERACTIVE KIT MODAL VIEWER LOGIC */
@@ -2559,6 +2788,14 @@ async function uploadLocalMedia(event) {
             submitBtn.innerText = '🚀 Upload to Hub';
           }
           
+          if (window.REFA_FIREBASE && window.REFA_FIREBASE.recordMediaUploadInDb) {
+            window.REFA_FIREBASE.recordMediaUploadInDb({
+              name: file.name,
+              uploader: uploaderName,
+              size: (file.size / (1024 * 1024)).toFixed(2) + ' MB',
+              bytes: file.size
+            });
+          }
           await fetchLocalMedia();
           renderMediaVault();
           renderDedicatedGallery();
