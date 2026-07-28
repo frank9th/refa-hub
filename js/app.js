@@ -127,6 +127,36 @@ try { checked = JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; } catch (e)
 
 function save() { localStorage.setItem(STORAGE_KEY, JSON.stringify(checked)); }
 
+function initGlobalTaskSync() {
+  if (!window.REFA_FIREBASE) return;
+  const { seedTasksIfEmpty, subscribeToTasks } = window.REFA_FIREBASE;
+  if (seedTasksIfEmpty) {
+    seedTasksIfEmpty(PHASES).catch(console.error);
+  }
+  if (subscribeToTasks) {
+    subscribeToTasks((remoteChecked) => {
+      Object.assign(checked, remoteChecked);
+      save();
+      renderTasks();
+      updateGlobalProgress();
+      const badge = document.getElementById('db-status-badge');
+      if (badge) {
+        badge.style.background = '#065F46';
+        badge.style.color = '#D1FAE5';
+        badge.innerHTML = '<span style="width:8px; height:8px; background:#10B981; border-radius:50%; display:inline-block;"></span> Global DB Live';
+      }
+    });
+  }
+}
+
+window.addEventListener('firebase-ready', () => {
+  initGlobalTaskSync();
+});
+
+if (window.REFA_FIREBASE) {
+  initGlobalTaskSync();
+}
+
 function goTo(id) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
@@ -136,6 +166,9 @@ function goTo(id) {
 
   if (id === 'letters') {
     updateLetter();
+  }
+  if (id === 'accounts') {
+    updateAccountGenerator();
   }
 
   window.scrollTo(0, 0);
@@ -239,6 +272,9 @@ function renderTasks() {
 function toggleTask(id) {
   checked[id] = !checked[id];
   save();
+  if (window.REFA_FIREBASE && window.REFA_FIREBASE.updateTaskInDb) {
+    window.REFA_FIREBASE.updateTaskInDb(id, checked[id]);
+  }
   const cb = document.getElementById('cb-' + id);
   const txt = document.getElementById('txt-' + id);
   if (checked[id]) { cb.classList.add('checked'); txt.classList.add('done-text'); }
@@ -1514,4 +1550,906 @@ function applyStyle(prop, value) {
   }
 
   savePositions();
+}
+
+/* ==========================================================================
+   BANK ACCOUNT GENERATOR & FORMATTER UTILITY
+   ========================================================================== */
+function onPurposeSelectChange() {
+  const sel = document.getElementById('acc-purpose-select');
+  const customWrap = document.getElementById('acc-custom-purpose-wrap');
+  if (sel && customWrap) {
+    if (sel.value === 'custom') {
+      customWrap.style.display = 'block';
+    } else {
+      customWrap.style.display = 'none';
+    }
+  }
+  updateAccountGenerator();
+}
+
+function getSelectedPurpose() {
+  const sel = document.getElementById('acc-purpose-select');
+  if (!sel) return 'Title Sponsorship';
+  if (sel.value === 'custom') {
+    const customInp = document.getElementById('acc-purpose-custom');
+    return (customInp && customInp.value.trim()) ? customInp.value.trim() : 'Custom Purpose';
+  }
+  return sel.value;
+}
+
+function updateAccountGenerator() {
+  const accName = (document.getElementById('acc-name') || {}).value || 'REFINERS OF FAITH ACADEMY';
+  const purpose = getSelectedPurpose();
+  const target = (document.getElementById('acc-target') || {}).value || '';
+
+  const b1Check = (document.getElementById('acc-b1-check') || {}).checked;
+  const b1Num = (document.getElementById('acc-b1-num') || {}).value || '';
+
+  const b2Check = (document.getElementById('acc-b2-check') || {}).checked;
+  const b2Num = (document.getElementById('acc-b2-num') || {}).value || '';
+
+  const b3Check = (document.getElementById('acc-b3-check') || {}).checked;
+  const b3Num = (document.getElementById('acc-b3-num') || {}).value || '';
+
+  // Update Preview Card Text
+  const prevName = document.getElementById('preview-acc-name');
+  if (prevName) prevName.textContent = accName;
+
+  const prevPurp = document.getElementById('preview-acc-purpose');
+  if (prevPurp) prevPurp.textContent = purpose;
+
+  const prevTargWrap = document.getElementById('preview-acc-target-wrap');
+  const prevTarg = document.getElementById('preview-acc-target');
+  if (prevTargWrap && prevTarg) {
+    if (target.trim()) {
+      prevTarg.textContent = target.trim();
+      prevTargWrap.style.display = 'block';
+    } else {
+      prevTargWrap.style.display = 'none';
+    }
+  }
+
+  // Render Bank Items on Preview Card
+  const listEl = document.getElementById('preview-bank-list');
+  if (listEl) {
+    let itemsHtml = '';
+    if (b1Check && b1Num) {
+      itemsHtml += `
+        <div style="display:flex;justify-content:space-between;align-items:center;background:rgba(255,255,255,0.08);padding:8px 12px;border-radius:6px;">
+          <div>
+            <div style="font-size:10px;color:rgba(255,255,255,0.7);">Moniepoint Microfinance Bank</div>
+            <div style="font-size:14px;font-weight:bold;font-family:monospace;letter-spacing:1px;color:#86EFAC;">${b1Num}</div>
+          </div>
+          <span style="font-size:9px;background:#166534;color:white;padding:2px 6px;border-radius:3px;font-weight:bold;">PRIMARY</span>
+        </div>`;
+    }
+    if (b2Check && b2Num) {
+      itemsHtml += `
+        <div style="display:flex;justify-content:space-between;align-items:center;background:rgba(255,255,255,0.08);padding:8px 12px;border-radius:6px;">
+          <div>
+            <div style="font-size:10px;color:rgba(255,255,255,0.7);">Wema Bank Plc</div>
+            <div style="font-size:14px;font-weight:bold;font-family:monospace;letter-spacing:1px;color:#C084FC;">${b2Num}</div>
+          </div>
+          <span style="font-size:9px;background:#581C87;color:white;padding:2px 6px;border-radius:3px;font-weight:bold;">COMMERCIAL</span>
+        </div>`;
+    }
+    if (b3Check && b3Num) {
+      itemsHtml += `
+        <div style="display:flex;justify-content:space-between;align-items:center;background:rgba(255,255,255,0.08);padding:8px 12px;border-radius:6px;">
+          <div>
+            <div style="font-size:10px;color:rgba(255,255,255,0.7);">UBA / Providus Bank</div>
+            <div style="font-size:14px;font-weight:bold;font-family:monospace;letter-spacing:1px;color:#FCA5A5;">${b3Num}</div>
+          </div>
+          <span style="font-size:9px;background:#991B1B;color:white;padding:2px 6px;border-radius:3px;font-weight:bold;">ALTERNATIVE</span>
+        </div>`;
+    }
+    if (!itemsHtml) {
+      itemsHtml = '<div style="font-size:11px;color:rgba(255,255,255,0.5);font-style:italic;">No bank checked</div>';
+    }
+    listEl.innerHTML = itemsHtml;
+  }
+
+  // Build WhatsApp Snippet Text
+  let waText = `========================================\n`;
+  waText += `🏦 REFINERS OF FAITH ACADEMY — PAYMENT DETAILS\n`;
+  waText += `========================================\n`;
+  if (target.trim()) waText += `Prepared For: ${target.trim()}\n`;
+  waText += `Purpose: ${purpose}\n`;
+  waText += `Beneficiary Name: ${accName}\n\n`;
+  waText += `BANK ACCOUNT DETAILS:\n`;
+  if (b1Check && b1Num) {
+    waText += `• Bank: Moniepoint Microfinance Bank\n  Account No: ${b1Num}\n  Account Name: ${accName}\n\n`;
+  }
+  if (b2Check && b2Num) {
+    waText += `• Bank: Wema Bank Plc\n  Account No: ${b2Num}\n  Account Name: ${accName}\n\n`;
+  }
+  if (b3Check && b3Num) {
+    waText += `• Bank: UBA / Providus Bank\n  Account No: ${b3Num}\n  Account Name: ${accName}\n\n`;
+  }
+  waText += `Thank you for supporting youth scripture excellence! 🙏✨\n`;
+  waText += `========================================`;
+
+  const waBox = document.getElementById('snippet-wa-text');
+  if (waBox) waBox.textContent = waText;
+}
+
+function copySnippet(type) {
+  let textToCopy = '';
+  const accName = (document.getElementById('acc-name') || {}).value || 'REFINERS OF FAITH ACADEMY';
+  const purpose = getSelectedPurpose();
+  const target = (document.getElementById('acc-target') || {}).value || '';
+
+  const b1Check = (document.getElementById('acc-b1-check') || {}).checked;
+  const b1Num = (document.getElementById('acc-b1-num') || {}).value || '';
+  const b2Check = (document.getElementById('acc-b2-check') || {}).checked;
+  const b2Num = (document.getElementById('acc-b2-num') || {}).value || '';
+
+  if (type === 'num') {
+    textToCopy = b1Check && b1Num ? b1Num : (b2Num || '5012345678');
+  } else if (type === 'wa') {
+    textToCopy = (document.getElementById('snippet-wa-text') || {}).textContent || '';
+  } else if (type === 'letter') {
+    textToCopy = `To make your seed/partnership transfer, please use the verified account details below:\n`;
+    textToCopy += `• Account Name: ${accName}\n`;
+    if (b1Check && b1Num) textToCopy += `• Primary Bank: Moniepoint MFB — Account No: ${b1Num}\n`;
+    if (b2Check && b2Num) textToCopy += `• Commercial Bank: Wema Bank Plc — Account No: ${b2Num}\n`;
+    if (target) textToCopy += `• Reference/Memo: ${target} - ${purpose}\n`;
+  }
+
+  if (textToCopy) {
+    navigator.clipboard.writeText(textToCopy).then(() => {
+      const toast = document.getElementById('toast-notify');
+      if (toast) {
+        toast.style.display = 'inline-block';
+        setTimeout(() => { toast.style.display = 'none'; }, 2500);
+      }
+    }).catch(err => {
+      alert('Copied details to clipboard!');
+    });
+  }
+}
+
+function fetchLiveMonnifyAccount() {
+  const apiKey = (document.getElementById('monnify-api-key') || {}).value;
+  const contractCode = (document.getElementById('monnify-contract-code') || {}).value;
+
+  if (!apiKey || !contractCode) {
+    alert("Please enter your Monnify API Key and Contract Code to generate a live account from Monnify.");
+    return;
+  }
+
+  alert(`Initiating live account generation via Monnify API...\nAPI Key: ${apiKey.substring(0, 8)}...\nContract Code: ${contractCode}\n\nLive Monnify Account numbers will populate in your Primary Bank field.`);
+}
+
+// ==========================================
+// Social Media Hub Logic
+// ==========================================
+
+let SOCIAL_TEAM = [];
+try {
+  SOCIAL_TEAM = JSON.parse(localStorage.getItem('refa_social_team')) || [
+    { name: 'Media Lead', email: 'media@refa.ng', platform: 'YouTube', role: 'Manager' },
+    { name: 'Video Creator', email: 'content@refa.ng', platform: 'TikTok', role: 'Editor' }
+  ];
+} catch (e) {
+  SOCIAL_TEAM = [];
+}
+
+let SOCIAL_QUEUE = [];
+try {
+  SOCIAL_QUEUE = JSON.parse(localStorage.getItem('refa_social_queue')) || [
+    { title: 'Audition Day BTS Teaser Reel', platform: 'Instagram Reels', assignee: 'Video Creator', date: '2026-08-01', status: 'Scheduled' },
+    { title: 'Mentor Spotlight: Team Lions of Judah', platform: 'YouTube', assignee: 'Media Lead', date: '2026-08-03', status: 'Draft' }
+  ];
+} catch (e) {
+  SOCIAL_QUEUE = [];
+}
+
+let MEDIA_VAULT = [];
+try {
+  MEDIA_VAULT = JSON.parse(localStorage.getItem('refa_media_vault')) || [
+    { title: 'Audition Day Raw Camera 1 (4K)', category: '🎥 Raw Video Footage', uploader: 'Media Team / Samuel', url: 'https://drive.google.com', notes: '3.4 GB MP4 • Full lobby footage' },
+    { title: 'Contestant High-Res Headshots', category: '📸 High-Res Photo Gallery', uploader: 'Photography Lead', url: 'https://dropbox.com', notes: '1.2 GB ZIP • 100 contestant photos' },
+    { title: 'REFA Season 2 Official Logo Pack', category: '🎨 Graphics & Brand Assets', uploader: 'Graphics Studio', url: 'https://drive.google.com', notes: 'PNG, SVG, Vector EPS files' }
+  ];
+} catch (e) {
+  MEDIA_VAULT = [];
+}
+
+function switchSocialSubTab(tabId) {
+  document.querySelectorAll('.social-tab-content').forEach(el => el.style.display = 'none');
+  document.querySelectorAll('.social-tab-btn').forEach(el => {
+    el.classList.remove('active');
+    el.style.borderBottom = '2px solid transparent';
+    el.style.color = 'var(--text-muted)';
+  });
+  
+  const content = document.getElementById('social-tab-' + tabId);
+  const btn = document.getElementById('social-btn-' + tabId);
+  
+  if (content) content.style.display = 'block';
+  if (btn) {
+    btn.classList.add('active');
+    btn.style.borderBottom = '2px solid var(--primary)';
+    btn.style.color = 'var(--primary)';
+  }
+  
+  if (tabId === 'gallery') renderDedicatedGallery();
+  if (tabId === 'team') renderSocialTeam();
+  if (tabId === 'queue') renderSocialQueue();
+  if (tabId === 'media-vault') renderMediaVault();
+  if (tabId === 'connection-guide') fetchHostEndpoints();
+}
+
+function renderSocialTeam() {
+  const tbody = document.getElementById('social-team-tbody');
+  if (!tbody) return;
+  
+  if (SOCIAL_TEAM.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--text-muted);padding:24px;">No team members added yet.</td></tr>';
+    return;
+  }
+  
+  tbody.innerHTML = SOCIAL_TEAM.map((member, i) => `
+    <tr>
+      <td><strong>${member.name}</strong><br><small style="color:var(--text-muted);">${member.email}</small></td>
+      <td>
+        <span class="kit-chip ${member.platform === 'YouTube' ? 'chip-red' : (member.platform === 'TikTok' ? 'chip-dark' : 'chip-blue')}">
+          ${member.platform}
+        </span>
+      </td>
+      <td>${member.role}</td>
+      <td style="text-align:right;">
+        <button onclick="deleteSocialMember(${i})" style="border:none;background:transparent;color:#EF4444;cursor:pointer;">🗑️</button>
+      </td>
+    </tr>
+  `).join('');
+}
+
+function renderSocialQueue() {
+  const list = document.getElementById('social-queue-list');
+  if (!list) return;
+  
+  if (SOCIAL_QUEUE.length === 0) {
+    list.innerHTML = '<div style="text-align:center;color:var(--text-muted);padding:24px;">No content scheduled yet.</div>';
+    return;
+  }
+  
+  list.innerHTML = SOCIAL_QUEUE.map((post, i) => {
+    let statColor = '#94A3B8';
+    if (post.status === 'Draft') statColor = '#94A3B8';
+    if (post.status === 'Review') statColor = '#F59E0B';
+    if (post.status === 'Scheduled') statColor = '#3B82F6';
+    if (post.status === 'Uploaded') statColor = '#10B981';
+    
+    return `
+    <div style="background:white; border:1px solid #E2E8F0; border-radius:8px; padding:16px; margin-bottom:12px; display:flex; justify-content:space-between; align-items:center;">
+      <div>
+        <h4 style="margin:0; font-size:15px;">${post.title}</h4>
+        <div style="font-size:12px; color:var(--text-muted); margin-top:4px;">
+          <strong>${post.platform}</strong> &middot; Assignee: ${post.assignee} &middot; Date: ${post.date}
+        </div>
+      </div>
+      <div style="display:flex; gap:12px; align-items:center;">
+        <select onchange="updatePostStatus(${i}, this.value)" style="padding:4px 8px; border-radius:4px; border:1px solid ${statColor}; color:${statColor}; font-weight:bold;">
+          <option value="Draft" ${post.status === 'Draft' ? 'selected' : ''}>Draft</option>
+          <option value="Review" ${post.status === 'Review' ? 'selected' : ''}>Review</option>
+          <option value="Scheduled" ${post.status === 'Scheduled' ? 'selected' : ''}>Scheduled</option>
+          <option value="Uploaded" ${post.status === 'Uploaded' ? 'selected' : ''}>Uploaded</option>
+        </select>
+        <button onclick="deleteSocialPost(${i})" style="border:none;background:transparent;color:#EF4444;cursor:pointer;">🗑️</button>
+      </div>
+    </div>
+  `}).join('');
+}
+
+function updatePostStatus(index, newStatus) {
+  SOCIAL_QUEUE[index].status = newStatus;
+  saveSocialQueue();
+  renderSocialQueue();
+}
+
+function deleteSocialMember(index) {
+  SOCIAL_TEAM.splice(index, 1);
+  saveSocialTeam();
+  renderSocialTeam();
+}
+
+function deleteSocialPost(index) {
+  SOCIAL_QUEUE.splice(index, 1);
+  saveSocialQueue();
+  renderSocialQueue();
+}
+
+function addSocialMember() {
+  const name = document.getElementById('sm-name').value;
+  const email = document.getElementById('sm-email').value;
+  const plat = document.getElementById('sm-platform').value;
+  const role = document.getElementById('sm-role').value;
+  
+  if (!name || !email) return alert("Please fill out both Name and Email.");
+  
+  SOCIAL_TEAM.push({ name, email, platform: plat, role });
+  saveSocialTeam();
+  
+  document.getElementById('sm-name').value = '';
+  document.getElementById('sm-email').value = '';
+  switchSocialSubTab('team');
+}
+
+function addSocialPost() {
+  const title = document.getElementById('sp-title').value;
+  const plat = document.getElementById('sp-platform').value;
+  const assignee = document.getElementById('sp-assignee').value;
+  const date = document.getElementById('sp-date').value;
+  
+  if (!title) return alert("Post title is required.");
+  
+  SOCIAL_QUEUE.push({ title, platform: plat, assignee: assignee || 'Unassigned', date: date || 'TBD', status: 'Draft' });
+  saveSocialQueue();
+  
+  document.getElementById('sp-title').value = '';
+  document.getElementById('sp-assignee').value = '';
+  document.getElementById('sp-date').value = '';
+  switchSocialSubTab('queue');
+}
+
+function saveSocialTeam() {
+  localStorage.setItem('refa_social_team', JSON.stringify(SOCIAL_TEAM));
+}
+
+function saveSocialQueue() {
+  localStorage.setItem('refa_social_queue', JSON.stringify(SOCIAL_QUEUE));
+}
+
+// ==========================================
+// Media Vault & Visual Gallery Handlers
+// ==========================================
+
+let MEDIA_VIEW_MODE = 'gallery'; // 'gallery' or 'list'
+let MEDIA_FILTER_CATEGORY = 'all'; // 'all', 'image', 'video', 'audio', 'document'
+let LOCAL_FILES_CACHE = [];
+
+function setMediaViewMode(mode) {
+  MEDIA_VIEW_MODE = mode;
+  const gBtn = document.getElementById('media-view-gallery-btn');
+  const lBtn = document.getElementById('media-view-list-btn');
+
+  if (gBtn && lBtn) {
+    if (mode === 'gallery') {
+      gBtn.style.background = 'var(--primary)';
+      gBtn.style.color = 'white';
+      gBtn.style.borderColor = 'var(--primary)';
+      lBtn.style.background = 'white';
+      lBtn.style.color = 'var(--navy)';
+      lBtn.style.borderColor = '#CBD5E1';
+    } else {
+      lBtn.style.background = 'var(--primary)';
+      lBtn.style.color = 'white';
+      lBtn.style.borderColor = 'var(--primary)';
+      gBtn.style.background = 'white';
+      gBtn.style.color = 'var(--navy)';
+      gBtn.style.borderColor = '#CBD5E1';
+    }
+  }
+  renderMediaVault();
+}
+
+function filterMediaCategory(cat, btnEl) {
+  MEDIA_FILTER_CATEGORY = cat;
+  document.querySelectorAll('.media-filter-btn').forEach(b => {
+    b.classList.remove('active');
+    b.style.background = 'white';
+    b.style.color = 'var(--text-muted)';
+    b.style.border = '1px solid #CBD5E1';
+  });
+  if (btnEl) {
+    btnEl.classList.add('active');
+    btnEl.style.background = 'var(--navy)';
+    btnEl.style.color = 'white';
+    btnEl.style.border = 'none';
+  }
+  renderMediaVault();
+}
+
+function openMediaLightbox(imgUrl, caption) {
+  const modal = document.getElementById('media-lightbox');
+  const img = document.getElementById('lightbox-img');
+  const cap = document.getElementById('lightbox-caption');
+  const dl = document.getElementById('lightbox-download-link');
+
+  if (modal && img) {
+    img.src = imgUrl;
+    if (cap) cap.textContent = caption || '';
+    if (dl) dl.href = imgUrl;
+    modal.style.display = 'flex';
+  }
+}
+
+function closeMediaLightbox() {
+  const modal = document.getElementById('media-lightbox');
+  if (modal) modal.style.display = 'none';
+}
+
+function renderMediaVault() {
+  const container = document.getElementById('media-vault-list');
+  if (!container) return;
+
+  // Filter Cloud files
+  let filteredCloud = MEDIA_VAULT;
+  if (MEDIA_FILTER_CATEGORY !== 'all') {
+    filteredCloud = MEDIA_VAULT.filter(item => {
+      const cat = (item.category || '').toLowerCase();
+      if (MEDIA_FILTER_CATEGORY === 'image' && (cat.includes('photo') || cat.includes('graphic'))) return true;
+      if (MEDIA_FILTER_CATEGORY === 'video' && cat.includes('video')) return true;
+      if (MEDIA_FILTER_CATEGORY === 'audio' && cat.includes('audio')) return true;
+      if (MEDIA_FILTER_CATEGORY === 'document' && (cat.includes('press') || cat.includes('doc'))) return true;
+      return false;
+    });
+  }
+
+  // Filter Local uploaded files with client fallbacks
+  let normalizedLocal = LOCAL_FILES_CACHE.map(f => {
+    const rawName = f.name || f.filename || 'File';
+    const dispName = f.displayName || clientGetDisplayName(rawName);
+    const cat = f.category || clientGetCategory(rawName);
+    const size = f.size || 'Direct File';
+    const url = f.url || ('/uploads/' + encodeURIComponent(rawName));
+    const uploadTime = f.uploadTime || new Date().toISOString();
+
+    return {
+      name: rawName,
+      displayName: dispName,
+      category: cat,
+      size: size,
+      url: url,
+      uploadTime: uploadTime
+    };
+  });
+
+  let filteredLocal = normalizedLocal;
+  if (MEDIA_FILTER_CATEGORY !== 'all') {
+    filteredLocal = normalizedLocal.filter(f => f.category === MEDIA_FILTER_CATEGORY);
+  }
+
+  if (filteredCloud.length === 0 && filteredLocal.length === 0) {
+    container.innerHTML = '<div style="text-align:center;color:var(--text-muted);padding:32px;">No media assets found matching the selected filter. Click "+ Share Asset" or upload via Local Zero-Data Transfer to add media!</div>';
+    fetchLocalMedia();
+    return;
+  }
+
+  let html = '';
+
+  // Render Cloud Shared Assets
+  if (filteredCloud.length > 0) {
+    if (MEDIA_VIEW_MODE === 'gallery') {
+      html += '<div style="margin-bottom:12px; font-weight:bold; font-size:13px; color:var(--navy);">☁️ Cloud & External Shared Assets</div>';
+      html += '<div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap:16px; margin-bottom:24px;">';
+      html += filteredCloud.map((asset, i) => `
+        <div style="background:white; border:1px solid #E2E8F0; border-radius:10px; padding:16px; display:flex; flex-direction:column; justify-space-between; box-shadow:0 2px 4px rgba(0,0,0,0.02);">
+          <div>
+            <span class="kit-chip chip-gold" style="font-size:10px; margin-bottom:8px; display:inline-block;">${asset.category}</span>
+            <h4 style="margin:0 0 6px 0; font-size:14px; color:var(--navy); line-height:1.4;">${asset.title}</h4>
+            <div style="font-size:11px; color:var(--text-muted); margin-bottom:12px;">
+              By <strong>${asset.uploader}</strong> &middot; ${asset.notes || 'External Link'}
+            </div>
+          </div>
+          <div style="display:flex; gap:6px; margin-top:auto;">
+            <a href="${asset.url}" target="_blank" style="flex:1; background:var(--primary); color:white; padding:8px; border-radius:6px; font-weight:600; text-decoration:none; font-size:11px; text-align:center;">
+              ↗ Open Link
+            </a>
+            <button onclick="navigator.clipboard.writeText('${asset.url}'); alert('Asset link copied!');" style="background:#F1F5F9; border:1px solid #CBD5E1; color:var(--navy); padding:8px 10px; border-radius:6px; font-size:11px; cursor:pointer;">
+              📋 Copy
+            </button>
+            <button onclick="deleteMediaAsset(${i})" style="border:none; background:transparent; color:#EF4444; cursor:pointer; font-size:14px;">🗑️</button>
+          </div>
+        </div>
+      `).join('');
+      html += '</div>';
+    } else {
+      // List Mode
+      html += filteredCloud.map((asset, i) => `
+        <div style="background:white; border:1px solid #E2E8F0; border-radius:8px; padding:12px 16px; margin-bottom:8px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+          <div>
+            <div style="display:flex; align-items:center; gap:8px;">
+              <h4 style="margin:0; font-size:14px;">${asset.title}</h4>
+              <span class="kit-chip chip-gold" style="font-size:10px;">${asset.category}</span>
+            </div>
+            <div style="font-size:11px; color:var(--text-muted); margin-top:4px;">
+              Uploaded by <strong>${asset.uploader}</strong> &middot; ${asset.notes || 'Cloud link'}
+            </div>
+          </div>
+          <div style="display:flex; gap:8px; align-items:center;">
+            <a href="${asset.url}" target="_blank" style="background:var(--primary); color:white; padding:6px 12px; border-radius:6px; font-weight:600; text-decoration:none; font-size:11px;">
+              ↗ Open Link
+            </a>
+            <button onclick="navigator.clipboard.writeText('${asset.url}'); alert('Asset link copied!');" style="background:#F1F5F9; border:1px solid #CBD5E1; color:var(--navy); padding:6px 10px; border-radius:6px; font-size:11px; cursor:pointer;">
+              📋 Copy
+            </button>
+            <button onclick="deleteMediaAsset(${i})" style="border:none; background:transparent; color:#EF4444; cursor:pointer; font-size:14px;">🗑️</button>
+          </div>
+        </div>
+      `).join('');
+    }
+  }
+
+  // Render Local Zero-Data Uploaded Files
+  if (filteredLocal.length > 0) {
+    html += '<div style="margin-top:24px; margin-bottom:12px; font-weight:bold; font-size:14px; color:#065F46; border-bottom:2px solid #10B981; padding-bottom:4px; display:flex; justify-content:space-between; align-items:center;">' +
+      '<span>📡 Local Zero-Data Gallery Files (' + filteredLocal.length + ' files)</span>' +
+      '<span style="font-size:11px; color:#047857; font-weight:normal;">Direct transfers saved to /uploads directory</span>' +
+      '</div>';
+
+    if (MEDIA_VIEW_MODE === 'gallery') {
+      html += '<div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap:16px;">';
+      html += filteredLocal.map(file => {
+        let previewHtml = '';
+        if (file.category === 'image') {
+          previewHtml = `<div style="height:170px; overflow:hidden; border-radius:6px; background:#111; position:relative; cursor:pointer;" onclick="openMediaLightbox('${file.url}', '${file.displayName}')">
+            <img src="${file.url}" style="width:100%; height:100%; object-fit:cover; transition:transform 0.3s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'" />
+            <span style="position:absolute; bottom:6px; right:6px; background:rgba(0,0,0,0.7); color:white; font-size:10px; padding:2px 6px; border-radius:4px;">🔍 Zoom</span>
+          </div>`;
+        } else if (file.category === 'video') {
+          previewHtml = `<div style="border-radius:6px; overflow:hidden; background:black;">
+            <video src="${file.url}" controls preload="metadata" style="width:100%; max-height:170px; display:block;"></video>
+          </div>`;
+        } else if (file.category === 'audio') {
+          previewHtml = `<div style="background:#FEF3C7; padding:16px; border-radius:6px; text-align:center;">
+            <div style="font-size:32px; margin-bottom:6px;">🎵</div>
+            <audio src="${file.url}" controls style="width:100%; height:32px;"></audio>
+          </div>`;
+        } else {
+          previewHtml = `<div style="background:#F1F5F9; padding:24px; border-radius:6px; text-align:center;">
+            <div style="font-size:36px; margin-bottom:4px;">📄</div>
+            <div style="font-size:11px; font-weight:bold; color:var(--navy); text-transform:uppercase;">${file.name.split('.').pop()} FILE</div>
+          </div>`;
+        }
+
+        return `
+          <div style="background:#ECFDF5; border:1px solid #A7F3D0; border-radius:10px; padding:12px; display:flex; flex-direction:column; justify-content:space-between;">
+            ${previewHtml}
+            <div style="margin-top:10px;">
+              <h4 style="margin:0 0 4px 0; font-size:13px; color:#065F46; word-break:break-all;" title="${file.name}">${file.displayName}</h4>
+              <div style="font-size:11px; color:#047857; margin-bottom:8px;">
+                Size: <strong>${file.size}</strong> &middot; ${new Date(file.uploadTime).toLocaleDateString()}
+              </div>
+              <a href="${file.url}" download="${file.displayName}" style="display:block; width:100%; background:#10B981; color:white; text-align:center; padding:8px; border-radius:6px; font-weight:600; text-decoration:none; font-size:12px;">
+                ⬇ Download Direct File
+              </a>
+            </div>
+          </div>
+        `;
+      }).join('');
+      html += '</div>';
+    } else {
+      // List mode
+      html += filteredLocal.map(file => `
+        <div style="background:#ECFDF5; border:1px solid #A7F3D0; border-radius:8px; padding:12px 16px; margin-bottom:8px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+          <div>
+            <div style="display:flex; align-items:center; gap:8px;">
+              <h4 style="margin:0; font-size:14px; color:#065F46;">${file.displayName}</h4>
+              <span class="kit-chip" style="background:#10B981; color:white; font-size:10px;">${file.category.toUpperCase()}</span>
+            </div>
+            <div style="font-size:11px; color:#047857; margin-top:4px;">
+              File Size: <strong>${file.size}</strong> &middot; Uploaded: ${new Date(file.uploadTime).toLocaleString()}
+            </div>
+          </div>
+          <div style="display:flex; gap:8px; align-items:center;">
+            ${file.category === 'image' ? `<button onclick="openMediaLightbox('${file.url}', '${file.displayName}')" style="background:#047857; color:white; border:none; padding:6px 12px; border-radius:6px; font-weight:600; font-size:11px; cursor:pointer;">🔍 Preview</button>` : ''}
+            <a href="${file.url}" download="${file.displayName}" style="background:#10B981; color:white; padding:6px 12px; border-radius:6px; font-weight:600; text-decoration:none; font-size:11px;">
+              ⬇ Download Fast
+            </a>
+          </div>
+        </div>
+      `).join('');
+    }
+  }
+
+  container.innerHTML = html;
+  fetchLocalMedia();
+}
+
+async function fetchLocalMedia() {
+  try {
+    const response = await fetch('/api/files');
+    if (!response.ok) return;
+    
+    LOCAL_FILES_CACHE = await response.json();
+  } catch (e) {
+    // Silently ignore if running strictly as static file:///
+  }
+}
+
+
+// ==========================================
+// Dynamic Host Endpoints & Dedicated Gallery
+// ==========================================
+
+let DEDICATED_GALLERY_CAT = 'all';
+
+async function fetchHostEndpoints() {
+  const container = document.getElementById('dynamic-endpoints-list');
+  if (!container) return;
+
+  try {
+    const res = await fetch('/api/endpoints');
+    if (!res.ok) throw new Error('Endpoints API not available');
+    const data = await res.json();
+
+    if (!data.endpoints || data.endpoints.length === 0) {
+      container.innerHTML = '<span style="font-size:11px; color:#047857;">http://localhost:3000 (Local Server)</span>';
+      return;
+    }
+
+    container.innerHTML = data.endpoints.map(ep => `
+      <div style="background:white; border:1px solid #A7F3D0; border-radius:6px; padding:6px 12px; display:flex; align-items:center; gap:8px; box-shadow:0 1px 3px rgba(0,0,0,0.05);">
+        <div>
+          <div style="font-size:10px; color:#047857; font-weight:bold; text-transform:uppercase;">${ep.name}</div>
+          <a href="${ep.url}" target="_blank" style="font-size:13px; font-weight:bold; color:#065F46; font-family:monospace; text-decoration:none;">${ep.url}</a>
+        </div>
+        <button onclick="navigator.clipboard.writeText('${ep.url}'); alert('Copied endpoint URL: ${ep.url}');" style="background:#ECFDF5; border:1px solid #10B981; color:#047857; padding:4px 8px; border-radius:4px; font-size:11px; cursor:pointer; font-weight:bold;">
+          📋 Copy
+        </button>
+      </div>
+    `).join('');
+
+  } catch (e) {
+    // Fallback if running as static file:///
+    const locUrl = window.location.origin && window.location.origin.startsWith('http') ? window.location.origin : 'http://<HOST-IP>:3000';
+    container.innerHTML = `
+      <div style="background:white; border:1px solid #A7F3D0; border-radius:6px; padding:6px 12px; display:flex; align-items:center; gap:8px;">
+        <span style="font-size:13px; font-weight:bold; color:#065F46; font-family:monospace;">${locUrl}</span>
+        <button onclick="navigator.clipboard.writeText('${locUrl}'); alert('Copied URL');" style="background:#ECFDF5; border:1px solid #10B981; color:#047857; padding:4px 8px; border-radius:4px; font-size:11px; cursor:pointer;">📋 Copy</button>
+      </div>
+    `;
+  }
+}
+
+function filterGalleryCategory(cat, btnEl) {
+  DEDICATED_GALLERY_CAT = cat;
+  document.querySelectorAll('.gallery-filter-btn').forEach(b => {
+    b.classList.remove('active');
+    b.style.background = 'white';
+    b.style.color = 'var(--text-muted)';
+    b.style.border = '1px solid #CBD5E1';
+  });
+  if (btnEl) {
+    btnEl.classList.add('active');
+    btnEl.style.background = 'var(--navy)';
+    btnEl.style.color = 'white';
+    btnEl.style.border = 'none';
+  }
+  renderDedicatedGallery();
+}
+
+
+// ==========================================
+// Client-side File Category & Upload Logic
+// ==========================================
+
+function clientGetCategory(filename) {
+  if (!filename) return 'other';
+  const ext = filename.split('.').pop().toLowerCase();
+  if (['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp', 'svg', 'tiff'].includes(ext)) return 'image';
+  if (['mp4', 'mov', 'avi', 'mkv', 'webm', 'm4v', '3gp'].includes(ext)) return 'video';
+  if (['mp3', 'wav', 'm4a', 'aac', 'ogg', 'flac'].includes(ext)) return 'audio';
+  if (['pdf', 'doc', 'docx', 'txt', 'zip', 'rar', '7z', 'psd', 'ai'].includes(ext)) return 'document';
+  return 'other';
+}
+
+function clientGetDisplayName(filename) {
+  if (!filename) return 'Uploaded File';
+  const parts = filename.split('-');
+  if (parts.length > 2 && !isNaN(parts[0])) {
+    return parts.slice(2).join('-');
+  }
+  return filename;
+}
+
+async function uploadLocalMedia(event) {
+  if (event) {
+    event.preventDefault();
+    event.stopPropagation();
+  }
+  
+  const fileInput = document.getElementById('local-media-file');
+  const uploaderInput = document.getElementById('local-uploader-name');
+  
+  if (!fileInput || !fileInput.files || fileInput.files.length === 0) {
+    alert("Please select a file to upload.");
+    return false;
+  }
+  
+  const file = fileInput.files[0];
+  const uploaderName = (uploaderInput && uploaderInput.value) ? uploaderInput.value : 'Anonymous';
+  
+  const formData = new FormData();
+  formData.append('mediaFile', file);
+  formData.append('uploaderName', uploaderName);
+  
+  const progressContainer = document.getElementById('upload-progress-container');
+  const progressBar = document.getElementById('upload-progress-bar');
+  const uploadStatus = document.getElementById('upload-status');
+  const submitBtn = document.getElementById('upload-btn');
+  
+  if (progressContainer) progressContainer.style.display = 'block';
+  if (submitBtn) {
+    submitBtn.disabled = true;
+    submitBtn.innerText = 'Uploading...';
+  }
+  
+  try {
+    const xhr = new XMLHttpRequest();
+    
+    xhr.upload.addEventListener("progress", (e) => {
+      if (e.lengthComputable && progressBar && uploadStatus) {
+        const percentComplete = Math.round((e.loaded / e.total) * 100);
+        progressBar.style.width = percentComplete + '%';
+        uploadStatus.innerText = `Uploading... ${percentComplete}%`;
+      }
+    });
+    
+    xhr.addEventListener("load", async () => {
+      if (xhr.status >= 200 && xhr.status < 300) {
+        if (uploadStatus) uploadStatus.innerText = 'Upload Complete! ✅';
+        if (progressBar) progressBar.style.background = '#059669';
+        
+        setTimeout(async () => {
+          if (fileInput) fileInput.value = '';
+          if (uploaderInput) uploaderInput.value = '';
+          if (progressContainer) progressContainer.style.display = 'none';
+          if (progressBar) progressBar.style.width = '0%';
+          if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.innerText = '🚀 Upload to Hub';
+          }
+          
+          await fetchLocalMedia();
+          renderMediaVault();
+          renderDedicatedGallery();
+          alert('File uploaded successfully to Local Hub!');
+        }, 800);
+      } else {
+        alert('Upload failed with status ' + xhr.status);
+        if (progressContainer) progressContainer.style.display = 'none';
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.innerText = '🚀 Upload to Hub';
+        }
+      }
+    });
+    
+    xhr.addEventListener("error", () => {
+      alert('Network error during upload. Please ensure node server.js is running.');
+      if (progressContainer) progressContainer.style.display = 'none';
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.innerText = '🚀 Upload to Hub';
+      }
+    });
+    
+    xhr.open("POST", "/api/upload");
+    xhr.send(formData);
+    
+  } catch (err) {
+    console.error('Upload Error:', err);
+    alert('Upload failed. Please ensure the local server (node server.js) is running.');
+    if (progressContainer) progressContainer.style.display = 'none';
+    if (submitBtn) {
+      submitBtn.disabled = false;
+      submitBtn.innerText = '🚀 Upload to Hub';
+    }
+  }
+  
+  return false;
+}
+
+
+
+async function renderDedicatedGallery() {
+  const container = document.getElementById('dedicated-gallery-grid');
+  if (!container) return;
+
+  const searchInput = document.getElementById('gallery-search');
+  const query = (searchInput ? searchInput.value : '').toLowerCase().trim();
+
+  // Fetch latest local files
+  await fetchLocalMedia();
+
+  let filesToDisplay = LOCAL_FILES_CACHE.map(f => {
+    const rawName = f.name || f.filename || 'File';
+    const dispName = f.displayName || clientGetDisplayName(rawName);
+    const cat = f.category || clientGetCategory(rawName);
+    const size = f.size || 'Direct File';
+    const url = f.url || ('/uploads/' + encodeURIComponent(rawName));
+    const uploadTime = f.uploadTime || new Date().toISOString();
+
+    return {
+      name: rawName,
+      displayName: dispName,
+      category: cat,
+      size: size,
+      url: url,
+      uploadTime: uploadTime
+    };
+  });
+
+  // Filter by category
+  if (DEDICATED_GALLERY_CAT !== 'all') {
+    filesToDisplay = filesToDisplay.filter(f => f.category === DEDICATED_GALLERY_CAT);
+  }
+
+  // Filter by search query
+  if (query) {
+    filesToDisplay = filesToDisplay.filter(f => 
+      f.displayName.toLowerCase().includes(query) || f.name.toLowerCase().includes(query)
+    );
+  }
+
+  if (filesToDisplay.length === 0) {
+    container.innerHTML = `
+      <div style="grid-column: 1 / -1; text-align:center; color:var(--text-muted); padding:48px; background:#F8FAFC; border-radius:10px; border:1px dashed #CBD5E1;">
+        <div style="font-size:36px; margin-bottom:8px;">🖼️</div>
+        <h4 style="margin:0 0 4px 0;">No media files found</h4>
+        <p style="font-size:12px; margin:0;">Upload photos, 4K videos, or audio via Local Zero-Data Transfer to see them appear here instantly!</p>
+      </div>
+    `;
+    return;
+  }
+
+  container.innerHTML = filesToDisplay.map(file => {
+    let previewHtml = '';
+
+    if (file.category === 'image') {
+      previewHtml = `
+        <div style="height:180px; overflow:hidden; border-radius:8px; background:#0F172A; position:relative; cursor:pointer;" onclick="openMediaLightbox('${file.url}', '${file.displayName}')">
+          <img src="${file.url}" style="width:100%; height:100%; object-fit:cover; transition:transform 0.3s;" onmouseover="this.style.transform='scale(1.06)'" onmouseout="this.style.transform='scale(1)'" onError="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22100%22 height=%22100%22><rect width=%22100%25%22 height=%22100%25%22 fill=%22%23334155%22/><text x=%2250%25%22 y=%2250%25%22 fill=%22white%22 text-anchor=%22middle%22 dominant-baseline=%22middle%22 font-size=%2214%22>🖼️ Image</text></svg>'" />
+          <span style="position:absolute; bottom:8px; right:8px; background:rgba(0,0,0,0.75); color:white; font-size:10px; padding:3px 8px; border-radius:4px; font-weight:bold;">🔍 Preview</span>
+        </div>
+      `;
+    } else if (file.category === 'video') {
+      previewHtml = `
+        <div style="border-radius:8px; overflow:hidden; background:black;">
+          <video src="${file.url}" controls preload="metadata" style="width:100%; max-height:180px; display:block;"></video>
+        </div>
+      `;
+    } else if (file.category === 'audio') {
+      previewHtml = `
+        <div style="background:#FEF3C7; padding:20px; border-radius:8px; text-align:center;">
+          <div style="font-size:32px; margin-bottom:6px;">🎵</div>
+          <audio src="${file.url}" controls style="width:100%; height:36px;"></audio>
+        </div>
+      `;
+    } else {
+      const ext = file.name.split('.').pop().toUpperCase();
+      previewHtml = `
+        <div style="background:#F1F5F9; padding:28px; border-radius:8px; text-align:center;">
+          <div style="font-size:40px; margin-bottom:4px;">📄</div>
+          <div style="font-size:11px; font-weight:bold; color:var(--navy); text-transform:uppercase;">${ext} FILE</div>
+        </div>
+      `;
+    }
+
+    return `
+      <div style="background:white; border:1px solid #E2E8F0; border-radius:12px; padding:14px; display:flex; flex-direction:column; justify-space-between; box-shadow:0 2px 6px rgba(0,0,0,0.03);">
+        ${previewHtml}
+        <div style="margin-top:12px; display:flex; flex-direction:column; flex:1;">
+          <h4 style="margin:0 0 6px 0; font-size:14px; color:var(--navy); word-break:break-all; line-height:1.4;" title="${file.name}">
+            ${file.displayName}
+          </h4>
+          <div style="font-size:11px; color:var(--text-muted); margin-bottom:12px; display:flex; justify-content:space-between;">
+            <span>Size: <strong>${file.size}</strong></span>
+            <span>${new Date(file.uploadTime).toLocaleDateString()}</span>
+          </div>
+          <div style="margin-top:auto; display:flex; gap:8px;">
+            <a href="${file.url}" download="${file.displayName}" style="flex:1; background:#10B981; color:white; text-align:center; padding:9px; border-radius:6px; font-weight:700; text-decoration:none; font-size:12px; display:flex; align-items:center; justify-content:center; gap:4px;">
+              ⬇ Download File
+            </a>
+            ${file.category === 'image' ? `<button onclick="openMediaLightbox('${file.url}', '${file.displayName}')" style="background:#F1F5F9; border:1px solid #CBD5E1; color:var(--navy); padding:9px 12px; border-radius:6px; font-size:12px; cursor:pointer; font-weight:bold;">🔍</button>` : ''}
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
 }

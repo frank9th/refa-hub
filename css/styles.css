@@ -110,6 +110,9 @@
     .chip-green { background: #DCFCE7; color: #15803D; }
     .chip-purple { background: #F3E8FF; color: #6D28D9; }
     .chip-blue { background: #E0F2FE; color: #0369A1; }
+    .chip-red { background: #FEE2E2; color: #DC2626; }
+    .chip-dark { background: #F1F5F9; color: #0F172A; }
+    .social-tab-btn:hover { background-color: #F8FAFC !important; }
 
     .kit-features { list-style: none; margin-bottom: 18px; }
     .kit-features li { font-size: 12.5px; color: var(--text-main); margin-bottom: 6px; display: flex; align-items: flex-start; gap: 8px; line-height: 1.4; }

@@ -1,0 +1,10 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=REFA Local Hub
+Comment=Start the REFA Season 2 Local Network Hub Server
+Exec=bash -c "cd '%k' && cd .. && bash start-linux.sh; exec bash"
+Icon=network-server
+Terminal=true
+Categories=Network;
+StartupNotify=false

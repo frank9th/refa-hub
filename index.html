@@ -27,6 +27,7 @@
     <div class="nav-section-label">Live Tools</div>
     <a class="nav-item" onclick="goTo('countdown')" id="nav-countdown"><span class="icon">⏱️</span> Countdown Timer</a>
     <a class="nav-item" onclick="goTo('letters')" id="nav-letters"><span class="icon">✉️</span> Letter Generator</a>
+    <a class="nav-item" onclick="goTo('accounts')" id="nav-accounts"><span class="icon">🏦</span> Account Generator</a>
     <div class="nav-section-label">Execution</div>
     <a class="nav-item" onclick="goTo('tasks')" id="nav-tasks"><span class="icon">✅</span> Phase Tasks</a>
     <a class="nav-item" onclick="goTo('studio')" id="nav-studio"><span class="icon">🎨</span> Graphics Studio</a>
@@ -233,7 +234,18 @@
 
   <!-- TASKS -->
   <section class="page" id="page-tasks">
-    <div class="page-header"><div class="eyebrow">Execution Tracker</div><h2>Phase Tasks</h2><p>Check off tasks as your team completes them. Progress is saved automatically in this browser. Click any phase header to collapse or expand it.</p></div>
+    <div class="page-header">
+      <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+        <div>
+          <div class="eyebrow">Execution Tracker</div>
+          <h2>Phase Tasks</h2>
+          <p>Check off tasks as your team completes them. Tasks sync globally in real-time for all team members via Cloud Firestore.</p>
+        </div>
+        <div id="db-status-badge" style="background:#065F46; color:#D1FAE5; font-size:12px; font-weight:600; padding:6px 12px; border-radius:20px; display:inline-flex; align-items:center; gap:6px;">
+          <span style="width:8px; height:8px; background:#10B981; border-radius:50%; display:inline-block;"></span> Global DB Syncing
+        </div>
+      </div>
+    </div>
     <div id="task-list-container"></div>
   </section>
 
@@ -499,46 +511,495 @@
     </div>
   </section>
 
-  <!-- SOCIAL -->
+  <!-- SOCIAL HUB -->
   <section class="page" id="page-social">
-    <div class="page-header"><div class="eyebrow">Digital Growth</div><h2>Social Media Strategy</h2><p>Content is the engine. Every stage generates clips, highlights and stories that fuel voting and build the REFA brand permanently online.</p></div>
-    <div class="grid-2" style="margin-bottom:24px;">
-      <div class="card">
-        <div class="card-title">Platform Roles</div>
-        <div class="rev-row"><div><div class="rev-name">Instagram</div><div class="rev-desc">Main engagement hub &mdash; Reels, Stories, Lives, Carousels</div></div></div>
-        <div class="rev-row"><div><div class="rev-name">TikTok</div><div class="rev-desc">Viral growth and youth reach &mdash; short clips, challenges</div></div></div>
-        <div class="rev-row"><div><div class="rev-name">Facebook</div><div class="rev-desc">Parent and church audience &mdash; Event pages, Live stream, Groups</div></div></div>
-        <div class="rev-row"><div><div class="rev-name">YouTube</div><div class="rev-desc">Full event archive + monetisation &mdash; highlights, series</div></div></div>
-        <div class="rev-row"><div><div class="rev-name">WhatsApp</div><div class="rev-desc">Community and voting mobilisation &mdash; broadcasts and team groups</div></div></div>
-      </div>
-      <div class="card">
-        <div class="card-title">Posting Cadence</div>
-        <div class="info-item" style="margin-bottom:10px;"><h4>Pre-Event</h4><p>2&ndash;3 posts per day across platforms</p></div>
-        <div class="info-item" style="margin-bottom:10px;"><h4>On Stage Days</h4><p>Live updates every 30 mins. Real-time clips. Reaction stories.</p></div>
-        <div class="info-item" style="margin-bottom:10px;"><h4>Between Stages</h4><p>1&ndash;2 posts per day minimum: spotlights, vote updates</p></div>
-        <div class="info-item"><h4>Post-Event</h4><p>Highlight content for 2 weeks after Grand Final</p></div>
+    <div class="page-header">
+      <div class="eyebrow">Digital Command Center</div>
+      <h2>Social Media & Team Hub</h2>
+      <p>Assign team members, delegate platform access, schedule posts, and manage the content lifecycle in dedicated views.</p>
+    </div>
+
+    <!-- SUB-TAB NAVIGATION -->
+    <div class="social-tabs" style="display:flex; gap:8px; border-bottom:1px solid #E2E8F0; margin-bottom:24px; flex-wrap:wrap;">
+      <button id="social-btn-portals" class="social-tab-btn active" onclick="switchSocialSubTab('portals')" style="background:none; border:none; padding:12px 16px; font-weight:600; cursor:pointer; border-bottom:2px solid var(--primary); color:var(--primary);">🚀 Portals</button>
+      <button id="social-btn-gallery" class="social-tab-btn" onclick="switchSocialSubTab('gallery')" style="background:none; border:none; padding:12px 16px; font-weight:600; cursor:pointer; color:var(--text-muted); border-bottom:2px solid transparent;">🖼️ Media Gallery</button>
+      <button id="social-btn-media-vault" class="social-tab-btn" onclick="switchSocialSubTab('media-vault')" style="background:none; border:none; padding:12px 16px; font-weight:600; cursor:pointer; color:var(--text-muted); border-bottom:2px solid transparent;">📁 Media Vault</button>
+      <button id="social-btn-add-media" class="social-tab-btn" onclick="switchSocialSubTab('add-media')" style="background:none; border:none; padding:12px 16px; font-weight:600; cursor:pointer; color:var(--text-muted); border-bottom:2px solid transparent;">➕ Share Asset</button>
+      <button id="social-btn-connection-guide" class="social-tab-btn" onclick="switchSocialSubTab('connection-guide')" style="background:none; border:none; padding:12px 16px; font-weight:600; cursor:pointer; color:var(--text-muted); border-bottom:2px solid transparent;">🔌 Connection Guide</button>
+      <button id="social-btn-team" class="social-tab-btn" onclick="switchSocialSubTab('team')" style="background:none; border:none; padding:12px 16px; font-weight:600; cursor:pointer; color:var(--text-muted); border-bottom:2px solid transparent;">👥 Team Directory</button>
+      <button id="social-btn-add-team" class="social-tab-btn" onclick="switchSocialSubTab('add-team')" style="background:none; border:none; padding:12px 16px; font-weight:600; cursor:pointer; color:var(--text-muted); border-bottom:2px solid transparent;">➕ Add Team Member</button>
+      <button id="social-btn-queue" class="social-tab-btn" onclick="switchSocialSubTab('queue')" style="background:none; border:none; padding:12px 16px; font-weight:600; cursor:pointer; color:var(--text-muted); border-bottom:2px solid transparent;">📅 Content Queue</button>
+      <button id="social-btn-add-post" class="social-tab-btn" onclick="switchSocialSubTab('add-post')" style="background:none; border:none; padding:12px 16px; font-weight:600; cursor:pointer; color:var(--text-muted); border-bottom:2px solid transparent;">📝 Schedule Post</button>
+      <button id="social-btn-sops" class="social-tab-btn" onclick="switchSocialSubTab('sops')" style="background:none; border:none; padding:12px 16px; font-weight:600; cursor:pointer; color:var(--text-muted); border-bottom:2px solid transparent;">📋 SOPs & Graphics</button>
+    </div>
+
+    <!-- VIEW 1: PORTALS -->
+    <div id="social-tab-portals" class="social-tab-content active" style="display:block;">
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-title">YouTube Studio</div>
+          <p style="font-size:13px; color:var(--text-muted); margin-bottom:12px;">Delegate channel access without sharing Google passwords.</p>
+          <ul style="font-size:12px; margin-bottom:16px; padding-left:20px;">
+            <li>Role: <strong>Editor</strong> or <strong>Manager</strong></li>
+            <li>Go to: <em>Settings → Permissions → Invite</em></li>
+          </ul>
+          <a href="https://studio.youtube.com" target="_blank" class="btn-preview" style="text-decoration:none; display:inline-block; width:100%; text-align:center;">Launch YouTube Permissions</a>
+        </div>
+        <div class="card">
+          <div class="card-title">Meta Business Suite</div>
+          <p style="font-size:13px; color:var(--text-muted); margin-bottom:12px;">Manage FB & Instagram roles centrally.</p>
+          <ul style="font-size:12px; margin-bottom:16px; padding-left:20px;">
+            <li>Role: <strong>Content Creator</strong></li>
+            <li>Go to: <em>Settings → Users → People</em></li>
+          </ul>
+          <a href="https://business.facebook.com/settings/people" target="_blank" class="btn-preview" style="text-decoration:none; display:inline-block; width:100%; text-align:center;">Launch Meta Business Suite</a>
+        </div>
+        <div class="card">
+          <div class="card-title">TikTok Business Center</div>
+          <p style="font-size:13px; color:var(--text-muted); margin-bottom:12px;">Grant operator access to TikTok Studio.</p>
+          <ul style="font-size:12px; margin-bottom:16px; padding-left:20px;">
+            <li>Role: <strong>Content Posting / Operator</strong></li>
+            <li>Go to: <em>Users → Members → Add Member</em></li>
+          </ul>
+          <a href="https://business.tiktok.com/" target="_blank" class="btn-preview" style="text-decoration:none; display:inline-block; width:100%; text-align:center;">Launch TikTok Center</a>
+        </div>
+        <div class="card">
+          <div class="card-title">X (Twitter) Delegation</div>
+          <p style="font-size:13px; color:var(--text-muted); margin-bottom:12px;">Allow team to tweet from their own accounts.</p>
+          <ul style="font-size:12px; margin-bottom:16px; padding-left:20px;">
+            <li>Role: <strong>Contributor</strong></li>
+            <li>Go to: <em>Settings → Security → Delegation</em></li>
+          </ul>
+          <a href="https://twitter.com/settings/delegation" target="_blank" class="btn-preview" style="text-decoration:none; display:inline-block; width:100%; text-align:center;">Launch X Settings</a>
+        </div>
       </div>
     </div>
-    <div class="card">
-      <div class="card-title">Hashtag Strategy</div>
-      <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:4px;">
-        <span style="background:var(--navy);color:var(--gold);padding:6px 14px;border-radius:99px;font-size:13px;font-weight:700;">#REFASeason2</span>
-        <span style="background:var(--navy);color:var(--gold);padding:6px 14px;border-radius:99px;font-size:13px;font-weight:700;">#TheWordLeague</span>
-        <span style="background:var(--navy);color:var(--gold);padding:6px 14px;border-radius:99px;font-size:13px;font-weight:700;">#WordsThatLast</span>
-        <span style="background:var(--gold-pale);color:var(--navy);padding:6px 14px;border-radius:99px;font-size:13px;font-weight:700;">#VoteForWord</span>
-        <span style="background:var(--gold-pale);color:var(--navy);padding:6px 14px;border-radius:99px;font-size:13px;font-weight:700;">#REFAChampion2026</span>
-        <span style="background:#F1F5F9;color:#475569;padding:6px 14px;border-radius:99px;font-size:13px;font-weight:600;">+ 10 Team-specific tags</span>
+
+    <!-- DEDICATED VIEW: VISUAL MEDIA GALLERY & DOWNLOADS -->
+    <div id="social-tab-gallery" class="social-tab-content" style="display:none;">
+      <div class="card">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; flex-wrap:wrap; gap:12px;">
+          <div>
+            <h3 style="margin:0; font-size:20px; color:var(--navy);">🖼️ REFA Zero-Data Visual Media Gallery</h3>
+            <p style="font-size:13px; color:var(--text-muted); margin-top:4px;">Browse, play, preview and download all event photos, 4K videos, audio clips, and documents uploaded by the team.</p>
+          </div>
+          <button onclick="fetchLocalMedia()" style="background:#10B981; color:white; border:none; padding:8px 16px; border-radius:6px; font-size:12px; font-weight:700; cursor:pointer;">
+            🔄 Refresh Gallery
+          </button>
+        </div>
+
+        <!-- Search & Filter Controls -->
+        <div style="display:flex; gap:12px; margin-bottom:20px; flex-wrap:wrap; align-items:center;">
+          <input type="text" id="gallery-search" placeholder="🔍 Search uploaded media files by name..." oninput="renderDedicatedGallery()" style="padding:10px 14px; border:1px solid #CBD5E1; border-radius:8px; flex:1; min-width:220px; font-family:inherit;" />
+          
+          <div style="display:flex; gap:6px; flex-wrap:wrap;">
+            <button class="gallery-filter-btn active" onclick="filterGalleryCategory('all', this)" style="padding:8px 12px; border-radius:8px; border:none; background:var(--navy); color:white; font-size:12px; font-weight:600; cursor:pointer;">All Files</button>
+            <button class="gallery-filter-btn" onclick="filterGalleryCategory('image', this)" style="padding:8px 12px; border-radius:8px; border:1px solid #CBD5E1; background:white; color:var(--text-muted); font-size:12px; font-weight:600; cursor:pointer;">📸 Photos</button>
+            <button class="gallery-filter-btn" onclick="filterGalleryCategory('video', this)" style="padding:8px 12px; border-radius:8px; border:1px solid #CBD5E1; background:white; color:var(--text-muted); font-size:12px; font-weight:600; cursor:pointer;">🎥 Videos</button>
+            <button class="gallery-filter-btn" onclick="filterGalleryCategory('audio', this)" style="padding:8px 12px; border-radius:8px; border:1px solid #CBD5E1; background:white; color:var(--text-muted); font-size:12px; font-weight:600; cursor:pointer;">🎵 Audio</button>
+            <button class="gallery-filter-btn" onclick="filterGalleryCategory('document', this)" style="padding:8px 12px; border-radius:8px; border:1px solid #CBD5E1; background:white; color:var(--text-muted); font-size:12px; font-weight:600; cursor:pointer;">📄 Documents</button>
+          </div>
+        </div>
+
+        <!-- Gallery Grid Container -->
+        <div id="dedicated-gallery-grid" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap:16px;">
+          <!-- Populated dynamically by JS -->
+        </div>
       </div>
     </div>
-    <div class="card">
-      <div class="card-title">Viral Content Hooks</div>
-      <div class="info-grid">
-        <div class="info-item"><h4>The 60-Second Challenge</h4><p>Invite non-contestants to recite 10 scriptures in 60 seconds. Post and tag REFA. Creates user-generated content wave.</p></div>
-        <div class="info-item"><h4>Which Team Are You?</h4><p>Personality quiz mapped to a team. Shareable graphic result. Drives team loyalty before anyone even knows a contestant.</p></div>
-        <div class="info-item"><h4>Mentor vs. Student</h4><p>Mentor challenges their contestant to a speed recall battle. Playful, humanising, highly shareable.</p></div>
-        <div class="info-item"><h4>Scripture of the Day</h4><p>Daily designed post with a competition scripture. Educates and promotes simultaneously.</p></div>
-        <div class="info-item"><h4>In the Word Series</h4><p>60-second daily devotional from a contestant. Builds their following and audience investment in their journey.</p></div>
-        <div class="info-item"><h4>Parent Reaction Clips</h4><p>Film and publish parent reactions to their child performing. Consistently the highest-reach, highest-share content type.</p></div>
+
+    <!-- VIEW: MEDIA VAULT & ASSETS DIRECTORY -->
+    <div id="social-tab-media-vault" class="social-tab-content" style="display:none;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; flex-wrap:wrap; gap:12px;">
+        <div>
+          <h3 style="margin:0; font-size:18px;">📁 Central Media & Assets Vault</h3>
+          <p style="font-size:13px; color:var(--text-muted); margin-top:4px;">Shared directory where videographers, creators, mentors, and partners connect to upload and download event media.</p>
+        </div>
+        <button onclick="switchSocialSubTab('add-media')" style="background:var(--primary); color:white; border:none; padding:10px 16px; border-radius:8px; font-weight:700; cursor:pointer; display:flex; align-items:center; gap:6px;">
+          <span>➕</span> Share Asset / Folder Link
+        </button>
+      </div>
+
+      <!-- CLOUD STORAGE LAUNCHERS -->
+      <div class="grid-4" style="margin-bottom:24px;">
+        <div class="stat-card" style="border-top:3px solid #10B981;">
+          <div class="label">Local Network Drop</div>
+          <div class="value" style="font-size:15px; margin:6px 0;">Zero-Data Hub</div>
+          <div class="sub" style="margin-bottom:12px;">Fast local transfer</div>
+          <a href="#" onclick="switchSocialSubTab('connection-guide')" style="font-size:12px; font-weight:bold; color:#10B981; text-decoration:none;">View Guide ↗</a>
+        </div>
+        <div class="stat-card" style="border-top:3px solid #4285F4;">
+          <div class="label">Google Drive Vault</div>
+          <div class="value" style="font-size:15px; margin:6px 0;">Google Drive Shared Drive</div>
+          <div class="sub" style="margin-bottom:12px;">Raw footage, 4K clips, photos</div>
+          <a href="https://drive.google.com" target="_blank" style="font-size:12px; font-weight:bold; color:#2563EB; text-decoration:none;">Open Shared Drive ↗</a>
+        </div>
+        <div class="stat-card" style="border-top:3px solid #0061FE;">
+          <div class="label">Dropbox Drop</div>
+          <div class="value" style="font-size:15px; margin:6px 0;">Dropbox Photo Dump</div>
+          <div class="sub" style="margin-bottom:12px;">High-res photo galleries</div>
+          <a href="https://dropbox.com" target="_blank" style="font-size:12px; font-weight:bold; color:#0061FE; text-decoration:none;">Open Dropbox Vault ↗</a>
+        </div>
+        <div class="stat-card" style="border-top:3px solid #6366F1;">
+          <div class="label">Quick Upload</div>
+          <div class="value" style="font-size:15px; margin:6px 0;">WeTransfer Transfer</div>
+          <div class="sub" style="margin-bottom:12px;">Send heavy files to team lead</div>
+          <a href="https://wetransfer.com" target="_blank" style="font-size:12px; font-weight:bold; color:#6366F1; text-decoration:none;">Launch WeTransfer ↗</a>
+        </div>
+      </div>
+
+      <!-- LOCAL FILE UPLOAD FORM -->
+      <div class="card" style="border: 2px dashed #10B981; background: #ECFDF5; margin-bottom: 24px;">
+        <div class="card-title" style="color: #047857; margin-bottom: 8px;">📡 Local Zero-Data Transfer</div>
+        <p style="font-size:13px; color:#065F46; margin-bottom:16px;">Directly upload 4K video or RAW photos to the Media Lead's computer over the local Wi-Fi. <strong>No internet data used.</strong></p>
+        
+        <form id="local-upload-form" action="javascript:void(0);" onsubmit="uploadLocalMedia(event); return false;">
+          <div style="display:flex; gap:12px; align-items:center; flex-wrap:wrap;">
+            <input type="file" id="local-media-file" required style="padding:10px; border:1px solid #10B981; border-radius:8px; background:white; flex:2;" />
+            <input type="text" id="local-uploader-name" placeholder="Your Name" required style="padding:10px; border:1px solid #10B981; border-radius:8px; flex:1;" />
+            <button type="submit" id="upload-btn" style="padding:12px 20px; background:#10B981; color:white; border:none; border-radius:8px; font-weight:bold; cursor:pointer;">🚀 Upload to Hub</button>
+          </div>
+          
+          <div id="upload-progress-container" style="display:none; margin-top:16px;">
+            <div style="font-size:12px; color:#047857; font-weight:bold; margin-bottom:6px;" id="upload-status">Uploading... 0%</div>
+            <div style="width:100%; background:rgba(16,185,129,0.2); border-radius:8px; height:12px; overflow:hidden;">
+              <div id="upload-progress-bar" style="width:0%; background:#10B981; height:100%; transition:width 0.2s;"></div>
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <!-- MEDIA FILES ROSTER & GALLERY TOGGLE -->
+      <div class="card">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; flex-wrap:wrap; gap:12px;">
+          <div>
+            <div class="card-title" style="margin:0;">Shared Media Directory</div>
+            <div style="font-size:12px; color:var(--text-muted);">Shared 4K clips, photos, audio & documents</div>
+          </div>
+          
+          <div style="display:flex; gap:8px; align-items:center;">
+            <button id="media-view-gallery-btn" onclick="setMediaViewMode('gallery')" style="padding:6px 12px; border:1px solid var(--primary); background:var(--primary); color:white; border-radius:6px; font-size:12px; font-weight:bold; cursor:pointer;">
+              🖼️ Visual Gallery
+            </button>
+            <button id="media-view-list-btn" onclick="setMediaViewMode('list')" style="padding:6px 12px; border:1px solid #CBD5E1; background:white; color:var(--navy); border-radius:6px; font-size:12px; font-weight:bold; cursor:pointer;">
+              📋 Roster List
+            </button>
+          </div>
+        </div>
+
+        <!-- Filter Pills -->
+        <div style="display:flex; gap:6px; margin-bottom:16px; flex-wrap:wrap;">
+          <button class="media-filter-btn active" onclick="filterMediaCategory('all', this)" style="padding:4px 10px; border-radius:12px; border:none; background:var(--navy); color:white; font-size:11px; font-weight:600; cursor:pointer;">All Files</button>
+          <button class="media-filter-btn" onclick="filterMediaCategory('image', this)" style="padding:4px 10px; border-radius:12px; border:1px solid #CBD5E1; background:white; color:var(--text-muted); font-size:11px; font-weight:600; cursor:pointer;">📸 Photos</button>
+          <button class="media-filter-btn" onclick="filterMediaCategory('video', this)" style="padding:4px 10px; border-radius:12px; border:1px solid #CBD5E1; background:white; color:var(--text-muted); font-size:11px; font-weight:600; cursor:pointer;">🎥 Videos</button>
+          <button class="media-filter-btn" onclick="filterMediaCategory('audio', this)" style="padding:4px 10px; border-radius:12px; border:1px solid #CBD5E1; background:white; color:var(--text-muted); font-size:11px; font-weight:600; cursor:pointer;">🎵 Audio</button>
+          <button class="media-filter-btn" onclick="filterMediaCategory('document', this)" style="padding:4px 10px; border-radius:12px; border:1px solid #CBD5E1; background:white; color:var(--text-muted); font-size:11px; font-weight:600; cursor:pointer;">📄 Documents</button>
+        </div>
+
+        <div id="media-vault-list">
+          <!-- Rendered dynamically by JS (Gallery vs List mode) -->
+        </div>
+      </div>
+    </div>
+
+    <!-- LIGHTBOX MODAL FOR IMAGE PREVIEWS -->
+    <div id="media-lightbox" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:99999; justify-content:center; align-items:center; flex-direction:column; padding:20px;">
+      <button onclick="closeMediaLightbox()" style="position:absolute; top:20px; right:25px; background:white; color:black; border:none; padding:8px 16px; border-radius:20px; font-weight:bold; font-size:14px; cursor:pointer;">✕ Close</button>
+      <img id="lightbox-img" src="" style="max-width:90%; max-height:80vh; border-radius:8px; box-shadow:0 10px 30px rgba(0,0,0,0.5);" />
+      <div id="lightbox-caption" style="color:white; margin-top:12px; font-size:14px; font-weight:600; text-align:center;"></div>
+      <a id="lightbox-download-link" href="#" download style="margin-top:12px; background:#10B981; color:white; padding:8px 18px; border-radius:8px; text-decoration:none; font-weight:bold; font-size:13px;">⬇ Download Full Image</a>
+    </div>
+
+    <!-- VIEW: ADD / SHARE MEDIA ASSET LINK FORM -->
+    <div id="social-tab-add-media" class="social-tab-content" style="display:none;">
+      <div class="card" style="max-width:600px; margin:0 auto;">
+        <div class="card-title">➕ Share Media Asset / Folder Link</div>
+        <p style="font-size:13px; color:var(--text-muted); margin-bottom:20px;">Publish a media link (Google Drive, Dropbox, Mega, YouTube clip) so editors and managers can access it.</p>
+        
+        <div style="display:flex; flex-direction:column; gap:16px;">
+          <div>
+            <label style="font-size:12px; font-weight:700; color:var(--navy); display:block; margin-bottom:6px;">Asset Name / Title</label>
+            <input type="text" id="mv-title" placeholder="e.g. Audition Day Raw Camera 1 Footage (4K)" style="width:100%; padding:10px; border:1px solid #CBD5E1; border-radius:8px; font-family:inherit;" />
+          </div>
+          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:16px;">
+            <div>
+              <label style="font-size:12px; font-weight:700; color:var(--navy); display:block; margin-bottom:6px;">Category</label>
+              <select id="mv-category" style="width:100%; padding:10px; border:1px solid #CBD5E1; border-radius:8px; font-family:inherit; background:white;">
+                <option>🎥 Raw Video Footage</option>
+                <option>📸 High-Res Photo Gallery</option>
+                <option>🎵 Audio & Microphones</option>
+                <option>🎨 Graphics & Brand Assets</option>
+                <option>📄 Press & Starter Packs</option>
+              </select>
+            </div>
+            <div>
+              <label style="font-size:12px; font-weight:700; color:var(--navy); display:block; margin-bottom:6px;">Uploader / Department</label>
+              <input type="text" id="mv-uploader" placeholder="e.g. Media Team / Samuel" style="width:100%; padding:10px; border:1px solid #CBD5E1; border-radius:8px; font-family:inherit;" />
+            </div>
+          </div>
+          <div>
+            <label style="font-size:12px; font-weight:700; color:var(--navy); display:block; margin-bottom:6px;">Download / Share Link (URL)</label>
+            <input type="url" id="mv-url" placeholder="https://drive.google.com/drive/folders/... or Dropbox link" style="width:100%; padding:10px; border:1px solid #CBD5E1; border-radius:8px; font-family:inherit;" />
+          </div>
+          <div>
+            <label style="font-size:12px; font-weight:700; color:var(--navy); display:block; margin-bottom:6px;">File Specs / Notes (Optional)</label>
+            <input type="text" id="mv-notes" placeholder="e.g. 4.2 GB MP4 &middot; 4K 60fps &middot; Google Drive link" style="width:100%; padding:10px; border:1px solid #CBD5E1; border-radius:8px; font-family:inherit;" />
+          </div>
+          
+          <div style="display:flex; gap:12px; margin-top:12px;">
+            <button onclick="addMediaAsset()" style="flex:1; padding:12px; background:var(--primary); color:white; border:none; border-radius:8px; font-weight:bold; cursor:pointer;">💾 Publish Asset Link</button>
+            <button onclick="switchSocialSubTab('media-vault')" style="padding:12px 20px; background:#F1F5F9; color:var(--text-muted); border:1px solid #CBD5E1; border-radius:8px; font-weight:600; cursor:pointer;">Cancel</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- VIEW: MEDIA CONNECTION GUIDES HUB (4 CONNECTION METHODS) -->
+    <div id="social-tab-connection-guide" class="social-tab-content" style="display:none;">
+      <div class="card">
+        <div class="card-title" style="display:flex; align-items:center; gap:8px;">
+          <span>🔌 REFA Zero-Data Local Hub — 4 Connection Methods</span>
+        </div>
+        <p style="font-size:13px; color:var(--text-muted); margin-bottom:24px;">
+          Connect your team's smartphones, cameras, and laptops to the Media Lead's hub directory over local Wi-Fi without internet or expensive mobile data!
+        </p>
+
+        <!-- 4-METHOD ACCORDION / CARDS -->
+        <div style="display:flex; flex-direction:column; gap:20px;">
+
+          <!-- METHOD 1: INSTANT BROWSER WEB DROP -->
+          <div style="background:#ECFDF5; border:1px solid #A7F3D0; border-radius:10px; padding:20px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; flex-wrap:wrap; gap:8px;">
+              <h4 style="margin:0; font-size:16px; color:#065F46;">🌐 Method 1: Instant Browser Web Drop (Any Phone or PC)</h4>
+              <span class="kit-chip" style="background:#10B981; color:white; font-size:11px;">RECOMMENDED FOR QUICK UPLOADS</span>
+            </div>
+            <p style="font-size:13px; color:#047857; margin-bottom:12px;">No app installation required. Any team member can open their browser and upload 4K video or photo dumps directly.</p>
+            <ol style="font-size:12.5px; color:#065F46; padding-left:20px; margin-bottom:12px; line-height:1.7;">
+              <li>Connect phone or laptop to the Media Lead's Wi-Fi Hotspot or Venue Wi-Fi router.</li>
+              <li>
+                <strong>Go to one of the dynamic endpoints detected from this host machine:</strong>
+                <div id="dynamic-endpoints-list" style="display:flex; gap:8px; flex-wrap:wrap; margin:10px 0;">
+                  <span style="font-size:11px; color:#047857; font-style:italic;">📡 Detecting host machine network endpoints...</span>
+                </div>
+              </li>
+              <li>Go to <strong>Media Gallery</strong> or <strong>Media Vault</strong> $\rightarrow$ Use the zero-data transfer form or direct download buttons to preview and transfer files.</li>
+            </ol>
+            <div style="font-size:11px; color:#047857; font-style:italic;">⚡ Live upload progress bar shows 0% to 100% completion in real-time.</div>
+          </div>
+
+          <!-- METHOD 2: DIRECT SHARED NETWORK DIRECTORY (SMB / WINDOWS SHARE / SAMBA) -->
+          <div style="background:#EFF6FF; border:1px solid #BFDBFE; border-radius:10px; padding:20px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; flex-wrap:wrap; gap:8px;">
+              <h4 style="margin:0; font-size:16px; color:#1E40AF;">📁 Method 2: Direct Network Shared Directory (Save Directly to Folder)</h4>
+              <span class="kit-chip chip-blue" style="font-size:11px;">DIRECT FOLDER MOUNT</span>
+            </div>
+            <p style="font-size:13px; color:#1E3A8A; margin-bottom:12px;">Mount the hub directory as a network drive on team devices so videographers can copy or save heavy files directly into the host folder.</p>
+            
+            <div class="grid-3" style="margin-top:12px;">
+              <div style="background:white; padding:12px; border-radius:8px; border:1px solid #DBEAFE;">
+                <strong style="color:#1E40AF; font-size:13px;">🪟 Windows File Explorer</strong>
+                <p style="font-size:11.5px; color:var(--text-muted); margin:4px 0 8px 0;">Press <kbd>Win + R</kbd> and type:</p>
+                <div style="background:#1E293B; color:#93C5FD; padding:6px; border-radius:4px; font-family:monospace; font-size:11px; font-weight:bold; word-break:break-all;">\\&lt;HOST-IP&gt;\uploads</div>
+                <div style="font-size:11px; color:var(--text-muted); margin-top:6px;">Drag and drop heavy 4K camera files directly!</div>
+              </div>
+              <div style="background:white; padding:12px; border-radius:8px; border:1px solid #DBEAFE;">
+                <strong style="color:#1E40AF; font-size:13px;">🍎 Mac Finder</strong>
+                <p style="font-size:11.5px; color:var(--text-muted); margin:4px 0 8px 0;">In Finder, press <kbd>Cmd + K</kbd> and type:</p>
+                <div style="background:#1E293B; color:#93C5FD; padding:6px; border-radius:4px; font-family:monospace; font-size:11px; font-weight:bold; word-break:break-all;">smb://&lt;HOST-IP&gt;/uploads</div>
+                <div style="font-size:11px; color:var(--text-muted); margin-top:6px;">Mounted shared folder appears on your Mac desktop.</div>
+              </div>
+              <div style="background:white; padding:12px; border-radius:8px; border:1px solid #DBEAFE;">
+                <strong style="color:#1E40AF; font-size:13px;">📱 Mobile (Android / iOS)</strong>
+                <p style="font-size:11.5px; color:var(--text-muted); margin:4px 0 8px 0;">Open CX File Explorer or iOS Files app:</p>
+                <div style="background:#1E293B; color:#93C5FD; padding:6px; border-radius:4px; font-family:monospace; font-size:11px; font-weight:bold; word-break:break-all;">Add Network → SMB → &lt;HOST-IP&gt;</div>
+                <div style="font-size:11px; color:var(--text-muted); margin-top:6px;">Copy photos directly from phone gallery into hub!</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- METHOD 3: ONE-CLICK OS LAUNCHERS -->
+          <div style="background:#FAF5FF; border:1px solid #E9D5FF; border-radius:10px; padding:20px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; flex-wrap:wrap; gap:8px;">
+              <h4 style="margin:0; font-size:16px; color:#6B21A8;">🚀 Method 3: One-Click OS Launchers (Double-Click Spinup)</h4>
+              <span class="kit-chip chip-gold" style="font-size:11px;">STANDALONE LAUNCHERS</span>
+            </div>
+            <p style="font-size:13px; color:#581C87; margin-bottom:14px;">Double-click the launcher script for your operating system. It auto-detects dependencies and spins up the server in seconds.</p>
+
+            <div class="grid-4">
+              <div style="background:white; padding:12px; border-radius:8px; border:1px solid #E9D5FF; text-align:center;">
+                <div style="font-size:24px;">🪟</div>
+                <div style="font-weight:700; font-size:12px; margin:4px 0;">Windows</div>
+                <div style="background:#1E1B4B; color:#C7D2FE; padding:4px 8px; border-radius:4px; font-family:monospace; font-size:11px; font-weight:bold;">start.bat</div>
+              </div>
+              <div style="background:white; padding:12px; border-radius:8px; border:1px solid #E9D5FF; text-align:center;">
+                <div style="font-size:24px;">🍎</div>
+                <div style="font-weight:700; font-size:12px; margin:4px 0;">Mac</div>
+                <div style="background:#1E1B4B; color:#C7D2FE; padding:4px 8px; border-radius:4px; font-family:monospace; font-size:11px; font-weight:bold;">start.command</div>
+              </div>
+              <div style="background:white; padding:12px; border-radius:8px; border:1px solid #E9D5FF; text-align:center;">
+                <div style="font-size:24px;">🐧</div>
+                <div style="font-weight:700; font-size:12px; margin:4px 0;">Linux</div>
+                <div style="background:#1E1B4B; color:#C7D2FE; padding:4px 8px; border-radius:4px; font-family:monospace; font-size:11px; font-weight:bold;">REFA-Hub.desktop</div>
+              </div>
+              <div style="background:white; padding:12px; border-radius:8px; border:1px solid #E9D5FF; text-align:center;">
+                <div style="font-size:24px;">📱</div>
+                <div style="font-weight:700; font-size:12px; margin:4px 0;">Android</div>
+                <div style="background:#1E1B4B; color:#C7D2FE; padding:4px 8px; border-radius:4px; font-family:monospace; font-size:11px; font-weight:bold;">start-android.sh</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- METHOD 4: HARD DRIVE & USB OTG DIRECT HANDSHAKE -->
+          <div style="background:#FFF7ED; border:1px solid #FED7AA; border-radius:10px; padding:20px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; flex-wrap:wrap; gap:8px;">
+              <h4 style="margin:0; font-size:16px; color:#9A3412;">🔌 Method 4: USB OTG & Flash Drive Physical Copy</h4>
+              <span class="kit-chip chip-red" style="font-size:11px;">MASS STORAGE HANDSHAKE</span>
+            </div>
+            <p style="font-size:13px; color:#7C2D12; margin-bottom:10px;">For multi-gigabyte 4K camera footage dumps (50GB+), plug the USB flash drive or camera SD card directly into the Media Lead's laptop.</p>
+            <div style="font-size:12px; color:#9A3412;">
+              👉 Save directly into path: <code style="background:white; padding:2px 6px; border-radius:4px; font-weight:bold;">c:\Users\Frank\Documents\RAFA_CONTEST\uploads</code>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- VIEW 2: TEAM DIRECTORY -->
+    <div id="social-tab-team" class="social-tab-content" style="display:none;">
+      <div class="card">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+          <div class="card-title" style="margin:0;">Team Access Roster</div>
+          <button onclick="switchSocialSubTab('add-team')" style="background:var(--primary); color:white; border:none; padding:8px 12px; border-radius:6px; font-weight:600; cursor:pointer;">+ Add Member</button>
+        </div>
+        <table style="width:100%; border-collapse:collapse; font-size:14px;">
+          <thead>
+            <tr style="border-bottom:1px solid #E2E8F0; text-align:left;">
+              <th style="padding:12px 8px; color:var(--text-muted);">Member</th>
+              <th style="padding:12px 8px; color:var(--text-muted);">Platform</th>
+              <th style="padding:12px 8px; color:var(--text-muted);">Assigned Role</th>
+              <th style="padding:12px 8px; text-align:right;">Action</th>
+            </tr>
+          </thead>
+          <tbody id="social-team-tbody">
+            <!-- Rendered by JS -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- VIEW 3: ADD TEAM MEMBER STANDALONE VIEW -->
+    <div id="social-tab-add-team" class="social-tab-content" style="display:none;">
+      <div class="card" style="max-width:600px; margin:0 auto;">
+        <div class="card-title">👤 Add New Team Member</div>
+        <p style="font-size:13px; color:var(--text-muted); margin-bottom:20px;">Onboard a team member to manage or upload content to official REFA social accounts.</p>
+        
+        <div style="display:flex; flex-direction:column; gap:16px;">
+          <div>
+            <label style="font-size:12px; font-weight:700; color:var(--navy); display:block; margin-bottom:6px;">Member Full Name</label>
+            <input type="text" id="sm-name" placeholder="e.g. Samuel Okonkwo" style="width:100%; padding:10px; border:1px solid #CBD5E1; border-radius:8px; font-family:inherit;" />
+          </div>
+          <div>
+            <label style="font-size:12px; font-weight:700; color:var(--navy); display:block; margin-bottom:6px;">Email Address (Used for Platform Invite)</label>
+            <input type="email" id="sm-email" placeholder="e.g. samuel@example.com" style="width:100%; padding:10px; border:1px solid #CBD5E1; border-radius:8px; font-family:inherit;" />
+          </div>
+          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:16px;">
+            <div>
+              <label style="font-size:12px; font-weight:700; color:var(--navy); display:block; margin-bottom:6px;">Target Social Platform</label>
+              <select id="sm-platform" style="width:100%; padding:10px; border:1px solid #CBD5E1; border-radius:8px; font-family:inherit; background:white;">
+                <option>YouTube</option>
+                <option>Meta (FB/IG)</option>
+                <option>TikTok</option>
+                <option>X (Twitter)</option>
+              </select>
+            </div>
+            <div>
+              <label style="font-size:12px; font-weight:700; color:var(--navy); display:block; margin-bottom:6px;">Assigned Role / Permission Level</label>
+              <select id="sm-role" style="width:100%; padding:10px; border:1px solid #CBD5E1; border-radius:8px; font-family:inherit; background:white;">
+                <option>Manager</option>
+                <option>Editor</option>
+                <option>Contributor</option>
+              </select>
+            </div>
+          </div>
+          
+          <div style="display:flex; gap:12px; margin-top:12px;">
+            <button onclick="addSocialMember()" style="flex:1; padding:12px; background:var(--primary); color:white; border:none; border-radius:8px; font-weight:bold; cursor:pointer;">💾 Save & Add Member</button>
+            <button onclick="switchSocialSubTab('team')" style="padding:12px 20px; background:#F1F5F9; color:var(--text-muted); border:1px solid #CBD5E1; border-radius:8px; font-weight:600; cursor:pointer;">Cancel</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- VIEW 4: CONTENT QUEUE -->
+    <div id="social-tab-queue" class="social-tab-content" style="display:none;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+        <h3 style="margin:0;">Scheduled Uploads & Drafts</h3>
+        <button onclick="switchSocialSubTab('add-post')" style="background:var(--primary); color:white; border:none; padding:8px 12px; border-radius:6px; font-weight:600; cursor:pointer;">+ Schedule Post</button>
+      </div>
+      <div id="social-queue-list">
+        <!-- Rendered by JS -->
+      </div>
+    </div>
+
+    <!-- VIEW 5: SCHEDULE NEW POST STANDALONE VIEW -->
+    <div id="social-tab-add-post" class="social-tab-content" style="display:none;">
+      <div class="card" style="max-width:600px; margin:0 auto;">
+        <div class="card-title">📝 Schedule New Content Post</div>
+        <p style="font-size:13px; color:var(--text-muted); margin-bottom:20px;">Plan, assign, and schedule a video or post across social platforms.</p>
+        
+        <div style="display:flex; flex-direction:column; gap:16px;">
+          <div>
+            <label style="font-size:12px; font-weight:700; color:var(--navy); display:block; margin-bottom:6px;">Post Title / Content Topic</label>
+            <input type="text" id="sp-title" placeholder="e.g. Stage 1 Highlights Reel & Contestant Reactions" style="width:100%; padding:10px; border:1px solid #CBD5E1; border-radius:8px; font-family:inherit;" />
+          </div>
+          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:16px;">
+            <div>
+              <label style="font-size:12px; font-weight:700; color:var(--navy); display:block; margin-bottom:6px;">Target Platform</label>
+              <select id="sp-platform" style="width:100%; padding:10px; border:1px solid #CBD5E1; border-radius:8px; font-family:inherit; background:white;">
+                <option>All Platforms</option>
+                <option>YouTube</option>
+                <option>Instagram Reels</option>
+                <option>TikTok</option>
+                <option>Facebook</option>
+                <option>X (Twitter)</option>
+              </select>
+            </div>
+            <div>
+              <label style="font-size:12px; font-weight:700; color:var(--navy); display:block; margin-bottom:6px;">Assigned Creator / Editor</label>
+              <input type="text" id="sp-assignee" placeholder="e.g. Video Team" style="width:100%; padding:10px; border:1px solid #CBD5E1; border-radius:8px; font-family:inherit;" />
+            </div>
+          </div>
+          <div>
+            <label style="font-size:12px; font-weight:700; color:var(--navy); display:block; margin-bottom:6px;">Target Upload Date</label>
+            <input type="date" id="sp-date" style="width:100%; padding:10px; border:1px solid #CBD5E1; border-radius:8px; font-family:inherit;" />
+          </div>
+          
+          <div style="display:flex; gap:12px; margin-top:12px;">
+            <button onclick="addSocialPost()" style="flex:1; padding:12px; background:var(--primary); color:white; border:none; border-radius:8px; font-weight:bold; cursor:pointer;">💾 Schedule Content Post</button>
+            <button onclick="switchSocialSubTab('queue')" style="padding:12px 20px; background:#F1F5F9; color:var(--text-muted); border:1px solid #CBD5E1; border-radius:8px; font-weight:600; cursor:pointer;">Cancel</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- VIEW 6: SOPS & GRAPHICS -->
+    <div id="social-tab-sops" class="social-tab-content" style="display:none;">
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-title">Brand Hashtags</div>
+          <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px;">
+            <span style="background:var(--navy);color:var(--gold);padding:6px 14px;border-radius:99px;font-size:13px;font-weight:700;">#REFASeason2</span>
+            <span style="background:var(--navy);color:var(--gold);padding:6px 14px;border-radius:99px;font-size:13px;font-weight:700;">#TheWordLeague</span>
+            <span style="background:var(--gold-pale);color:var(--navy);padding:6px 14px;border-radius:99px;font-size:13px;font-weight:700;">#VoteForWord</span>
+          </div>
+          <button onclick="navigator.clipboard.writeText('#REFASeason2 #TheWordLeague #WordsThatLast #VoteForWord #REFAChampion2026'); alert('Hashtags copied!');" style="width:100%; padding:8px; border-radius:6px; background:#F1F5F9; border:1px solid #E2E8F0; cursor:pointer;">📋 Copy All Hashtags</button>
+        </div>
+        <div class="card">
+          <div class="card-title">Graphics Studio</div>
+          <p style="font-size:13px; color:var(--text-muted); margin-bottom:16px;">Need a banner, countdown, or announcement? Use the built-in Graphics Studio.</p>
+          <button onclick="goTo('studio')" class="btn-preview" style="width:100%;">🎨 Open Graphics Studio</button>
+        </div>
       </div>
     </div>
   </section>
@@ -802,6 +1263,164 @@
 
     </div>
   </section>
+  <!-- ACCOUNT GENERATOR -->
+  <section class="page" id="page-accounts">
+    <div class="page-header" style="display:flex; justify-content:space-between; align-items:flex-end;">
+      <div>
+        <div class="eyebrow">Financial Utility</div>
+        <h2>Bank Account Generator &amp; Transfer Cards</h2>
+        <p>Generate, format, and copy verified bank account details for sponsorship letters, appeals, and donations.</p>
+      </div>
+      <button class="btn-preview" onclick="window.print()" style="font-size:14px; padding:10px 20px;">🖨️ Print / Save Card PDF</button>
+    </div>
+
+    <div class="grid-2" style="align-items:start;">
+      <!-- Controls Form -->
+      <div class="card">
+        <div class="card-title" style="margin-bottom:16px;"><span class="icon">⚙️</span> Account Details Configuration</div>
+        
+        <div class="form-group" style="margin-bottom:14px;">
+          <label style="font-size:12px;font-weight:700;color:var(--navy);display:block;margin-bottom:4px;">Purpose / Campaign Category</label>
+          <select id="acc-purpose-select" onchange="onPurposeSelectChange()" style="width:100%;padding:10px;border-radius:6px;border:1px solid #CBD5E1;font-size:13px;">
+            <option value="Title Sponsorship (₦1,000,000)">Title Sponsorship (₦1,000,000)</option>
+            <option value="Gold Sponsorship (₦500,000)">Gold Sponsorship (₦500,000)</option>
+            <option value="Silver Sponsorship (₦250,000)">Silver Sponsorship (₦250,000)</option>
+            <option value="Community Supporter (₦100,000)">Community Supporter (₦100,000)</option>
+            <option value="Individual Patron Seed (₦50,000)">Individual Patron Seed (₦50,000)</option>
+            <option value="General Contest Appeal / Support">General Contest Appeal / Support</option>
+            <option value="Vendor / Production Payout">Vendor / Production Payout</option>
+            <option value="custom">Custom Purpose...</option>
+          </select>
+        </div>
+
+        <div class="form-group" id="acc-custom-purpose-wrap" style="display:none;margin-bottom:14px;">
+          <label style="font-size:12px;font-weight:700;color:var(--navy);display:block;margin-bottom:4px;">Custom Purpose</label>
+          <input type="text" id="acc-purpose-custom" placeholder="e.g. Stage Sound Equipment Support" oninput="updateAccountGenerator()" style="width:100%;padding:10px;border-radius:6px;border:1px solid #CBD5E1;font-size:13px;" />
+        </div>
+
+        <div class="form-group" style="margin-bottom:14px;">
+          <label style="font-size:12px;font-weight:700;color:var(--navy);display:block;margin-bottom:4px;">Account Name (Beneficiary)</label>
+          <input type="text" id="acc-name" value="REFINERS OF FAITH ACADEMY" oninput="updateAccountGenerator()" style="width:100%;padding:10px;border-radius:6px;border:1px solid #CBD5E1;font-size:13px;font-weight:bold;" />
+        </div>
+
+        <div class="form-group" style="margin-bottom:14px;">
+          <label style="font-size:12px;font-weight:700;color:var(--navy);display:block;margin-bottom:4px;">Target Sponsor / Donor Name (Optional)</label>
+          <input type="text" id="acc-target" placeholder="e.g. Grace International School" oninput="updateAccountGenerator()" style="width:100%;padding:10px;border-radius:6px;border:1px solid #CBD5E1;font-size:13px;" />
+        </div>
+
+        <hr class="divider" style="margin:16px 0"/>
+        <div style="font-weight:700;font-size:13px;color:var(--navy);margin-bottom:10px;">🏦 Select Banks & Account Numbers</div>
+
+        <!-- Bank 1: Moniepoint -->
+        <div style="background:#F8F9FB;padding:12px;border-radius:8px;margin-bottom:10px;border:1px solid #E2E8F0;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+            <label style="font-weight:700;font-size:13px;color:var(--navy);display:flex;align-items:center;gap:6px;">
+              <input type="checkbox" id="acc-b1-check" checked onchange="updateAccountGenerator()"/> 🟢 Moniepoint MFB
+            </label>
+            <span style="font-size:10px;background:#DCFCE7;color:#166534;padding:2px 6px;border-radius:4px;font-weight:bold;">Primary Bank</span>
+          </div>
+          <input type="text" id="acc-b1-num" value="5012345678" placeholder="Moniepoint Account Number" oninput="updateAccountGenerator()" style="width:100%;padding:8px;border-radius:4px;border:1px solid #CBD5E1;font-size:13px;font-family:monospace;font-weight:bold;" />
+        </div>
+
+        <!-- Bank 2: Wema Bank -->
+        <div style="background:#F8F9FB;padding:12px;border-radius:8px;margin-bottom:10px;border:1px solid #E2E8F0;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+            <label style="font-weight:700;font-size:13px;color:var(--navy);display:flex;align-items:center;gap:6px;">
+              <input type="checkbox" id="acc-b2-check" checked onchange="updateAccountGenerator()"/> 🟣 Wema Bank Plc
+            </label>
+            <span style="font-size:10px;background:#F3E8FF;color:#6B21A8;padding:2px 6px;border-radius:4px;font-weight:bold;">Commercial Bank</span>
+          </div>
+          <input type="text" id="acc-b2-num" value="7012345678" placeholder="Wema Bank Account Number" oninput="updateAccountGenerator()" style="width:100%;padding:8px;border-radius:4px;border:1px solid #CBD5E1;font-size:13px;font-family:monospace;font-weight:bold;" />
+        </div>
+
+        <!-- Bank 3: Providus / UBA -->
+        <div style="background:#F8F9FB;padding:12px;border-radius:8px;margin-bottom:10px;border:1px solid #E2E8F0;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+            <label style="font-weight:700;font-size:13px;color:var(--navy);display:flex;align-items:center;gap:6px;">
+              <input type="checkbox" id="acc-b3-check" onchange="updateAccountGenerator()"/> 🔴 UBA / Providus Bank
+            </label>
+            <span style="font-size:10px;background:#FEF2F2;color:#991B1B;padding:2px 6px;border-radius:4px;font-weight:bold;">Optional</span>
+          </div>
+          <input type="text" id="acc-b3-num" value="1027784775" placeholder="UBA / Providus Account Number" oninput="updateAccountGenerator()" style="width:100%;padding:8px;border-radius:4px;border:1px solid #CBD5E1;font-size:13px;font-family:monospace;font-weight:bold;" />
+        </div>
+
+        <!-- Optional Monnify Credentials Collapsible -->
+        <details style="margin-top:16px;background:#EEF2FF;padding:12px;border-radius:8px;border:1px solid #C7D2FE;">
+          <summary style="font-size:12px;font-weight:bold;color:#3730A3;cursor:pointer;user-select:none;">🔌 Monnify Live API Settings (Optional)</summary>
+          <div style="margin-top:10px;display:flex;flex-direction:column;gap:8px;">
+            <input type="text" id="monnify-api-key" placeholder="Monnify API Key (MK_PROD_...)" style="padding:6px;font-size:11px;border-radius:4px;border:1px solid #A5B4FC;" />
+            <input type="text" id="monnify-contract-code" placeholder="Contract Code" style="padding:6px;font-size:11px;border-radius:4px;border:1px solid #A5B4FC;" />
+            <button onclick="fetchLiveMonnifyAccount()" style="background:#4338CA;color:white;border:none;padding:8px;border-radius:4px;font-size:11px;font-weight:bold;cursor:pointer;">⚡ Fetch Live Account via Monnify API</button>
+          </div>
+        </details>
+      </div>
+
+      <!-- Live Output & Preview Card -->
+      <div>
+        <!-- Visual Transfer Card -->
+        <div class="card" style="background:linear-gradient(135deg,#0F172A 0%,#1E293B 100%);color:white;border:2px solid var(--gold);padding:24px;border-radius:12px;position:relative;overflow:hidden;margin-bottom:20px;">
+          <div style="position:absolute;top:-20px;right:-20px;width:100px;height:100px;background:rgba(212,175,55,0.1);border-radius:50%;pointer-events:none;"></div>
+          
+          <div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid rgba(255,255,255,0.15);padding-bottom:12px;margin-bottom:16px;">
+            <div>
+              <div style="font-size:10px;color:var(--gold);font-weight:bold;letter-spacing:1px;">REFINERS OF FAITH ACADEMY (REFA)</div>
+              <div style="font-size:16px;font-weight:800;letter-spacing:0.5px;">SEASON 2 — OFFICIAL PAYMENT SLIP</div>
+            </div>
+            <div style="background:var(--gold);color:var(--navy);font-size:10px;font-weight:900;padding:4px 8px;border-radius:4px;">VERIFIED</div>
+          </div>
+
+          <div style="margin-bottom:14px;">
+            <div style="font-size:11px;color:rgba(255,255,255,0.6);text-transform:uppercase;">Account Name</div>
+            <div style="font-size:17px;font-weight:900;color:var(--gold-light);" id="preview-acc-name">REFINERS OF FAITH ACADEMY</div>
+          </div>
+
+          <div style="margin-bottom:14px;">
+            <div style="font-size:11px;color:rgba(255,255,255,0.6);text-transform:uppercase;">Purpose / Campaign</div>
+            <div style="font-size:14px;font-weight:bold;color:white;" id="preview-acc-purpose">Title Sponsorship (₦1,000,000)</div>
+          </div>
+
+          <div id="preview-acc-target-wrap" style="margin-bottom:14px;display:none;">
+            <div style="font-size:11px;color:rgba(255,255,255,0.6);text-transform:uppercase;">Prepared For</div>
+            <div style="font-size:13px;font-weight:bold;color:#93C5FD;" id="preview-acc-target"></div>
+          </div>
+
+          <div style="background:rgba(255,255,255,0.05);padding:14px;border-radius:8px;border:1px solid rgba(212,175,55,0.3);margin-bottom:16px;">
+            <div style="font-size:11px;color:var(--gold);font-weight:bold;margin-bottom:8px;">BANK TRANSFER ACCOUNT DETAILS:</div>
+            <div id="preview-bank-list" style="display:flex;flex-direction:column;gap:10px;">
+              <!-- Dynamic Bank Items -->
+            </div>
+          </div>
+
+          <div style="font-size:10px;text-align:center;color:rgba(255,255,255,0.5);font-style:italic;">
+            Official bank account for REFA Season 2 ("Words That Last"). Transferred funds are automatically tracked &amp; acknowledged.
+          </div>
+        </div>
+
+        <!-- Action Copy Buttons -->
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin-bottom:20px;">
+          <button onclick="copySnippet('num')" style="background:var(--navy);color:var(--gold);border:none;padding:12px;border-radius:8px;font-weight:bold;font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;">
+            📋 Copy Number Only
+          </button>
+          <button onclick="copySnippet('wa')" style="background:#059669;color:white;border:none;padding:12px;border-radius:8px;font-weight:bold;font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;">
+            📱 Copy WhatsApp Text
+          </button>
+          <button onclick="copySnippet('letter')" style="background:#2563EB;color:white;border:none;padding:12px;border-radius:8px;font-weight:bold;font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;">
+            ✉️ Copy Letter Block
+          </button>
+        </div>
+
+        <!-- Formatted Snippet Box Preview -->
+        <div class="card">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+            <div class="card-title" style="margin:0;font-size:14px;">💬 Formatted WhatsApp Message Preview</div>
+            <span id="toast-notify" style="display:none;font-size:11px;background:#DCFCE7;color:#15803D;padding:3px 8px;border-radius:4px;font-weight:bold;">Copied!</span>
+          </div>
+          <div style="background:#F8F9FB;padding:14px;border-radius:8px;font-size:12px;font-family:monospace;white-space:pre-wrap;line-height:1.6;border-left:4px solid #059669;color:#1E293B;" id="snippet-wa-text"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- LETTER GENERATOR -->
   <section class="page" id="page-letters">
     <div class="page-header" style="display:flex; justify-content:space-between; align-items:flex-end;">
@@ -932,6 +1551,7 @@
   </div>
 </div>
 
+  <script type="module" src="js/firebase-init.js"></script>
   <script src="js/app.js?v=3"></script>
   <script src="js/templates/bts.js"></script>
   <script src="js/templates/champions-chosen.js"></script>

@@ -1,3 +1,4 @@
-*.md
-*.ps1
-split_templates.js
+node_modules/
+firebase-debug.log
+uploads/*
+!uploads/.gitkeep
