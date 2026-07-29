@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Live Leaderboard & Voting</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet" />
+  
+  <link rel="stylesheet" href="css/styles.css" />
+  
+  <style>
+    /* ─── BASE STYLES ──────────────────────────── */
+    body { 
+      font-family: 'Inter', sans-serif; 
+      background: #060B18; 
+      color: #e2e8f0; 
+      min-height: 100vh; 
+      margin: 0;
+      padding: 0;
+      overflow-x: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    body::before {
+      content: ''; position: fixed; top: -50%; left: -50%; width: 200%; height: 200%;
+      background: radial-gradient(ellipse at 20% 50%, rgba(var(--brand-primary-rgb, 139,92,246),0.1) 0%, transparent 50%),
+                  radial-gradient(ellipse at 80% 20%, rgba(var(--brand-accent-rgb, 212,175,55),0.1) 0%, transparent 50%);
+      animation: bgDrift 25s ease-in-out infinite alternate; z-index: -1; pointer-events: none;
+    }
+    
+    @keyframes bgDrift {
+      0% { transform: translate(0,0) rotate(0deg); }
+      100% { transform: translate(3%, 3%) rotate(2deg); }
+    }
+
+    /* ─── TOP BAR ─────────────────────────────── */
+    .top-bar {
+      background: rgba(6,11,24,0.7); border-bottom: 1px solid rgba(255,255,255,0.08);
+      padding: 16px 32px; display: flex; align-items: center; justify-content: space-between;
+      position: sticky; top: 0; z-index: 100; backdrop-filter: blur(20px);
+    }
+    .brand-name { font-family: 'Playfair Display', serif; font-size: 20px; color: #fff; font-weight: 800; }
+    .live-badge { background: rgba(239,68,68,0.15); color: #ef4444; border: 1px solid rgba(239,68,68,0.3); padding: 4px 10px; border-radius: 99px; font-size: 11px; font-weight: 700; text-transform: uppercase; display: flex; align-items: center; gap: 6px; }
+    .pulse-dot { width: 6px; height: 6px; background: #ef4444; border-radius: 50%; animation: pulse 1.5s infinite; }
+    @keyframes pulse { 0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239,68,68,0.7); } 70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(239,68,68,0); } 100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239,68,68,0); } }
+
+    /* ─── CONTAINER ───────────────────────────── */
+    .container { max-width: 900px; margin: 40px auto; padding: 0 20px; flex: 1; width: 100%; box-sizing: border-box; }
+    
+    .header-text { text-align: center; margin-bottom: 40px; }
+    .header-text h1 { font-family: 'Playfair Display', serif; font-size: 42px; margin: 0 0 10px 0; color: #fff; }
+    .header-text p { color: rgba(255,255,255,0.6); font-size: 16px; margin: 0; max-width: 600px; margin: 0 auto; line-height: 1.5; }
+
+    /* ─── FILTERS ─────────────────────────────── */
+    .filter-tabs { display: flex; justify-content: center; flex-wrap: wrap; gap: 10px; margin-bottom: 30px; }
+    .filter-tab { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: rgba(255,255,255,0.7); padding: 8px 16px; border-radius: 99px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+    .filter-tab:hover { background: rgba(255,255,255,0.1); color: #fff; }
+    .filter-tab.active { background: rgba(var(--brand-primary-rgb, 124,58,237), 0.2); border-color: var(--brand-primary, #7c3aed); color: #fff; }
+
+    /* ─── LEADERBOARD CARDS ───────────────────── */
+    .leaderboard-list { display: flex; flex-direction: column; gap: 16px; }
+    
+    .l-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; padding: 20px; display: flex; align-items: center; justify-content: space-between; backdrop-filter: blur(12px); transition: transform 0.2s; }
+    .l-card:hover { transform: translateY(-2px); border-color: rgba(255,255,255,0.15); }
+    
+    /* Top 3 Highlighting */
+    .l-card[data-rank="1"] { background: linear-gradient(90deg, rgba(212,175,55,0.15), rgba(0,0,0,0.2)); border-left: 4px solid #D4AF37; }
+    .l-card[data-rank="2"] { background: linear-gradient(90deg, rgba(192,192,192,0.15), rgba(0,0,0,0.2)); border-left: 4px solid #C0C0C0; }
+    .l-card[data-rank="3"] { background: linear-gradient(90deg, rgba(205,127,50,0.15), rgba(0,0,0,0.2)); border-left: 4px solid #CD7F32; }
+
+    .l-rank { font-family: 'Playfair Display', serif; font-size: 32px; font-weight: 800; color: rgba(255,255,255,0.2); width: 60px; text-align: center; }
+    .l-card[data-rank="1"] .l-rank { color: #D4AF37; }
+    
+    .l-info { flex: 1; padding: 0 20px; }
+    .l-name { font-size: 18px; font-weight: 700; color: #fff; margin-bottom: 4px; display: flex; align-items: center; gap: 10px; }
+    .l-cat-badge { font-size: 10px; background: rgba(255,255,255,0.1); padding: 2px 8px; border-radius: 4px; color: rgba(255,255,255,0.7); text-transform: uppercase; font-weight: 700; }
+    
+    .l-progress-container { margin-top: 10px; }
+    .l-progress-bar { height: 6px; background: rgba(255,255,255,0.1); border-radius: 99px; overflow: hidden; position: relative; }
+    .l-progress-fill { height: 100%; background: var(--brand-accent, #D4AF37); border-radius: 99px; width: 0%; transition: width 1s cubic-bezier(0.16, 1, 0.3, 1); }
+    .l-card[data-rank="1"] .l-progress-fill { background: linear-gradient(90deg, #D4AF37, #FFDF73); }
+    
+    .l-stats { text-align: right; margin-right: 20px; }
+    .l-votes { font-family: 'Playfair Display', serif; font-size: 24px; font-weight: 800; color: #fff; margin-bottom: 2px; }
+    .l-label { font-size: 11px; color: rgba(255,255,255,0.5); text-transform: uppercase; font-weight: 600; }
+
+    .btn-vote { background: linear-gradient(135deg, var(--brand-primary, #7c3aed), #6366f1); color: #fff; border: none; padding: 12px 24px; border-radius: 12px; font-size: 14px; font-weight: 700; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 15px rgba(var(--brand-primary-rgb, 124,58,237), 0.4); }
+    .btn-vote:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(var(--brand-primary-rgb, 124,58,237), 0.6); }
+
+    /* ─── PAYMENT MODAL ───────────────────────── */
+    .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); z-index: 1000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(8px); }
+    .modal { background: #1e293b; border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; width: 100%; max-width: 500px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); overflow: hidden; animation: modalIn 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+    
+    @keyframes modalIn { from { opacity: 0; transform: translateY(20px) scale(0.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
+    
+    .modal-header { padding: 24px 30px; border-bottom: 1px solid rgba(255,255,255,0.08); position: relative; }
+    .modal-header h2 { font-family: 'Playfair Display', serif; margin: 0; color: #fff; font-size: 24px; }
+    .btn-close { position: absolute; right: 24px; top: 24px; background: none; border: none; color: rgba(255,255,255,0.5); font-size: 20px; cursor: pointer; transition: color 0.2s; }
+    .btn-close:hover { color: #fff; }
+    
+    .modal-body { padding: 30px; }
+    .v-target { text-align: center; margin-bottom: 30px; }
+    .v-target h3 { margin: 0; color: var(--brand-accent, #D4AF37); font-size: 18px; }
+    .v-target p { margin: 4px 0 0; color: rgba(255,255,255,0.5); font-size: 13px; }
+
+    .package-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 30px; }
+    .p-card { background: rgba(0,0,0,0.2); border: 2px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 16px; text-align: center; cursor: pointer; transition: all 0.2s; }
+    .p-card:hover { background: rgba(255,255,255,0.05); }
+    .p-card.selected { border-color: var(--brand-primary, #7c3aed); background: rgba(var(--brand-primary-rgb, 124,58,237), 0.15); }
+    .p-votes { font-size: 20px; font-weight: 800; color: #fff; margin-bottom: 4px; }
+    .p-price { font-size: 13px; color: rgba(255,255,255,0.6); }
+
+    .form-group { margin-bottom: 16px; text-align: left; }
+    .form-group label { display: block; font-size: 11px; font-weight: 600; color: rgba(255,255,255,0.7); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
+    .form-control { width: 100%; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 12px; color: #fff; font-family: 'Inter', sans-serif; font-size: 14px; box-sizing: border-box; }
+    .form-control:focus { outline: none; border-color: var(--brand-primary, #7c3aed); }
+
+    .btn-pay { width: 100%; padding: 16px; border-radius: 12px; font-size: 16px; font-weight: 700; background: linear-gradient(135deg, #059669, #10b981); color: #fff; border: none; cursor: pointer; transition: all 0.3s; margin-top: 10px; }
+    .btn-pay:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(16,185,129, 0.4); }
+  </style>
+</head>
+<body>
+
+  <!-- PAYMENT MODAL -->
+  <div class="modal-overlay" id="vote-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h2>Support Contestant</h2>
+        <button class="btn-close" onclick="closeVoteModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="v-target">
+          <h3 id="vm-name">Contestant Name</h3>
+          <p id="vm-cat">Category</p>
+        </div>
+        
+        <label style="display: block; font-size: 11px; font-weight: 600; color: rgba(255,255,255,0.7); margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px; text-align: center;">Select Vote Package</label>
+        
+        <div class="package-grid">
+          <div class="p-card selected" onclick="selectPackage(this, 10, 2000)">
+            <div class="p-votes">10 Votes</div>
+            <div class="p-price">₦2,000</div>
+          </div>
+          <div class="p-card" onclick="selectPackage(this, 50, 10000)">
+            <div class="p-votes">50 Votes</div>
+            <div class="p-price">₦10,000</div>
+          </div>
+          <div class="p-card" onclick="selectPackage(this, 100, 20000)">
+            <div class="p-votes">100 Votes</div>
+            <div class="p-price">₦20,000</div>
+          </div>
+          <div class="p-card" onclick="selectPackage(this, 500, 100000)">
+            <div class="p-votes">500 Votes</div>
+            <div class="p-price">₦100,000</div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Your Phone Number (Optional)</label>
+          <input type="tel" id="vm-phone" class="form-control" placeholder="080...">
+        </div>
+
+        <button class="btn-pay" id="btn-process-vote" onclick="processVotePayment()">
+          Pay ₦2,000 via Paystack
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="top-bar">
+    <div class="brand-name" id="nav-brand">Event Hub</div>
+    <div class="live-badge">
+      <div class="pulse-dot"></div> Live Voting Open
+    </div>
+  </div>
+
+  <div class="container">
+    
+    <div class="header-text">
+      <h1 id="page-title">Live Leaderboard</h1>
+      <p id="page-tagline">Support your favorite talents. Every vote counts towards the Grand Finale.</p>
+    </div>
+
+    <div class="filter-tabs" id="category-tabs">
+      <div class="filter-tab active" onclick="filterLeaderboard('all')">All Categories</div>
+      <!-- Populated by JS -->
+    </div>
+
+    <div class="leaderboard-list" id="leaderboard-list">
+      <!-- Populated by JS -->
+    </div>
+
+  </div>
+
+  <script src="js/event-config.js"></script>
+  <script type="module" src="js/firebase-init.js"></script>
+  <script src="js/modules/leaderboard.js"></script>
+
+</body>
+</html>

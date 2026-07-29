@@ -56,7 +56,7 @@ window.RENDERERS['event-host'] = function(w, h, s, gold, bg, tc, img, logo) {
   let photoW = w * 0.45;
   let photoH = photoW * 1.25;
   return `
-    <div style="width:${w}px;height:${h}px;background:linear-gradient(160deg,#0D2145,#08172E);position:relative;overflow:hidden;color:white;font-family:'Inter',sans-serif;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;">
+    <div style="width:${w}px;height:${h}px;background:linear-gradient(160deg,#0D2145,${s.bgColor});position:relative;overflow:hidden;color:white;font-family:'Inter',sans-serif;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;">
       <div style="position:absolute;top:0;left:0;right:0;bottom:0;background:radial-gradient(circle at top right,rgba(212,175,55,0.1),transparent 50%);z-index:0;"></div>
       
       <div style="font-size:11px;color:${gold};letter-spacing:3px;font-weight:bold;margin-bottom:15px;z-index:2;">YOUR HOST</div>
@@ -75,7 +75,7 @@ window.RENDERERS['event-host'] = function(w, h, s, gold, bg, tc, img, logo) {
       </div>
       
       <div style="position:absolute;bottom:25px;font-size:10px;color:${gold};letter-spacing:2px;font-weight:bold;z-index:2;">
-        REFA Season 2
+        ${s.eventName}
       </div>
       <div style="position:absolute;bottom:0;left:0;right:0;height:4px;background:${gold};"></div>
     </div>

@@ -14,7 +14,6 @@ import {
   increment,
   serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCt6M4rbejaSqLyfCz9Udmx03hZUhD1irM",
@@ -28,7 +27,6 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
-const auth = getAuth(app);
 
 // Enable offline persistence
 enableIndexedDbPersistence(db).catch((err) => {
@@ -39,6 +37,56 @@ enableIndexedDbPersistence(db).catch((err) => {
   }
 });
 
+function getEventPath(subCol) {
+  const event = window.REFA_EVENTS ? window.REFA_EVENTS.getActiveEvent() : null;
+  const eventId = event && event.id ? event.id : 'refa-season2';
+  return `events/${eventId}/${subCol}`;
+}
+
+// --- EVENTS CONFIG HELPERS ---
+async function getEvent(eventId) {
+  try {
+    const docRef = doc(db, "events", eventId);
+    const docSnap = await getDoc(docRef);
+    if (docSnap.exists()) {
+      return { id: docSnap.id, ...docSnap.data() };
+    }
+    return null;
+  } catch (err) {
+    console.error("Error getting event:", err);
+    return null;
+  }
+}
+
+async function listEvents() {
+  try {
+    const colRef = collection(db, "events");
+    const snapshot = await getDocs(colRef);
+    const events = [];
+    snapshot.forEach(docSnap => events.push({ id: docSnap.id, ...docSnap.data() }));
+    return events;
+  } catch (err) {
+    console.error("Error listing events:", err);
+    return [];
+  }
+}
+
+async function saveEvent(eventData) {
+  try {
+    const eventId = eventData.id || `event-${Date.now()}`;
+    const docRef = doc(db, "events", eventId);
+    await setDoc(docRef, {
+      ...eventData,
+      id: eventId,
+      updatedAt: serverTimestamp()
+    }, { merge: true });
+    return { success: true, id: eventId };
+  } catch (err) {
+    console.error("Error saving event:", err);
+    return { success: false, error: err.message };
+  }
+}
+
 /**
  * Validate a Pass Key against Firestore.
  * Checks key active status, max usage limit, and records login.
@@ -46,7 +94,7 @@ enableIndexedDbPersistence(db).catch((err) => {
  * @param {string} keyInput - Entered Pass Key
  * @returns {Promise<{success: boolean, message?: string, roleData?: object}>}
  */
-async function validatePassKey(name, keyInput) {
+async function validatePassKey(name, keyInput, currentEventId) {
   const cleanKey = (keyInput || '').trim().toUpperCase();
   if (!cleanKey) {
     return { success: false, message: 'Pass key cannot be empty.' };
@@ -63,6 +111,13 @@ async function validatePassKey(name, keyInput) {
     const data = docSnap.data();
     if (data.active === false) {
       return { success: false, message: 'This Pass Key has been deactivated by administrator.' };
+    }
+
+    if (currentEventId) {
+      const keyEventId = data.eventId || 'refa-season-2';
+      if (keyEventId !== currentEventId) {
+        return { success: false, message: 'This Pass Key is not authorized for the current event dashboard.' };
+      }
     }
 
     const currentUses = Number(data.currentUses || 0);
@@ -130,7 +185,7 @@ async function validatePassKey(name, keyInput) {
  */
 async function seedTasksIfEmpty(phases) {
   try {
-    const tasksColRef = collection(db, "tasks");
+    const tasksColRef = collection(db, getEventPath("tasks"));
     const snapshot = await getDocs(tasksColRef);
     if (!snapshot.empty) {
       return false;
@@ -139,7 +194,7 @@ async function seedTasksIfEmpty(phases) {
     const batch = writeBatch(db);
     phases.forEach(phase => {
       phase.tasks.forEach(t => {
-        const taskDocRef = doc(db, "tasks", t.id);
+        const taskDocRef = doc(db, getEventPath("tasks"), t.id);
         batch.set(taskDocRef, {
           id: t.id,
           phaseId: phase.id,
@@ -161,12 +216,43 @@ async function seedTasksIfEmpty(phases) {
   }
 }
 
+async function seedTeamsIfEmpty(defaultTeams) {
+  try {
+    const teamsColRef = collection(db, getEventPath("teams"));
+    const snapshot = await getDocs(teamsColRef);
+    if (!snapshot.empty || !defaultTeams || defaultTeams.length === 0) {
+      return false;
+    }
+
+    const batch = writeBatch(db);
+    defaultTeams.forEach(t => {
+      const teamId = 'team-' + t.num;
+      const teamDocRef = doc(db, getEventPath("teams"), teamId);
+      batch.set(teamDocRef, {
+        id: teamId,
+        name: t.name,
+        color: t.color,
+        num: t.num,
+        mentor: 'Unassigned',
+        members: [],
+        createdAt: serverTimestamp()
+      });
+    });
+
+    await batch.commit();
+    return true;
+  } catch (err) {
+    console.error("[Firebase DB] Error seeding teams:", err);
+    return false;
+  }
+}
+
 /**
  * Subscribe to real-time task updates from Firestore.
  * @param {Function} callback - Callback function receiving an object of { taskId: boolean }.
  */
 function subscribeToTasks(callback) {
-  const tasksColRef = collection(db, "tasks");
+  const tasksColRef = collection(db, getEventPath("tasks"));
   return onSnapshot(tasksColRef, (snapshot) => {
     const checkedMap = {};
     const taskDetailsMap = {};
@@ -189,7 +275,7 @@ function subscribeToTasks(callback) {
  */
 async function updateTaskInDb(taskId, isCompleted, userName = 'Team Member') {
   try {
-    const taskDocRef = doc(db, "tasks", taskId);
+    const taskDocRef = doc(db, getEventPath("tasks"), taskId);
     await setDoc(taskDocRef, {
       completed: isCompleted,
       completedBy: isCompleted ? userName : null,
@@ -202,7 +288,7 @@ async function updateTaskInDb(taskId, isCompleted, userName = 'Team Member') {
 
 // --- TEAMS GLOBAL STATE HELPERS ---
 function subscribeToTeams(callback) {
-  const colRef = collection(db, "teams");
+  const colRef = collection(db, getEventPath("teams"));
   return onSnapshot(colRef, (snapshot) => {
     const teamsList = [];
     snapshot.forEach(docSnap => {
@@ -216,7 +302,7 @@ function subscribeToTeams(callback) {
 async function addTeamToDb(teamData) {
   try {
     const teamId = teamData.id || `team-${Date.now()}`;
-    const docRef = doc(db, "teams", teamId);
+    const docRef = doc(db, getEventPath("teams"), teamId);
     await setDoc(docRef, {
       ...teamData,
       id: teamId,
@@ -231,7 +317,7 @@ async function addTeamToDb(teamData) {
 
 async function deleteTeamFromDb(teamId) {
   try {
-    await deleteDoc(doc(db, "teams", teamId));
+    await deleteDoc(doc(db, getEventPath("teams"), teamId));
     return { success: true };
   } catch (err) {
     console.error("Error deleting team:", err);
@@ -241,7 +327,7 @@ async function deleteTeamFromDb(teamId) {
 
 // --- CONTENT SCHEDULE GLOBAL STATE HELPERS ---
 function subscribeToContentSchedule(callback) {
-  const colRef = collection(db, "content_schedule");
+  const colRef = collection(db, getEventPath("content_schedule"));
   return onSnapshot(colRef, (snapshot) => {
     const items = [];
     snapshot.forEach(docSnap => {
@@ -255,7 +341,7 @@ function subscribeToContentSchedule(callback) {
 async function addContentScheduleToDb(contentData) {
   try {
     const itemId = contentData.id || `post-${Date.now()}`;
-    const docRef = doc(db, "content_schedule", itemId);
+    const docRef = doc(db, getEventPath("content_schedule"), itemId);
     await setDoc(docRef, {
       ...contentData,
       id: itemId,
@@ -270,7 +356,7 @@ async function addContentScheduleToDb(contentData) {
 
 async function deleteContentScheduleFromDb(itemId) {
   try {
-    await deleteDoc(doc(db, "content_schedule", itemId));
+    await deleteDoc(doc(db, getEventPath("content_schedule"), itemId));
     return { success: true };
   } catch (err) {
     console.error("Error deleting content schedule item:", err);
@@ -280,7 +366,7 @@ async function deleteContentScheduleFromDb(itemId) {
 
 // --- MEDIA UPLOADS GLOBAL STATE HELPERS ---
 function subscribeToMediaUploads(callback) {
-  const colRef = collection(db, "media_uploads");
+  const colRef = collection(db, getEventPath("media_uploads"));
   return onSnapshot(colRef, (snapshot) => {
     const uploads = [];
     snapshot.forEach(docSnap => {
@@ -293,7 +379,7 @@ function subscribeToMediaUploads(callback) {
 async function recordMediaUploadInDb(fileMeta) {
   try {
     const docId = fileMeta.name ? fileMeta.name.replace(/[^a-zA-Z0-9_\-]/g, '_') : `file-${Date.now()}`;
-    const docRef = doc(db, "media_uploads", docId);
+    const docRef = doc(db, getEventPath("media_uploads"), docId);
     await setDoc(docRef, {
       ...fileMeta,
       updatedAt: serverTimestamp()
@@ -303,17 +389,108 @@ async function recordMediaUploadInDb(fileMeta) {
   }
 }
 
+// --- CONTESTANT GLOBAL STATE HELPERS ---
+function subscribeToContestants(callback) {
+  const colRef = collection(db, getEventPath("contestants"));
+  return onSnapshot(colRef, (snapshot) => {
+    const contestants = [];
+    snapshot.forEach(docSnap => {
+      contestants.push({ id: docSnap.id, ...docSnap.data() });
+    });
+    callback(contestants);
+  }, (err) => console.error("[Firebase DB] Contestants sync error:", err));
+}
+
+async function addContestantToDb(contestantData) {
+  try {
+    const contestantId = contestantData.id || `c-${Date.now()}`;
+    const docRef = doc(db, getEventPath("contestants"), contestantId);
+    await setDoc(docRef, {
+      ...contestantData,
+      id: contestantId,
+      createdAt: serverTimestamp()
+    }, { merge: true });
+    return { success: true, id: contestantId };
+  } catch (err) {
+    console.error("Error adding contestant:", err);
+    return { success: false, error: err.message };
+  }
+}
+
+async function updateContestantInDb(contestantId, updateData) {
+  try {
+    const docRef = doc(db, getEventPath("contestants"), contestantId);
+    await updateDoc(docRef, updateData);
+    return { success: true };
+  } catch (err) {
+    console.error("Error updating contestant:", err);
+    return { success: false, error: err.message };
+  }
+}
+
+// --- RUNSHEET GLOBAL STATE HELPERS ---
+function subscribeToRunsheet(eventId, callback) {
+  const colRef = collection(db, `events/${eventId}/runsheet`);
+  return onSnapshot(colRef, (snapshot) => {
+    const cues = [];
+    snapshot.forEach(docSnap => {
+      cues.push({ id: docSnap.id, ...docSnap.data() });
+    });
+    callback(cues);
+  }, (err) => console.error("[Firebase DB] Runsheet sync error:", err));
+}
+
+async function updateRunsheetCue(eventId, cueId, updateData) {
+  try {
+    const docRef = doc(db, `events/${eventId}/runsheet`, cueId);
+    await setDoc(docRef, updateData, { merge: true });
+    return { success: true };
+  } catch (err) {
+    console.error("Error updating cue:", err);
+    return { success: false, error: err.message };
+  }
+}
+
+// --- FINANCE GLOBAL STATE HELPERS ---
+function subscribeToFinance(eventId, callback) {
+  const colRef = collection(db, `events/${eventId}/finance`);
+  return onSnapshot(colRef, (snapshot) => {
+    const transactions = [];
+    snapshot.forEach(docSnap => {
+      transactions.push({ id: docSnap.id, ...docSnap.data() });
+    });
+    callback(transactions);
+  }, (err) => console.error("[Firebase DB] Finance sync error:", err));
+}
+
+async function addFinanceTransaction(eventId, transactionData) {
+  try {
+    const docRef = doc(collection(db, `events/${eventId}/finance`));
+    await setDoc(docRef, {
+      ...transactionData,
+      createdAt: serverTimestamp()
+    });
+    return { success: true, id: docRef.id };
+  } catch (err) {
+    console.error("Error adding transaction:", err);
+    return { success: false, error: err.message };
+  }
+}
+
 // Expose Firebase and methods to window for classic JS app
 window.REFA_FIREBASE = {
   db,
-  auth,
   collection,
   doc,
   onSnapshot,
   setDoc,
   updateDoc,
   deleteDoc,
+  getEvent,
+  listEvents,
+  saveEvent,
   seedTasksIfEmpty,
+  seedTeamsIfEmpty,
   subscribeToTasks,
   updateTaskInDb,
   validatePassKey,
@@ -325,9 +502,13 @@ window.REFA_FIREBASE = {
   deleteContentScheduleFromDb,
   subscribeToMediaUploads,
   recordMediaUploadInDb,
-  signIn: (email, password) => signInWithEmailAndPassword(auth, email, password),
-  signOut: () => signOut(auth),
-  onAuthStateChanged: (callback) => onAuthStateChanged(auth, callback)
+  subscribeToContestants,
+  addContestantToDb,
+  updateContestantInDb,
+  subscribeToRunsheet,
+  updateRunsheetCue,
+  subscribeToFinance,
+  addFinanceTransaction
 };
 
 // Dispatch event so app.js knows Firebase is ready

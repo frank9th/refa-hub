@@ -20,18 +20,45 @@ const TEMPLATE_CATEGORIES = [
   { id: 'promo', label: 'Countdown', icon: '⏱️' },
 ];
 
-const TEAM_COLORS = {
-  'Eagles of Zion': '#1A3A8F',
-  'Shields of David': '#991B1B',
-  'Lions of Judah': '#B45309',
-  'Rivers of Eden': '#065F46',
-  'Flames of Elijah': '#C2410C',
-  'Arrows of Jonathan': '#374151',
-  'Stars of Abraham': '#6D28D9',
-  'Swords of Gideon': '#78350F',
-  'Doves of Solomon': '#0F766E',
-  'Thunder of Sinai': '#111827'
-};
+let TEAM_COLORS = {};
+
+function updateStudioEventConfig() {
+  const event = window.REFA_EVENTS?.getActiveEvent();
+  if (event) {
+    const theme = window.REFA_EVENTS.BUILT_IN_THEMES[event.theme || 'royal-gold'];
+    studioState.accentColor = theme ? theme.colors.accent : '#D4AF37';
+    studioState.bgColor = theme ? theme.colors.primary : '#08172E';
+    
+    if (event.dates) {
+      studioState.eventDate = event.dates.audition || 'TBD';
+    }
+    studioState.eventName = event.name || 'REFA Championship';
+    studioState.season = event.season ? `Season ${event.season}` : 'Season 2';
+    studioState.tagline = event.tagline || 'Words That Last';
+    
+    if (event.prizes) {
+      studioState.prizeFirst = event.prizes.first || '₦300,000';
+      studioState.prizeSecond = event.prizes.second || '₦200,000';
+      studioState.prizeThird = event.prizes.third || '₦100,000';
+    }
+    if (event.details) {
+      studioState.location = event.details.venue || 'TBD';
+    }
+    if (event.contact) {
+      studioState.contactPhone = event.contact.phone || '';
+      studioState.contactEmail = event.contact.email || '';
+    }
+  }
+  
+  if (window.currentTeams) {
+    TEAM_COLORS = {};
+    window.currentTeams.forEach(t => {
+      TEAM_COLORS[t.name] = t.color || '#1A3A8F';
+    });
+  }
+}
+
+window.addEventListener('active-event-changed', updateStudioEventConfig);
 
 let studioState = {
   templateId: 'stage-promo',
@@ -54,6 +81,9 @@ let studioState = {
   bgColor: '#08172E',
   uploadedImg: null,
   logoImg: null,
+  eventName: 'REFA Championship',
+  season: 'Season 2',
+  tagline: 'Words That Last',
   guestName: 'Warri Mama',
   guestRole: 'Special Guest Artist',
   hostName: 'MC Champion',
@@ -284,7 +314,8 @@ function exportGraphic() {
     const url = format === 'jpeg' ? c.toDataURL('image/jpeg', quality) : c.toDataURL('image/png');
     const a = document.createElement('a');
     a.href = url;
-    a.download = `refa-${studioState.templateId}-${Date.now()}.${format}`;
+    const eventSlug = window.REFA_EVENTS?.getActiveEvent()?.id || 'event';
+    a.download = `${eventSlug}-${studioState.templateId}-${Date.now()}.${format}`;
     a.click();
   }).catch(err => {
     canvas.style.transform = originalTransform;
@@ -298,6 +329,8 @@ function updateStudio() {
 }
 
 function initStudio() {
+  updateStudioEventConfig();
+  
   const formatSel = document.getElementById('export-format');
   const scaleSel = document.getElementById('export-scale');
   const qualGroup = document.getElementById('quality-group');

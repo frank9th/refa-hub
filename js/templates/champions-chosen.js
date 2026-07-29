@@ -8,7 +8,7 @@ window.TEMPLATES.push({
   "label": "100 Champions",
   "emoji": "🎉",
   "cat": "social",
-  "thumbBg": "linear-gradient(135deg,#B45309,#D4AF37)",
+  "thumbBg": "linear-gradient(135deg,#B45309,${s.accentColor})",
   "desc": "\"The 100 Are Chosen\" celebration post"
 });
 window.CONTROLS_CONFIG['champions-chosen'] = [
@@ -29,7 +29,7 @@ window.CONTROLS_CONFIG['champions-chosen'] = [
 ];
 window.RENDERERS['champions-chosen'] = function(w, h, s, gold, bg, tc, img, logo) {
   return `
-    <div style="width:${w}px;height:${h}px;background:linear-gradient(135deg,#D4AF37 20%,#B45309 100%);position:relative;overflow:hidden;color:#1a0a00;font-family:'Inter',sans-serif;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:30px;box-sizing:border-box;">
+    <div style="width:${w}px;height:${h}px;background:linear-gradient(135deg,${s.accentColor} 20%,#B45309 100%);position:relative;overflow:hidden;color:#1a0a00;font-family:'Inter',sans-serif;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:30px;box-sizing:border-box;">
       <div style="position:absolute;font-size:24px;opacity:0.4;top:30px;left:30px;">✨</div>
       <div style="position:absolute;font-size:30px;opacity:0.5;top:60px;right:40px;">✨</div>
       <div style="position:absolute;font-size:20px;opacity:0.3;bottom:80px;left:60px;">✨</div>
@@ -46,7 +46,7 @@ window.RENDERERS['champions-chosen'] = function(w, h, s, gold, bg, tc, img, logo
       </div>
       
       <div style="position:absolute;bottom:25px;font-size:10px;font-weight:bold;letter-spacing:1px;opacity:0.7;z-index:2;">
-        Bible Recitation Competition · Season 2
+        Bible Recitation Competition · ${s.season}
       </div>
     </div>
   `;

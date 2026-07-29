@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const multer = require('multer');
 const cors = require('cors');
@@ -47,9 +48,28 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 
 app.use(cors());
+app.use(express.json());
 
 // Serve static files from the root directory
 app.use(express.static(__dirname));
+
+// Mount AI Handlers
+const chatHandler = require('./api/chat.js');
+const previewStrategyHandler = require('./api/preview-strategy.js');
+const generateEventStrategyHandler = require('./api/generate-event-strategy.js');
+const refineStrategyHandler = require('./api/refine-strategy.js');
+
+app.post('/api/chat', chatHandler);
+app.options('/api/chat', chatHandler);
+
+app.post('/api/preview-strategy', previewStrategyHandler);
+app.options('/api/preview-strategy', previewStrategyHandler);
+
+app.post('/api/generate-event-strategy', generateEventStrategyHandler);
+app.options('/api/generate-event-strategy', generateEventStrategyHandler);
+
+app.post('/api/refine-strategy', refineStrategyHandler);
+app.options('/api/refine-strategy', refineStrategyHandler);
 
 // Serve the uploads directory so files can be viewed and downloaded
 app.use('/uploads', express.static(UPLOADS_DIR));

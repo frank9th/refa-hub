@@ -1,0 +1,14 @@
+HIT THE MIC SEASON 3 - MASTER PROJECT FRAMEWORK 
+Volume 1 
+Project Foundation: Executive Summary, Vision, Mission, Theme, Core Values, Objectives, KPIs, Scope, Governance, Organizational Chart, Roles. 
+Volume 2 Event Strategy: Event concept, audience, branding, competition format, contestant journey, success metrics. 
+Volume 3 Competition Framework: Registration, eligibility, rules, auditions, judging, mentoring, eliminations, finale. 
+Volume 4 Operations Plan: Venue, stage, lighting, sound, LED, cameras, security, medical, logistics. 
+Volume 5 Production Bible: Scripts, cue sheets, rehearsals, technical rider, backstage workflow. 
+Volume 6 Website & Digital Platform: Registration, contestant portal, judges portal, admin portal, voting, payment integration, notifications, database. 
+Volume 7 Marketing & Media: Branding, press, TV, radio, social media, influencers, website content. 
+Volume 8 Sponsorship: Packages, branding opportunities, ROI, agreements. 
+Volume 9 Finance: 100 million budget, revenue, expenses, procurement, controls. 
+Volume 10 Legal & Compliance: Terms, privacy, contracts, copyright, insurance. 
+Volume 11 Event Day Manual: Run sheet, opening, performances, voting, awards, closing. 
+Volume 12 Post Event: Reports, evaluation, recommendations.

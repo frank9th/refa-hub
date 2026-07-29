@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Contestant Portal</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet" />
+  
+  <link rel="stylesheet" href="css/styles.css" />
+  
+  <style>
+    /* ─── BASE STYLES ──────────────────────────── */
+    body { 
+      font-family: 'Inter', sans-serif; 
+      background: #060B18; 
+      color: #e2e8f0; 
+      min-height: 100vh; 
+      margin: 0;
+      padding: 0;
+      overflow-x: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    body::before {
+      content: ''; 
+      position: fixed; 
+      top: -50%; left: -50%; 
+      width: 200%; height: 200%;
+      background: radial-gradient(ellipse at 20% 50%, rgba(var(--brand-primary-rgb, 139,92,246),0.1) 0%, transparent 50%),
+                  radial-gradient(ellipse at 80% 20%, rgba(var(--brand-accent-rgb, 212,175,55),0.1) 0%, transparent 50%);
+      animation: bgDrift 25s ease-in-out infinite alternate;
+      z-index: -1; 
+      pointer-events: none;
+    }
+
+    @keyframes bgDrift {
+      0% { transform: translate(0,0) rotate(0deg); }
+      100% { transform: translate(3%, 3%) rotate(2deg); }
+    }
+
+    /* ─── TOP BAR ─────────────────────────────── */
+    .top-bar {
+      background: rgba(6,11,24,0.7);
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      padding: 16px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky; 
+      top: 0; 
+      z-index: 100;
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+    }
+    .brand-name { font-family: 'Playfair Display', serif; font-size: 20px; color: #fff; font-weight: 800; letter-spacing: 0.5px; }
+    
+    .logout-btn {
+      color: rgba(255,255,255,0.5); font-size: 13px; font-weight: 600; cursor: pointer; border: none; background: none; display: none;
+    }
+    .logout-btn:hover { color: #f87171; }
+
+    /* ─── CONTAINER ───────────────────────────── */
+    .container { max-width: 900px; margin: 40px auto; padding: 0 20px; flex: 1; width: 100%; box-sizing: border-box; }
+
+    /* ─── LOGIN VIEW ──────────────────────────── */
+    #login-view {
+      max-width: 450px;
+      margin: 60px auto;
+      text-align: center;
+      animation: fadeIn 0.5s ease;
+    }
+    
+    @keyframes fadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+
+    .login-card {
+      background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 20px; padding: 40px; backdrop-filter: blur(12px);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.05);
+    }
+    .login-card h2 { font-family: 'Playfair Display', serif; color: var(--brand-accent, #D4AF37); margin: 0 0 8px; font-size: 28px; }
+    .login-card p { color: rgba(255,255,255,0.5); font-size: 14px; margin-bottom: 30px; line-height: 1.5; }
+
+    .form-group { margin-bottom: 20px; text-align: left; }
+    .form-group label { display: block; font-size: 11px; font-weight: 600; color: rgba(255,255,255,0.7); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
+    .form-control {
+      width: 100%; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 12px; padding: 14px 16px; color: #fff; font-family: 'Inter', sans-serif;
+      font-size: 15px; transition: all 0.3s; box-sizing: border-box;
+    }
+    .form-control:focus { outline: none; border-color: var(--brand-accent); box-shadow: 0 0 0 3px rgba(var(--brand-accent-rgb, 212,175,55), 0.15); }
+    
+    .btn-primary {
+      width: 100%; padding: 14px 20px; border-radius: 12px; font-size: 15px; font-weight: 700;
+      background: var(--brand-primary, #7c3aed); color: #fff; border: none; cursor: pointer;
+      transition: all 0.3s; box-shadow: 0 4px 15px rgba(var(--brand-primary-rgb, 124,58,237), 0.4);
+      margin-top: 10px;
+    }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(var(--brand-primary-rgb, 124,58,237), 0.6); }
+
+    .otp-section { display: none; margin-top: 20px; }
+
+    /* ─── DASHBOARD VIEW ──────────────────────── */
+    #dashboard-view { display: none; animation: fadeIn 0.5s ease; }
+
+    .dash-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 30px; }
+    .dash-header h1 { font-family: 'Playfair Display', serif; font-size: 36px; margin: 0 0 4px; color: #fff; }
+    .dash-header p { color: rgba(255,255,255,0.5); font-size: 15px; margin: 0; }
+    .cat-badge { background: rgba(var(--brand-accent-rgb, 212,175,55), 0.15); color: var(--brand-accent, #D4AF37); border: 1px solid rgba(var(--brand-accent-rgb, 212,175,55), 0.3); padding: 6px 14px; border-radius: 99px; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; display: inline-block; margin-bottom: 12px; }
+
+    .grid-container { display: grid; grid-template-columns: 2fr 1fr; gap: 24px; }
+    @media (max-width: 800px) { .grid-container { grid-template-columns: 1fr; } }
+
+    /* Cards */
+    .card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; padding: 24px; backdrop-filter: blur(12px); box-shadow: 0 8px 24px rgba(0,0,0,0.3); margin-bottom: 24px; }
+    .card-title { font-size: 13px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: rgba(255,255,255,0.6); margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; }
+
+    /* Journey Tracker */
+    .journey-bar { display: flex; justify-content: space-between; align-items: center; position: relative; margin-top: 40px; margin-bottom: 20px; }
+    .journey-line { position: absolute; top: 12px; left: 20px; right: 20px; height: 3px; background: rgba(255,255,255,0.1); z-index: 1; }
+    .journey-line-fill { position: absolute; top: 12px; left: 20px; height: 3px; background: var(--brand-accent, #D4AF37); z-index: 1; transition: width 0.5s ease; width: 0%; }
+    
+    .j-node { position: relative; z-index: 2; display: flex; flex-direction: column; align-items: center; width: 60px; }
+    .j-dot { width: 24px; height: 24px; border-radius: 50%; background: #1e293b; border: 3px solid rgba(255,255,255,0.2); transition: all 0.3s; }
+    .j-label { font-size: 10px; font-weight: 700; color: rgba(255,255,255,0.4); text-transform: uppercase; margin-top: 10px; text-align: center; }
+    
+    .j-node.past .j-dot { background: var(--brand-accent, #D4AF37); border-color: var(--brand-accent, #D4AF37); }
+    .j-node.past .j-label { color: rgba(255,255,255,0.8); }
+    .j-node.active .j-dot { background: var(--brand-primary, #7c3aed); border-color: var(--brand-primary, #7c3aed); box-shadow: 0 0 15px rgba(var(--brand-primary-rgb, 124,58,237), 0.5); }
+    .j-node.active .j-label { color: var(--brand-primary, #7c3aed); }
+
+    /* Voting Widget */
+    .vote-widget { background: linear-gradient(135deg, rgba(var(--brand-primary-rgb, 124,58,237), 0.15), rgba(var(--brand-accent-rgb, 212,175,55), 0.15)); border: 1px solid rgba(var(--brand-accent-rgb, 212,175,55), 0.3); border-radius: 12px; padding: 20px; text-align: center; }
+    .vote-count { font-family: 'Playfair Display', serif; font-size: 32px; font-weight: 800; color: #fff; margin: 10px 0; }
+    .vote-link-box { background: rgba(0,0,0,0.3); border: 1px dashed rgba(255,255,255,0.3); border-radius: 8px; padding: 12px; display: flex; justify-content: space-between; align-items: center; margin-top: 16px; }
+    .vote-link { font-family: monospace; font-size: 13px; color: #34d399; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .btn-copy { background: rgba(255,255,255,0.1); border: none; color: #fff; padding: 6px 12px; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer; transition: all 0.2s; }
+    .btn-copy:hover { background: rgba(255,255,255,0.2); }
+
+    /* Next Event / Schedule */
+    .event-item { display: flex; gap: 16px; align-items: flex-start; padding: 16px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+    .event-item:last-child { border-bottom: none; }
+    .event-date { background: rgba(255,255,255,0.05); border-radius: 10px; text-align: center; padding: 10px; min-width: 50px; }
+    .e-month { font-size: 10px; font-weight: 700; text-transform: uppercase; color: rgba(var(--brand-accent-rgb, 212,175,55), 0.8); }
+    .e-day { font-size: 20px; font-weight: 800; color: #fff; }
+    .e-details h4 { margin: 0 0 4px; font-size: 14px; color: #fff; }
+    .e-details p { margin: 0 0 6px; font-size: 12px; color: rgba(255,255,255,0.5); line-height: 1.4; }
+    .e-status { font-size: 10px; font-weight: 700; background: rgba(52,211,153,0.15); color: #34d399; padding: 3px 8px; border-radius: 4px; display: inline-block; }
+
+    /* Stats */
+    .stat-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+    .stat-row:last-child { border-bottom: none; }
+    .stat-label { font-size: 13px; color: rgba(255,255,255,0.6); }
+    .stat-val { font-size: 16px; font-weight: 700; color: #fff; }
+  </style>
+</head>
+<body>
+
+  <div class="top-bar">
+    <div class="brand-name" id="nav-brand">Event Hub</div>
+    <button class="logout-btn" id="btn-logout" onclick="logout()">Logout</button>
+  </div>
+
+  <div class="container">
+    
+    <!-- LOGIN VIEW -->
+    <div id="login-view">
+      <div class="login-card">
+        <h2>Contestant Portal</h2>
+        <p>Login to view your progress, access your voting link, and check your next schedule.</p>
+        
+        <div id="login-step-1">
+          <div class="form-group">
+            <label>Contestant ID</label>
+            <input type="text" class="form-control" id="login-id" placeholder="e.g. HTM-123456" oninput="this.value = this.value.toUpperCase()">
+          </div>
+          <div class="form-group">
+            <label>Phone Number</label>
+            <input type="tel" class="form-control" id="login-phone" placeholder="Registered phone number">
+          </div>
+          <button class="btn-primary" onclick="requestOTP()">Send Login Code</button>
+        </div>
+
+        <div id="login-step-2" class="otp-section">
+          <div class="form-group">
+            <label>Enter 4-Digit Code (Simulation: type 1234)</label>
+            <input type="text" class="form-control" id="login-otp" placeholder="----" maxlength="4" style="text-align:center; font-size:24px; letter-spacing:8px;">
+          </div>
+          <button class="btn-primary" onclick="verifyOTP()">Login to Dashboard</button>
+          <p style="margin-top: 16px; font-size: 12px; cursor:pointer; color: var(--brand-accent);" onclick="cancelOTP()">← Back</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- DASHBOARD VIEW -->
+    <div id="dashboard-view">
+      <div class="dash-header">
+        <div>
+          <div class="cat-badge" id="dash-category">CATEGORY</div>
+          <h1 id="dash-name">Contestant Name</h1>
+          <p>Registration ID: <strong id="dash-id">---</strong></p>
+        </div>
+      </div>
+
+      <!-- Journey Tracker -->
+      <div class="card" style="padding-bottom: 40px;">
+        <div class="card-title">Contestant Journey</div>
+        <div class="journey-bar" id="journey-bar">
+          <div class="journey-line"></div>
+          <div class="journey-line-fill" id="j-fill"></div>
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+      <div class="grid-container">
+        <!-- Left Col -->
+        <div>
+          <div class="card">
+            <div class="card-title">Voting Center <span style="font-size:10px; background:rgba(52,211,153,0.15); color:#34d399; padding:2px 6px; border-radius:4px;">LIVE</span></div>
+            <div class="vote-widget">
+              <p style="margin:0; font-size:13px; color:rgba(255,255,255,0.6);">Your Total Public Votes</p>
+              <div class="vote-count" id="dash-votes">0</div>
+              <p style="margin:0; font-size:11px; color:rgba(255,255,255,0.4);">Leaderboard Rank: <strong style="color:#fff;" id="dash-rank">TBD</strong></p>
+              
+              <div class="vote-link-box">
+                <span class="vote-link" id="vote-link-text">https://hub.com/vote/...</span>
+                <button class="btn-copy" onclick="copyVoteLink()">Copy</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-title">My Scores & Stats</div>
+            <div class="stat-row">
+              <span class="stat-label">Status</span>
+              <span class="stat-val" style="color:#34d399;" id="stat-status">Active</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label">Entry Type</span>
+              <span class="stat-val" id="stat-type">-</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label">Last Judges Score (Avg)</span>
+              <span class="stat-val" id="stat-score">Pending</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label">Registered On</span>
+              <span class="stat-val" id="stat-date">-</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Col -->
+        <div>
+          <div class="card">
+            <div class="card-title">Schedule & Next Steps</div>
+            <div id="schedule-list">
+              <!-- Populated by JS -->
+            </div>
+          </div>
+          
+          <div class="card">
+            <div class="card-title">Mentor Messages</div>
+            <div style="background: rgba(0,0,0,0.2); border-radius: 8px; padding: 16px; border-left: 3px solid var(--brand-accent);">
+              <p style="margin:0 0 8px; font-size:12px; color:rgba(255,255,255,0.4);">From: Administration</p>
+              <p style="margin:0; font-size:13px; color:rgba(255,255,255,0.8); line-height:1.5;">Welcome to the portal! Keep an eye on your schedule. We will post your audition venue assignments here shortly.</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <script src="js/event-config.js"></script>
+  <script type="module" src="js/firebase-init.js"></script>
+  <script src="js/modules/contestant-portal.js"></script>
+
+</body>
+</html>

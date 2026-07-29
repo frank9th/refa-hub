@@ -12,13 +12,50 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@700;800&family=Bebas+Neue&family=Great+Vibes&family=Oswald:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="css/styles.css" />
+  <style>
+    .premium-lock-overlay {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(10, 15, 36, 0.4);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      color: white;
+      text-align: center;
+      padding: 20px;
+    }
+    .premium-lock-card {
+      background: rgba(20, 25, 45, 0.9);
+      border: 1px solid rgba(212, 175, 55, 0.5);
+      padding: 30px;
+      border-radius: 12px;
+      max-width: 400px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.8);
+    }
+    .premium-lock-title {
+      color: #d4af37;
+      font-size: 20px;
+      font-weight: 800;
+      margin-bottom: 12px;
+    }
+    .premium-lock-text {
+      font-size: 14px;
+      color: rgba(255,255,255,0.8);
+      line-height: 1.6;
+    }
+  </style>
+  <script src="js/event-config.js"></script>
 </head>
 <body>
 <!-- ROLE-BASED AUTH LOCK OVERLAY -->
 <div id="auth-lock-overlay">
   <div class="auth-card">
-    <div class="auth-logo">REFA HUB 2026</div>
-    <div class="auth-subtitle">Season 2 Championship Command Center</div>
+    <div class="auth-logo" id="auth-title-display">EVENT HUB</div>
+    <div class="auth-subtitle" id="auth-subtitle-display">Loading event data...</div>
     <form id="auth-login-form" onsubmit="handlePassKeyLogin(event); return false;">
       <div class="auth-form-group">
         <label for="auth-member-name">Member Name</label>
@@ -39,9 +76,9 @@
 
 <aside id="sidebar">
   <div class="sidebar-brand">
-    <div class="s2-badge">Season 2</div>
-    <h1>REFA<br/>Championship</h1>
-    <p>Words That Last &middot; 2026</p>
+    <div class="s2-badge" id="event-season-badge">Season 2</div>
+    <h1 id="event-name-display">REFA<br/>Championship</h1>
+    <p id="event-tagline-display">Words That Last &middot; 2026</p>
   </div>
   <div id="sidebar-user-badge" style="padding: 10px 14px; background: rgba(255,255,255,0.06); border-radius: 12px; margin: 0 16px 16px 16px; border: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: space-between;">
     <div>
@@ -58,14 +95,22 @@
     <a class="nav-item" onclick="goTo('countdown')" id="nav-countdown"><span class="icon">⏱️</span> Countdown Timer</a>
     <a class="nav-item" onclick="goTo('letters')" id="nav-letters"><span class="icon">✉️</span> Letter Generator</a>
     <a class="nav-item" onclick="goTo('accounts')" id="nav-accounts"><span class="icon">🏦</span> Account Generator</a>
+    <a class="nav-item" href="events.html" id="nav-events" style="display:none;"><span class="icon">🎪</span> Manage Events</a>
+    <div class="nav-section-label">External Portals</div>
+    <a class="nav-item" href="register.html"><span class="icon">📝</span> Registration Page</a>
+    <a class="nav-item" href="contestant-portal.html"><span class="icon">🎤</span> Contestant Portal</a>
+    <a class="nav-item" href="judges.html"><span class="icon">⚖️</span> Judges Dashboard</a>
+    <a class="nav-item" href="leaderboard.html"><span class="icon">🏆</span> Public Leaderboard</a>
     <div class="nav-section-label">Execution</div>
     <a class="nav-item" onclick="goTo('tasks')" id="nav-tasks"><span class="icon">✅</span> Phase Tasks</a>
     <a class="nav-item" onclick="goTo('studio')" id="nav-studio"><span class="icon">🎨</span> Graphics Studio</a>
     <a class="nav-item" onclick="goTo('voting')" id="nav-voting"><span class="icon">🗳️</span> Voting System</a>
     <a class="nav-item" onclick="goTo('parents')" id="nav-parents"><span class="icon">👨‍👩‍👧</span> Parent Strategy</a>
     <div class="nav-section-label">Operations</div>
+    <a class="nav-item" onclick="goTo('runsheet')" id="nav-runsheet"><span class="icon">🎬</span> Live Run Sheet</a>
     <a class="nav-item" onclick="goTo('operations')" id="nav-operations"><span class="icon">⚙️</span> Key Operations &amp; Roles</a>
     <a class="nav-item" onclick="goTo('revenue')" id="nav-revenue"><span class="icon">💰</span> Revenue Strategy</a>
+    <a class="nav-item" onclick="goTo('finance')" id="nav-finance"><span class="icon">📊</span> Finance Dashboard</a>
     <a class="nav-item" onclick="goTo('teams')" id="nav-teams"><span class="icon">🏆</span> Team Structure</a>
     <a class="nav-item" onclick="goTo('social')" id="nav-social"><span class="icon">📱</span> Social Media</a>
     <a class="nav-item" onclick="goTo('sponsorship')" id="nav-sponsorship"><span class="icon">🤝</span> Sponsorship</a>
@@ -82,15 +127,15 @@
   <section class="page active" id="page-dashboard">
     <div class="page-header">
       <div class="eyebrow">Management Hub</div>
-      <h2>REFA Season 2 &mdash; The Word League</h2>
-      <p style="color:var(--navy);font-weight:600;"><strong>The Word League</strong> transforms standard Bible quizzing into a high-stakes, team-based championship.</p>
+      <h2><span id="dash-event-name">REFA Season 2</span> &mdash; <span id="dash-event-tagline">The Word League</span></h2>
+      <p style="color:var(--brand-primary);font-weight:600;"><strong id="dash-tagline-bold">The Word League</strong> transforms standard Bible quizzing into a high-stakes, team-based championship.</p>
       <p>Central command for all team leads, mentors, coordinators and content managers. Track progress, manage tasks, and stay aligned across every phase.</p>
     </div>
     <div class="grid-4" style="margin-bottom:28px;">
-      <div class="stat-card"><div class="label">Event Theme</div><div class="value" style="font-size:18px;line-height:1.3;">Words That Last</div><div class="sub">Season 2 Official Theme</div></div>
-      <div class="stat-card"><div class="label">Target Contestants</div><div class="value">100</div><div class="sub">10 teams x 10 members</div></div>
-      <div class="stat-card"><div class="label">Vote Rate</div><div class="value">₦200</div><div class="sub">Primary Revenue Engine</div></div>
-      <div class="stat-card"><div class="label">Grand Final</div><div class="value">Sep 6</div><div class="sub">Church Auditorium</div></div>
+      <div class="stat-card"><div class="label">Event Theme</div><div class="value" style="font-size:18px;line-height:1.3;" id="stat-theme">Words That Last</div><div class="sub">Official Theme</div></div>
+      <div class="stat-card"><div class="label">Target Contestants</div><div class="value" id="stat-contestants">100</div><div class="sub" id="stat-teams-sub">10 teams x 10 members</div></div>
+      <div class="stat-card"><div class="label">Vote Rate</div><div class="value" id="stat-vote-rate">₦200</div><div class="sub">Primary Revenue Engine</div></div>
+      <div class="stat-card"><div class="label">Grand Final</div><div class="value" id="stat-final-date">Sep 6</div><div class="sub" id="stat-venue" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Church Auditorium</div></div>
     </div>
     <div class="grid-2">
       <div class="card"><div class="card-title">Overall Task Progress</div><div id="dashboard-progress-list"></div></div>
@@ -112,152 +157,28 @@
       <div class="card-title"><span class="icon">✨</span> Ready Production Kits &amp; Execution Tools</div>
       <p style="font-size:13px;color:var(--text-muted);margin-bottom:16px;">Interactive graphical toolkits prepared for immediate deployment across schools, parents, sponsors, and social media.</p>
       
-      <div class="kit-grid">
-        <!-- KIT 1: SPONSORSHIP -->
-        <div class="kit-card">
-          <div class="kit-header kit-header-sponsorship">
-            <div class="kit-title-wrap">
-              <h3>Sponsorship Pitch Deck</h3>
-              <p>Corporate, School &amp; Individual Kit</p>
-            </div>
-            <div class="kit-icon">🤝</div>
-          </div>
-          <div class="kit-body">
-            <div class="kit-badge-row">
-              <span class="kit-chip chip-gold">5 Tiers (₦50k-₦1M)</span>
-              <span class="kit-chip chip-blue">Proposal Deck</span>
-            </div>
-            <ul class="kit-features">
-              <li>School, Brand &amp; Individual Pitch Templates</li>
-              <li>Executive Summary 1-Pager</li>
-              <li>5-Tier Deliverables Matrix</li>
-              <li>Printable Agreement Contract</li>
-            </ul>
-            <div class="kit-actions">
-              <button class="btn-preview" onclick="openKitModal('sponsorship')">🚀 Open Ready-to-Use Kit</button>
-              <div style="display:flex; gap:5px; margin-top:5px; flex-wrap:wrap;">
-                <button class="btn-raw" onclick="editTemplate('sponsorship_schools')" style="background:var(--navy);color:var(--white);border:none;border-radius:4px;padding:6px 10px;font-size:11px;cursor:pointer;">✏️ Letter (Schools)</button>
-                <button class="btn-raw" onclick="editTemplate('sponsorship_business')" style="background:var(--navy);color:var(--white);border:none;border-radius:4px;padding:6px 10px;font-size:11px;cursor:pointer;">✏️ Letter (Business)</button>
-                <button class="btn-raw" onclick="editTemplate('sponsorship_individual')" style="background:var(--navy);color:var(--white);border:none;border-radius:4px;padding:6px 10px;font-size:11px;cursor:pointer;">✏️ Letter (Individual)</button>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- KIT 2: PARENT VOTING -->
-        <div class="kit-card">
-          <div class="kit-header kit-header-parent">
-            <div class="kit-title-wrap">
-              <h3>Parent Voting Starter Pack</h3>
-              <p>Mobilization &amp; Print Kit</p>
-            </div>
-            <div class="kit-icon">👨‍👩‍👧</div>
-          </div>
-          <div class="kit-body">
-            <div class="kit-badge-row">
-              <span class="kit-chip chip-green">Printable Cards</span>
-              <span class="kit-chip chip-gold">WhatsApp Copy (₦200/Vote)</span>
-            </div>
-            <ul class="kit-features">
-              <li>Audition Day Parent Welcome Letter</li>
-              <li>QR Code &amp; 100-Vote Challenge Card</li>
-              <li>One-Click WhatsApp Broadcast Copy</li>
-              <li>Step-by-Step Voting Guide &amp; FAQs</li>
-            </ul>
-            <div class="kit-actions">
-              <button class="btn-preview" onclick="openKitModal('parent')">🚀 Open Ready-to-Use Kit</button>
-              <a href="Parent_Voting_Starter_Pack.md" target="_blank" class="btn-raw">📄 Raw (.md)</a>
-            </div>
-          </div>
-        </div>
-
-        <!-- KIT 3: SOCIAL MEDIA -->
-        <div class="kit-card">
-          <div class="kit-header kit-header-social">
-            <div class="kit-title-wrap">
-              <h3>Social Media Launch Kit</h3>
-              <p>Campaign Copy &amp; Visual Briefs</p>
-            </div>
-            <div class="kit-icon">📱</div>
-          </div>
-          <div class="kit-body">
-            <div class="kit-badge-row">
-              <span class="kit-chip chip-purple">Daily Posts</span>
-              <span class="kit-chip chip-blue">Reels Scripts</span>
-            </div>
-            <ul class="kit-features">
-              <li>Teaser Campaign &amp; Concept Reveals</li>
-              <li>Profile Week Contestant Spotlight Scripts</li>
-              <li>Voting Launch &amp; Countdown Posts</li>
-              <li>Graphic Designer Briefs &amp; Specs</li>
-            </ul>
-            <div class="kit-actions">
-              <button class="btn-preview" onclick="openKitModal('social')">🚀 Open Ready-to-Use Kit</button>
-              <a href="Social_Media_Launch_Kit.md" target="_blank" class="btn-raw">📄 Raw (.md)</a>
-            </div>
-          </div>
-        </div>
-
-        <!-- KIT 4: PRODUCTION BIBLE -->
-        <div class="kit-card">
-          <div class="kit-header kit-header-bible">
-            <div class="kit-title-wrap">
-              <h3>Master Production Bible</h3>
-              <p>Full Season Strategy &amp; Architecture</p>
-            </div>
-            <div class="kit-icon">📘</div>
-          </div>
-          <div class="kit-body">
-            <div class="kit-badge-row">
-              <span class="kit-chip chip-gold">Master Plan</span>
-              <span class="kit-chip chip-green">Reality TV Concept</span>
-            </div>
-            <ul class="kit-features">
-              <li>"The Word League" Season 2 Architecture</li>
-              <li>Detailed 7-Phase Execution Timeline</li>
-              <li>Scoring Rules &amp; Judging Framework</li>
-              <li>10 Team Names, Colours &amp; Mentor Brief</li>
-            </ul>
-            <div class="kit-actions">
-              <button class="btn-preview" onclick="openKitModal('bible')">🚀 Open Ready-to-Use Kit</button>
-              <a href="REFA_Season2_Strategy.md" target="_blank" class="btn-raw">📄 Raw (.md)</a>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+      <div class="kit-grid" id="dynamic-kit-grid"></div>
 
     <div class="card">
       <div class="card-title">Stage Snapshot</div>
       <div style="overflow-x:auto;">
         <table>
           <thead><tr><th>Stage</th><th>Date</th><th>Theme</th><th>Status</th></tr></thead>
-          <tbody>
-            <tr><td><strong>Audition / Screening</strong></td><td>August 1</td><td>Selection of 100 contestants</td><td><span class="phase-badge upcoming"><span class="dot"></span>Upcoming</span></td></tr>
-            <tr><td><strong>Stage 1 &mdash; The Proving Ground</strong></td><td>August 9</td><td>Volume &amp; Accuracy</td><td><span class="phase-badge upcoming"><span class="dot"></span>Upcoming</span></td></tr>
-            <tr><td><strong>Stage 2 &mdash; The Refinement</strong></td><td>August 16</td><td>Precision &amp; Pressure</td><td><span class="phase-badge upcoming"><span class="dot"></span>Upcoming</span></td></tr>
-            <tr><td><strong>Grand Final &mdash; The Last Word</strong></td><td>September 6</td><td>Championship Night</td><td><span class="phase-badge upcoming"><span class="dot"></span>Upcoming</span></td></tr>
+          <tbody id="stage-snapshot-body">
+            <!-- Dynamically populated by JS based on activeEvent.stagesSnapshot -->
           </tbody>
         </table>
       </div>
     </div>
-    <div class="alert alert-gold"><span class="alert-icon">⚡</span><div><strong>Urgent &mdash; Audition is August 1.</strong> Voting platform, social media handles, application form, and sponsorship outreach must be completed this week. See <a href="#" onclick="goTo('tasks')" style="color:inherit;font-weight:700;">Phase Tasks</a> for your immediate checklist.</div></div>
+    <div id="urgent-alert-container"></div>
   </section>
 
   <!-- TIMELINE -->
   <section class="page" id="page-timeline">
     <div class="page-header"><div class="eyebrow">Season Calendar</div><h2>Full Season Timeline</h2><p>Every phase of the competition from pre-season to the Grand Final, with key milestones and content windows mapped.</p></div>
     <div class="card">
-      <div class="timeline">
-        <div class="tl-item done" style="cursor:pointer;" onclick="goToTask('preseason')"><div class="tl-date">July 1 &ndash; July 31</div><div class="tl-title">Pre-Season Setup</div><div class="tl-desc">Brand identity locked. Social media created. Sponsorship pitches sent. Application form live. Voting platform commissioned. Teaser campaign running.</div></div>
-        <div class="tl-item active-phase" style="cursor:pointer;" onclick="goToTask('audition')"><div class="tl-date">August 1</div><div class="tl-title">Audition / Screening Day</div><div class="tl-desc">Private internal screening. 100 contestants selected. Teams formed &mdash; 10 teams of 10, each assigned a mentor. Parents receive voting starter packs.</div></div>
-        <div class="tl-item" style="cursor:pointer;" onclick="goToTask('profileweek')"><div class="tl-date">August 2 &ndash; 6</div><div class="tl-title">Profile Week (Voting CLOSED)</div><div class="tl-desc">Contestant profile videos posted daily. Team reveals staggered. Mentor introductions. Parents added to WhatsApp groups. Audience falls in love with contestants before they can vote.</div></div>
-        <div class="tl-item" style="cursor:pointer;" onclick="goToTask('profileweek')"><div class="tl-date">August 7</div><div class="tl-title">Voting Round 1 Opens</div><div class="tl-desc">Voting officially opens. Parents mobilised via WhatsApp. First leaderboard teaser published. Hype: "Stage 1 tomorrow &mdash; who is leading?"</div></div>
-        <div class="tl-item" style="cursor:pointer;" onclick="goToTask('stage1')"><div class="tl-date">August 9</div><div class="tl-title">Stage 1 &mdash; The Proving Ground</div><div class="tl-desc"><strong>Why it's called The Proving Ground:</strong> This is where raw talent meets reality. Contestants must prove they deserve their spot by quoting 60 scriptures in 2 minutes under the heat of the stage lights.<br/><br/>All 10 teams compete. Live stream active. Judges give filmed remarks. Leaderboard announced live. Voting closes midnight.</div></div>
-        <div class="tl-item" style="cursor:pointer;" onclick="goToTask('poststage1')"><div class="tl-date">August 10 &ndash; 15</div><div class="tl-title">Post-Stage 1 Content + Round 2 Voting</div><div class="tl-desc">Highlights reel published within 48 hrs. Contestant spotlights, parent reaction clips, BTS content. Voting Round 2 open. Leaderboard updates every 48 hrs.</div></div>
-        <div class="tl-item" style="cursor:pointer;" onclick="goToTask('stage2')"><div class="tl-date">August 16</div><div class="tl-title">Stage 2 &mdash; The Refinement</div><div class="tl-desc"><strong>Why it's called The Refinement:</strong> The pressure increases to weed out the weak. Contestants face Cross-Examination (judges interrupting them) and Duet Challenges, refining their focus and precision.<br/><br/>Team immunity stakes. Leaderboard revealed live on stage. Voting closes midnight.</div></div>
-        <div class="tl-item" style="cursor:pointer;" onclick="goToTask('stage2')"><div class="tl-date">August 17 &ndash; September 5</div><div class="tl-title">Final Push + Championship Voting</div><div class="tl-desc">Finalist features, "Road to the Final" series. Longest voting window. Voting closes Sep 5 midnight.</div></div>
-        <div class="tl-item" style="cursor:pointer;" onclick="goToTask('final')"><div class="tl-date">September 6</div><div class="tl-title">Grand Final &mdash; The Last Word</div><div class="tl-desc"><strong>Why it's called The Last Word:</strong> This is the ultimate showdown. The final chance to speak, the final chance to win.<br/><br/>Championship night. Red carpet arrival. Live worship opener. 3 championship rounds. Parent Testimony segment. Full awards ceremony.</div></div>
+      <div class="timeline" id="timeline-container">
+        <!-- Dynamically populated by JS based on activeEvent.phases -->
       </div>
     </div>
   </section>
@@ -368,6 +289,51 @@
       <div class="comm-row"><div class="comm-date">Sep 1</div><div class="comm-msg">"5 days left to vote! The Final Round closes Sep 5 midnight. Share the link everywhere. This is the championship push."</div></div>
       <div class="comm-row"><div class="comm-date">Sep 5</div><div class="comm-msg">"LAST CHANCE &mdash; Voting closes TONIGHT at midnight. Thank you for every vote, every share, every prayer."</div></div>
       <div class="comm-row"><div class="comm-date">Sep 6 Final</div><div class="comm-msg">Arrival time. Reserved seats. Dress code. Awards preview. Photo station hours. Post-event fellowship details.</div></div>
+    </div>
+  </section>
+
+  <!-- RUNSHEET -->
+  <section class="page" id="page-runsheet">
+    <div class="page-header">
+      <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+        <div>
+          <div class="eyebrow">Live Operations</div>
+          <h2>Event Day Live Run Sheet</h2>
+          <p>Real-time MC cue system and stage coordination. Changes sync globally.</p>
+        </div>
+        <div id="runsheet-status" style="background:rgba(212,175,55,0.15); color:#D4AF37; font-size:12px; font-weight:700; padding:6px 12px; border-radius:20px;">
+          ● Live Sync
+        </div>
+      </div>
+    </div>
+    
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 20px; background: rgba(0,0,0,0.2); padding: 16px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05);">
+      <div>
+        <div style="font-size: 11px; color: rgba(255,255,255,0.5); text-transform: uppercase; font-weight: 700; letter-spacing: 1px; margin-bottom: 4px;">Running Time</div>
+        <div id="rs-clock" style="font-family: 'Inter', monospace; font-size: 24px; font-weight: 800; color: #fff;">00:00:00</div>
+      </div>
+      <div>
+        <button id="btn-toggle-live-mode" onclick="toggleRunsheetLiveMode()" style="background: var(--brand-primary, #7c3aed); color: #fff; border: none; padding: 10px 16px; border-radius: 8px; font-weight: 700; cursor: pointer;">Enable Live Mode</button>
+      </div>
+    </div>
+
+    <div class="card" style="padding: 0; overflow: hidden;">
+      <div style="overflow-x: auto;">
+        <table style="width: 100%; border-collapse: collapse; text-align: left;">
+          <thead style="background: rgba(255,255,255,0.02); border-bottom: 1px solid rgba(255,255,255,0.05);">
+            <tr>
+              <th style="padding: 16px; font-size: 12px; color: rgba(255,255,255,0.5); text-transform: uppercase;">Time</th>
+              <th style="padding: 16px; font-size: 12px; color: rgba(255,255,255,0.5); text-transform: uppercase;">Segment</th>
+              <th style="padding: 16px; font-size: 12px; color: rgba(255,255,255,0.5); text-transform: uppercase;">MC Script / Notes</th>
+              <th style="padding: 16px; font-size: 12px; color: rgba(255,255,255,0.5); text-transform: uppercase;">Crew</th>
+              <th style="padding: 16px; font-size: 12px; color: rgba(255,255,255,0.5); text-transform: uppercase; text-align: right;">Status</th>
+            </tr>
+          </thead>
+          <tbody id="runsheet-body">
+            <!-- Populated by JS -->
+          </tbody>
+        </table>
+      </div>
     </div>
   </section>
 
@@ -523,6 +489,94 @@
     </div>
   </section>
 
+  <!-- FINANCE DASHBOARD -->
+  <section class="page" id="page-finance">
+    <div class="page-header">
+      <div style="display:flex; justify-content:space-between; align-items:flex-end;">
+        <div>
+          <div class="eyebrow">Financial Tracking</div>
+          <h2>Live Finance Dashboard</h2>
+          <p>Track real-time vote revenue, sponsorships, and expenses.</p>
+        </div>
+        <div>
+          <button class="btn-preview" onclick="document.getElementById('finance-modal').style.display='flex'">➕ Log Transaction</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid-4" style="margin-bottom:28px;">
+      <div class="stat-card" style="border-top: 4px solid #10b981;">
+        <div class="label">Total Revenue</div>
+        <div class="value" id="fin-total-revenue">₦0</div>
+        <div class="sub">Voting + Sponsorships</div>
+      </div>
+      <div class="stat-card" style="border-top: 4px solid #ef4444;">
+        <div class="label">Total Expenses</div>
+        <div class="value" id="fin-total-expenses">₦0</div>
+        <div class="sub">Operational costs</div>
+      </div>
+      <div class="stat-card" style="border-top: 4px solid #3b82f6;">
+        <div class="label">Net Profit</div>
+        <div class="value" id="fin-net-profit">₦0</div>
+        <div class="sub">Current standing</div>
+      </div>
+      <div class="stat-card" style="border-top: 4px solid #f59e0b;">
+        <div class="label">Target Progress</div>
+        <div class="value" id="fin-target-pct">0%</div>
+        <div class="sub">of ₦4,000,000 goal</div>
+      </div>
+    </div>
+
+    <div class="card" style="padding: 0; overflow: hidden;">
+      <div style="padding: 20px; border-bottom: 1px solid rgba(255,255,255,0.05);">
+        <h3 style="margin: 0; font-family: 'Playfair Display', serif; font-size: 20px;">Ledger</h3>
+      </div>
+      <div style="overflow-x: auto;">
+        <table style="width: 100%; border-collapse: collapse; text-align: left;">
+          <thead style="background: rgba(255,255,255,0.02); border-bottom: 1px solid rgba(255,255,255,0.05);">
+            <tr>
+              <th style="padding: 16px; font-size: 12px; color: rgba(255,255,255,0.5); text-transform: uppercase;">Date</th>
+              <th style="padding: 16px; font-size: 12px; color: rgba(255,255,255,0.5); text-transform: uppercase;">Type</th>
+              <th style="padding: 16px; font-size: 12px; color: rgba(255,255,255,0.5); text-transform: uppercase;">Description</th>
+              <th style="padding: 16px; font-size: 12px; color: rgba(255,255,255,0.5); text-transform: uppercase; text-align: right;">Amount</th>
+            </tr>
+          </thead>
+          <tbody id="finance-ledger-body">
+            <!-- Populated by JS -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- TRANSACTION MODAL -->
+    <div class="modal-overlay" id="finance-modal" style="display:none; align-items:center; justify-content:center; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.8); z-index:1000;">
+      <div class="modal-container" style="background:#1e293b; padding:24px; border-radius:12px; width:100%; max-width:400px; position:relative;">
+        <button class="modal-close" onclick="document.getElementById('finance-modal').style.display='none'" style="position:absolute; right:16px; top:16px; background:none; border:none; color:white; font-size:20px; cursor:pointer;">&times;</button>
+        <h3 style="margin-top:0; color:white; font-family:'Playfair Display', serif;">Log Transaction</h3>
+        
+        <div style="margin-bottom:16px;">
+          <label style="display:block; color:rgba(255,255,255,0.7); font-size:12px; margin-bottom:4px;">Type</label>
+          <select id="fin-type" style="width:100%; padding:10px; border-radius:6px; background:rgba(0,0,0,0.3); border:1px solid rgba(255,255,255,0.1); color:white;">
+            <option value="income">Income (Revenue / Sponsorship)</option>
+            <option value="expense">Expense (Cost / Purchase)</option>
+          </select>
+        </div>
+        
+        <div style="margin-bottom:16px;">
+          <label style="display:block; color:rgba(255,255,255,0.7); font-size:12px; margin-bottom:4px;">Description</label>
+          <input type="text" id="fin-desc" placeholder="e.g. Stage Lighting Deposit" style="width:100%; padding:10px; border-radius:6px; background:rgba(0,0,0,0.3); border:1px solid rgba(255,255,255,0.1); color:white;">
+        </div>
+        
+        <div style="margin-bottom:24px;">
+          <label style="display:block; color:rgba(255,255,255,0.7); font-size:12px; margin-bottom:4px;">Amount (₦)</label>
+          <input type="number" id="fin-amount" placeholder="50000" style="width:100%; padding:10px; border-radius:6px; background:rgba(0,0,0,0.3); border:1px solid rgba(255,255,255,0.1); color:white;">
+        </div>
+        
+        <button onclick="logFinanceTransaction()" style="width:100%; padding:12px; border-radius:6px; background:var(--brand-primary); border:none; color:white; font-weight:bold; cursor:pointer;">Save Transaction</button>
+      </div>
+    </div>
+  </section>
+
   <!-- TEAMS -->
   <section class="page" id="page-teams">
     <div class="page-header">
@@ -544,17 +598,8 @@
       </div>
       <div class="team-grid" id="teams-grid"></div>
     </div>
-    <div class="grid-2">
-      <div class="card">
-        <div class="card-title">Mentor Role Brief</div>
-        <div class="info-item"><ul><li>Train team members weekly from audition to Final</li><li>Act as team spokesperson on social media</li><li>Lead team WhatsApp group (admin role)</li><li>Participate in voting strategy decisions</li><li>Appear on stage during team introductions</li><li>Feature in "Mentor Moments" content series</li><li>Expand audience via their own networks</li></ul></div>
-      </div>
-      <div class="card">
-        <div class="card-title">Stage Format Overview</div>
-        <div class="info-item" style="margin-bottom:10px;"><h4>Stage 1 &mdash; The Proving Ground</h4><p>60 scriptures in 2 minutes. 30 scriptures in 1 minute. Judges score accuracy, speed, delivery.</p></div>
-        <div class="info-item" style="margin-bottom:10px;"><h4>Stage 2 &mdash; The Refinement</h4><p>Cross-examination. Duet rounds. Speed recall challenges. Team immunity stakes.</p></div>
-        <div class="info-item"><h4>Grand Final &mdash; The Last Word</h4><p>Personal mastery. "The Gauntlet" curveball round. Power recitation of contestant's choice.</p></div>
-      </div>
+    <div class="grid-2" id="teams-info-container">
+      <!-- Dynamically populated by JS based on activeEvent.teamsInfo -->
     </div>
   </section>
 
@@ -1055,44 +1100,8 @@
   <section class="page" id="page-sponsorship">
     <div class="page-header"><div class="eyebrow">Partnership</div><h2>Sponsorship Packages</h2><p>Target: Christian schools, Bible publishers, faith-based businesses, family brands &amp; individual patrons. Pitch decks must go out by July 25.</p></div>
     <div class="alert alert-red"><span class="alert-icon">⚡</span><strong>Urgent:</strong> Send sponsorship pitch decks by July 25. Sponsors need minimum 2 weeks to decide and process. Audition is August 1.</div>
-    <div class="sponsor-tier" style="border-color:var(--gold);background:var(--gold-pale);">
-      <div class="tier-title" style="color:var(--navy);">Title Sponsor</div>
-      <div class="tier-price" style="color:var(--gold);">₦1,000,000</div>
-      <div class="tier-benefit" style="color:var(--navy);">Event named after sponsor ("REFA Season 2 powered by [Brand]")</div>
-      <div class="tier-benefit" style="color:var(--navy);">Opening and closing banner at all 3 stage events</div>
-      <div class="tier-benefit" style="color:var(--navy);">All digital asset mentions throughout the season</div>
-      <div class="tier-benefit" style="color:var(--navy);">VIP table (10 seats) at Grand Final</div>
-      <div class="tier-benefit" style="color:var(--navy);">Logo on all print and digital materials</div>
-      <div class="tier-benefit" style="color:var(--navy);">Dedicated social media feature post</div>
-    </div>
-    <div class="sponsor-tier" style="border-color:#B45309;background:#FFFBEB;">
-      <div class="tier-title" style="color:#B45309;">Gold Sponsor</div>
-      <div class="tier-price" style="color:#B45309;">₦500,000</div>
-      <div class="tier-benefit" style="color:var(--navy);">Logo on all digital assets and programme</div>
-      <div class="tier-benefit" style="color:var(--navy);">Stage mention at 2 events</div>
-      <div class="tier-benefit" style="color:var(--navy);">Social media feature post (twice during season)</div>
-      <div class="tier-benefit" style="color:var(--navy);">Reserved seats (6) at Grand Final</div>
-    </div>
-    <div class="sponsor-tier" style="border-color:#6B7280;background:#F9FAFB;">
-      <div class="tier-title" style="color:#374151;">Silver Sponsor</div>
-      <div class="tier-price" style="color:#374151;">₦250,000</div>
-      <div class="tier-benefit" style="color:var(--navy);">Logo on event programme</div>
-      <div class="tier-benefit" style="color:var(--navy);">Stage mention at 1 event</div>
-      <div class="tier-benefit" style="color:var(--navy);">Social media shoutout post</div>
-    </div>
-    <div class="sponsor-tier" style="border-color:#9CA3AF;background:#FFFFFF;">
-      <div class="tier-title" style="color:#6B7280;">Community Supporter</div>
-      <div class="tier-price" style="color:#6B7280;">₦100,000</div>
-      <div class="tier-benefit" style="color:var(--navy);">Name listed in event programme and digital credits</div>
-      <div class="tier-benefit" style="color:var(--navy);">Thank-you post on social media</div>
-    </div>
-    <div class="sponsor-tier" style="border-color:#059669;background:#ECFDF5;">
-      <div class="tier-title" style="color:#047857;">Individual Supporter</div>
-      <div class="tier-price" style="color:#047857;">₦50,000</div>
-      <div class="tier-benefit" style="color:var(--navy);">Name listed in official event programme &amp; digital honor roll</div>
-      <div class="tier-benefit" style="color:var(--navy);">Personalized e-Certificate of Appreciation ("Society Builder")</div>
-      <div class="tier-benefit" style="color:var(--navy);">Special mention in online live stream roll of honor / end credits</div>
-      <div class="tier-benefit" style="color:var(--navy);">Honored guest seat reservation at Grand Final</div>
+    <div id="sponsorship-tiers-container" style="display:flex; flex-direction:column; gap:16px;">
+      <!-- Dynamic Tiers injected by app.js -->
     </div>
   </section>
 
@@ -1347,7 +1356,7 @@
 
         <div class="form-group" style="margin-bottom:14px;">
           <label style="font-size:12px;font-weight:700;color:var(--navy);display:block;margin-bottom:4px;">Account Name (Beneficiary)</label>
-          <input type="text" id="acc-name" value="REFINERS OF FAITH ACADEMY" oninput="updateAccountGenerator()" style="width:100%;padding:10px;border-radius:6px;border:1px solid #CBD5E1;font-size:13px;font-weight:bold;" />
+          <input type="text" id="acc-name" value="" oninput="updateAccountGenerator()" style="width:100%;padding:10px;border-radius:6px;border:1px solid #CBD5E1;font-size:13px;font-weight:bold;" />
         </div>
 
         <div class="form-group" style="margin-bottom:14px;">
@@ -1410,15 +1419,15 @@
           
           <div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid rgba(255,255,255,0.15);padding-bottom:12px;margin-bottom:16px;">
             <div>
-              <div style="font-size:10px;color:var(--gold);font-weight:bold;letter-spacing:1px;">REFINERS OF FAITH ACADEMY (REFA)</div>
-              <div style="font-size:16px;font-weight:800;letter-spacing:0.5px;">SEASON 2 — OFFICIAL PAYMENT SLIP</div>
+              <div style="font-size:10px;color:var(--gold);font-weight:bold;letter-spacing:1px;" id="preview-acc-org">ORGANIZATION NAME</div>
+              <div style="font-size:16px;font-weight:800;letter-spacing:0.5px;" id="preview-acc-season-title">SEASON 2 — OFFICIAL PAYMENT SLIP</div>
             </div>
             <div style="background:var(--gold);color:var(--navy);font-size:10px;font-weight:900;padding:4px 8px;border-radius:4px;">VERIFIED</div>
           </div>
 
           <div style="margin-bottom:14px;">
             <div style="font-size:11px;color:rgba(255,255,255,0.6);text-transform:uppercase;">Account Name</div>
-            <div style="font-size:17px;font-weight:900;color:var(--gold-light);" id="preview-acc-name">REFINERS OF FAITH ACADEMY</div>
+            <div style="font-size:17px;font-weight:900;color:var(--gold-light);" id="preview-acc-name">ORGANIZATION NAME</div>
           </div>
 
           <div style="margin-bottom:14px;">
@@ -1438,8 +1447,8 @@
             </div>
           </div>
 
-          <div style="font-size:10px;text-align:center;color:rgba(255,255,255,0.5);font-style:italic;">
-            Official bank account for REFA Season 2 ("Words That Last"). Transferred funds are automatically tracked &amp; acknowledged.
+          <div style="font-size:10px;text-align:center;color:rgba(255,255,255,0.5);font-style:italic;" id="preview-acc-footer">
+            Official bank account for ORGANIZATION NAME
           </div>
         </div>
 
@@ -1474,7 +1483,7 @@
       <div>
         <div class="eyebrow">Production</div>
         <h2>Letter Generator</h2>
-        <p>Create and print official REFA / AG Nigeria documents.</p>
+        <p>Create and print official event documents.</p>
       </div>
       <button class="btn-preview" onclick="window.print()" style="font-size:14px; padding:10px 20px;">🖨️ Print / Save PDF</button>
     </div>
@@ -1487,7 +1496,7 @@
           
           <div class="form-group">
             <label>Our Ref</label>
-            <input type="text" id="let-our-ref" placeholder="e.g. REFA/2026/SP-01" oninput="updateLetter()" />
+            <input type="text" id="let-our-ref" placeholder="e.g. ORG/2026/01" oninput="updateLetter()" />
           </div>
           
           <div class="form-group">
@@ -1644,7 +1653,15 @@
 </div>
 
   <script type="module" src="js/firebase-init.js"></script>
+  <!-- ── Event Seed Scripts — load before app.js ───────────────────────── -->
+  <script src="scripts/seed-event-refa2.js"></script>
+  <script src="scripts/seed-event-hit-the-mic-s3.js"></script>
+  <script src="scripts/seed-tasks-hit-the-mic-s3.js"></script>
+  <!-- ─────────────────────────────────────────────────────────────────── -->
+  <script src="js/modules/runsheet.js"></script>
+  <script src="js/modules/finance.js"></script>
   <script src="js/app.js?v=3"></script>
+
   <script src="js/templates/bts.js"></script>
   <script src="js/templates/champions-chosen.js"></script>
   <script src="js/templates/coming-soon.js"></script>
@@ -1666,7 +1683,45 @@
   <script src="js/templates/team-reveal.js"></script>
   <script src="js/templates/tech-crew.js"></script>
   <script src="js/templates/voting-live.js"></script>
-  <script src="js/countdown.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    .premium-lock-overlay {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(10, 15, 36, 0.4);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      color: white;
+      text-align: center;
+      padding: 20px;
+    }
+    .premium-lock-card {
+      background: rgba(20, 25, 45, 0.9);
+      border: 1px solid rgba(212, 175, 55, 0.5);
+      padding: 30px;
+      border-radius: 12px;
+      max-width: 400px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.8);
+    }
+    .premium-lock-title {
+      color: #d4af37;
+      font-size: 20px;
+      font-weight: 800;
+      margin-bottom: 12px;
+    }
+    .premium-lock-text {
+      font-size: 14px;
+      color: rgba(255,255,255,0.8);
+      line-height: 1.6;
+    }
+  </style>
+  <script src="js/event-config.js"></script>
+  <script src="js/ai-widget.js"></script>
   <script src="js/studio.js"></script>
 </body>
 </html>

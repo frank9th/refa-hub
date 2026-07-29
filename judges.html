@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Judges Portal — Digital Scoring</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet" />
+  
+  <link rel="stylesheet" href="css/styles.css" />
+  
+  <style>
+    /* ─── BASE STYLES ──────────────────────────── */
+    body { 
+      font-family: 'Inter', sans-serif; 
+      background: #060B18; 
+      color: #e2e8f0; 
+      min-height: 100vh; 
+      margin: 0;
+      padding: 0;
+      overflow-x: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    body::before {
+      content: ''; position: fixed; top: -50%; left: -50%; width: 200%; height: 200%;
+      background: radial-gradient(ellipse at 20% 50%, rgba(var(--brand-primary-rgb, 139,92,246),0.1) 0%, transparent 50%),
+                  radial-gradient(ellipse at 80% 20%, rgba(var(--brand-accent-rgb, 212,175,55),0.1) 0%, transparent 50%);
+      animation: bgDrift 25s ease-in-out infinite alternate; z-index: -1; pointer-events: none;
+    }
+
+    /* ─── TOP BAR ─────────────────────────────── */
+    .top-bar {
+      background: rgba(6,11,24,0.7); border-bottom: 1px solid rgba(255,255,255,0.08);
+      padding: 16px 32px; display: flex; align-items: center; justify-content: space-between;
+      position: sticky; top: 0; z-index: 100; backdrop-filter: blur(20px);
+    }
+    .brand-name { font-family: 'Playfair Display', serif; font-size: 20px; color: #fff; font-weight: 800; }
+    .judge-badge { background: linear-gradient(135deg, #1d4ed8, #4c1d95); padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; text-transform: uppercase; color: #fff; }
+
+    /* ─── LAYOUT ──────────────────────────────── */
+    .container { display: grid; grid-template-columns: 350px 1fr; gap: 30px; max-width: 1200px; margin: 30px auto; padding: 0 20px; flex: 1; width: 100%; box-sizing: border-box; }
+    @media (max-width: 900px) { .container { grid-template-columns: 1fr; } }
+
+    /* ─── SIDEBAR (Contestants List) ──────────── */
+    .sidebar { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; padding: 20px; display: flex; flex-direction: column; max-height: calc(100vh - 120px); }
+    .filter-group { margin-bottom: 16px; }
+    .filter-group select { width: 100%; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 10px; color: #fff; font-family: 'Inter', sans-serif; }
+    
+    .contestant-list { overflow-y: auto; flex: 1; margin-top: 10px; padding-right: 5px; }
+    .contestant-list::-webkit-scrollbar { width: 6px; }
+    .contestant-list::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
+    
+    .c-card { background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.05); border-radius: 12px; padding: 16px; margin-bottom: 10px; cursor: pointer; transition: all 0.2s; display: flex; justify-content: space-between; align-items: center; }
+    .c-card:hover { background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.1); }
+    .c-card.active { background: rgba(var(--brand-accent-rgb, 212,175,55), 0.1); border-color: var(--brand-accent, #D4AF37); }
+    .c-card.scored { opacity: 0.6; }
+    
+    .c-info h4 { margin: 0 0 4px; font-size: 14px; color: #fff; }
+    .c-info p { margin: 0; font-size: 11px; color: rgba(255,255,255,0.5); font-family: monospace; }
+    .c-status { font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 4px; }
+    .status-pending { background: rgba(245,158,11,0.15); color: #fbbf24; }
+    .status-scored { background: rgba(16,185,129,0.15); color: #34d399; }
+
+    /* ─── MAIN AREA (Scoring Form) ────────────── */
+    .main-area { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; padding: 30px; backdrop-filter: blur(12px); display: flex; flex-direction: column; }
+    .empty-state { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: rgba(255,255,255,0.3); text-align: center; }
+    .empty-state .icon { font-size: 48px; margin-bottom: 16px; opacity: 0.5; }
+    
+    #score-panel { display: none; }
+    
+    .panel-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 30px; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 20px; }
+    .panel-header h2 { font-family: 'Playfair Display', serif; font-size: 28px; margin: 0 0 8px; color: #fff; }
+    .cat-tag { background: rgba(255,255,255,0.1); color: #fff; padding: 4px 10px; border-radius: 4px; font-size: 11px; font-weight: 700; text-transform: uppercase; }
+    .total-circle { width: 70px; height: 70px; border-radius: 50%; background: rgba(0,0,0,0.3); border: 2px solid var(--brand-accent, #D4AF37); display: flex; flex-direction: column; align-items: center; justify-content: center; }
+    .total-val { font-size: 24px; font-weight: 800; color: #fff; line-height: 1; }
+    .total-lbl { font-size: 9px; text-transform: uppercase; color: rgba(255,255,255,0.5); margin-top: 4px; }
+
+    /* Scoring Sliders */
+    .score-group { background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.05); border-radius: 12px; padding: 20px; margin-bottom: 16px; display: flex; align-items: center; gap: 20px; }
+    .score-info { flex: 1; }
+    .score-info h4 { margin: 0 0 6px; font-size: 14px; color: #fff; }
+    .score-info p { margin: 0; font-size: 11px; color: rgba(255,255,255,0.4); }
+    
+    .score-input { display: flex; align-items: center; gap: 16px; width: 250px; }
+    .score-input input[type="range"] { flex: 1; accent-color: var(--brand-accent, #D4AF37); }
+    .score-display { background: rgba(255,255,255,0.1); width: 44px; height: 32px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; color: #fff; }
+
+    .btn-submit { width: 100%; padding: 18px; border-radius: 12px; font-size: 16px; font-weight: 700; background: linear-gradient(135deg, #059669, #10b981); color: #fff; border: none; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 15px rgba(16,185,129, 0.4); margin-top: 20px; display: flex; justify-content: center; align-items: center; gap: 8px; }
+    .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(16,185,129, 0.6); }
+    .btn-submit:disabled { background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.3); box-shadow: none; transform: none; cursor: not-allowed; }
+
+    /* Role Lock */
+    #auth-lock { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(6,11,24,0.95); z-index: 1000; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(10px); }
+    .auth-card { background: #1e293b; border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 40px; text-align: center; max-width: 400px; width: 100%; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); }
+    .auth-card h3 { color: #fff; font-family: 'Playfair Display', serif; font-size: 24px; margin: 0 0 8px; }
+    .auth-card p { color: rgba(255,255,255,0.6); font-size: 13px; margin-bottom: 24px; }
+    .auth-card input { width: 100%; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.2); padding: 12px; border-radius: 8px; color: #fff; margin-bottom: 16px; box-sizing: border-box; }
+    .auth-card button { width: 100%; background: #D4AF37; color: #000; border: none; padding: 12px; border-radius: 8px; font-weight: 700; cursor: pointer; }
+  </style>
+</head>
+<body>
+
+  <!-- ROLE LOCK OVERLAY -->
+  <div id="auth-lock">
+    <div class="auth-card">
+      <div style="font-size: 40px; margin-bottom: 16px;">⚖️</div>
+      <h3>Judges Portal</h3>
+      <p>Secure login for official panel members only.</p>
+      <input type="text" id="judge-name" placeholder="Judge Name (e.g. Panelist 1)">
+      <input type="password" id="judge-passkey" placeholder="Pass Key (Simulate: JUDGE-2026)">
+      <button onclick="loginJudge()">Unlock Portal</button>
+      <p id="auth-err" style="color: #f87171; font-size: 11px; margin-top: 12px; display: none;">Invalid Pass Key</p>
+    </div>
+  </div>
+
+  <div class="top-bar">
+    <div style="display:flex; align-items:center; gap:12px;">
+      <div class="brand-name" id="nav-brand">Event Hub</div>
+      <div class="judge-badge">Judges Portal</div>
+    </div>
+    <div>
+      <span style="font-size: 13px; color: rgba(255,255,255,0.5); margin-right: 16px;" id="logged-judge">Not Logged In</span>
+      <button onclick="window.location.reload()" style="background:none; border:none; color:#f87171; cursor:pointer; font-weight:600;">Logout</button>
+    </div>
+  </div>
+
+  <div class="container">
+    
+    <!-- SIDEBAR: Contestant Queue -->
+    <div class="sidebar">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+        <h3 style="margin:0; font-size:16px; color:#fff;">Active Stage</h3>
+        <span style="font-size:11px; background:rgba(212,175,55,0.15); color:var(--brand-accent, #D4AF37); padding:4px 8px; border-radius:4px;">Quarter Finals</span>
+      </div>
+      
+      <div class="filter-group">
+        <select id="cat-filter" onchange="filterContestants()">
+          <option value="all">All Categories</option>
+          <!-- Populated by JS -->
+        </select>
+      </div>
+
+      <div class="contestant-list" id="contestant-list">
+        <!-- Populated by JS -->
+      </div>
+    </div>
+
+    <!-- MAIN AREA: Scoring Form -->
+    <div class="main-area">
+      <div class="empty-state" id="empty-state">
+        <div class="icon">⚖️</div>
+        <h3>Select a contestant to score</h3>
+        <p>Choose a contestant from the queue on the left.</p>
+      </div>
+
+      <div id="score-panel">
+        <div class="panel-header">
+          <div>
+            <div class="cat-tag" id="sc-cat">Gospel Singing</div>
+            <h2 id="sc-name">Contestant Name</h2>
+            <p style="margin:0; color:rgba(255,255,255,0.4); font-family:monospace;" id="sc-id">HTM-000000</p>
+          </div>
+          <div class="total-circle">
+            <div class="total-val" id="sc-total">0</div>
+            <div class="total-lbl">Total / 100</div>
+          </div>
+        </div>
+
+        <form id="scoring-form">
+          <input type="hidden" id="active-contestant-id">
+          
+          <!-- Criteria generated dynamically by JS based on event config -->
+          <div id="criteria-container"></div>
+
+          <div style="margin-top: 30px;">
+            <label style="font-size: 11px; color: rgba(255,255,255,0.5); text-transform: uppercase; font-weight: 600;">Private Notes (Optional)</label>
+            <textarea class="form-control" id="sc-notes" rows="2" style="width:100%; background:rgba(0,0,0,0.2); border:1px solid rgba(255,255,255,0.1); border-radius:8px; padding:10px; color:#fff; font-family:'Inter'; margin-top:6px; resize:vertical;"></textarea>
+          </div>
+
+          <button type="button" class="btn-submit" id="btn-submit-score" onclick="submitScore()">
+            🔒 Lock & Submit Score
+          </button>
+        </form>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="js/event-config.js"></script>
+  <script type="module" src="js/firebase-init.js"></script>
+  <script src="js/modules/judges.js"></script>
+
+</body>
+</html>
