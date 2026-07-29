@@ -336,7 +336,7 @@ async function populateEventSwitcher() {
 
 async function initEvent() {
   const urlParams = new URLSearchParams(window.location.search);
-  const eventId = urlParams.get('event') || 'refa-season2';
+  const eventId = urlParams.get('event') || 'hit-the-mic-s3';
 
   // ── Auto-seed REFA Season 2 if it doesn't exist ─────────────────────────
   if (window.seedRefa2Event && eventId === 'refa-season2') {
@@ -361,7 +361,7 @@ async function initEvent() {
   } else {
     console.error('Event not found:', eventId);
     alert('Event not found! Loading default.');
-    window.location.href = 'index.html?event=refa-season2';
+    window.location.href = 'index.html?event=hit-the-mic-s3';
     return;
   }
 
