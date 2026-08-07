@@ -1,0 +1,39 @@
+  <!-- AI BRIEF FORM -->
+  <div class="card" id="brief-section">
+    <div class="card-title">📝 Tell the AI About Your Event</div>
+    <div class="brief-form">
+      <textarea id="event-description" placeholder="e.g. A 3-phase talent competition for 200 youth, 10 teams competing across 8 weeks. Prize pool of ₦600,000. We need to raise money through voting and sponsorships. The event is in Lagos..."></textarea>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Start Date</label>
+          <input type="date" id="start-date" />
+        </div>
+        <div class="form-group">
+          <label>Duration</label>
+          <input type="number" id="duration-days" placeholder="e.g. 56 (8 weeks)" min="1" />
+        </div>
+        <div class="form-group">
+          <label>Est. Budget (₦)</label>
+          <input type="number" id="budget" placeholder="e.g. 1500000" />
+        </div>
+        <div class="form-group">
+          <label>Target Audience Size</label>
+          <input type="number" id="attendees" placeholder="e.g. 200" />
+        </div>
+        <div class="form-group" style="grid-column: 1 / -1;">
+          <label>Location / Venue</label>
+          <input type="text" id="location" placeholder="e.g. Civic Center, Lagos, Nigeria" />
+        </div>
+      </div>
+      <button class="btn-ai" onclick="generatePreview()" id="btn-preview">
+        <span>✨</span> Get AI Strategy Preview
+      </button>
+    </div>
+
+    <!-- AI Thinking State -->
+    <div class="ai-thinking" id="ai-thinking">
+      <div class="spinner"></div>
+      <div class="thinking-label" id="thinking-label">The Strategist is thinking...</div>
+      <p id="thinking-sub">Analyzing event type, revenue potential, and optimal phase structure</p>
+    </div>
+  </div>

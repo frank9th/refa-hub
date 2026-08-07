@@ -1,0 +1,82 @@
+  <div class="card" id="manual-wizard-section" style="display: none;">
+    <div class="card-title">⚙️ Manual Event Creation</div>
+    
+    <div class="step-indicator">
+      <div class="step-dot" id="dot-1"></div>
+      <div class="step-dot" id="dot-2"></div>
+      <div class="step-dot" id="dot-3"></div>
+    </div>
+
+    <!-- STEP 1 -->
+    <div class="wizard-step" id="man-step-1">
+      <h3 style="font-size: 18px; color: #fff; margin-bottom: 20px;">1. Basic Details</h3>
+      <div class="form-grid">
+          <div class="form-group">
+            <label>Event ID (URL slug)</label>
+            <input type="text" id="man-id" placeholder="e.g. talent-hunt-2027" />
+            <div class="helper-text">Lowercase, no spaces. Used for URLs (e.g. /vote?event=talent-hunt-2027)</div>
+          </div>
+          <div class="form-group">
+            <label>Event Name</label>
+            <input type="text" id="man-name" placeholder="e.g. Youth Talent Hunt" />
+          </div>
+          <div class="form-group">
+            <label>Tagline / Subtitle</label>
+            <input type="text" id="man-tagline" placeholder="e.g. Unleashing Potential" />
+          </div>
+          <div class="form-group">
+            <label>Host Organization</label>
+            <input type="text" id="man-org" placeholder="e.g. Global Youth Org" />
+          </div>
+      </div>
+      <div class="wizard-nav">
+        <button class="btn-gold" onclick="nextManualStep(2)">Next Step →</button>
+      </div>
+    </div>
+
+    <!-- STEP 2 -->
+    <div class="wizard-step" id="man-step-2">
+      <h3 style="font-size: 18px; color: #fff; margin-bottom: 20px;">2. Advanced Configuration</h3>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Campaign Start Date</label>
+          <input type="date" id="man-start-date" />
+          <div class="helper-text">The day public mobilization begins (not necessarily the finale day).</div>
+        </div>
+        <div class="form-group">
+          <label>End Date</label>
+          <input type="date" id="man-end-date" />
+        </div>
+        <div class="form-group">
+          <label>Target Contestants / Teams</label>
+          <input type="number" id="man-contestants" placeholder="e.g. 10" />
+        </div>
+        <div class="form-group">
+          <label>Voting / Ticket Price (₦)</label>
+          <input type="number" id="man-vote-price" placeholder="e.g. 100" />
+        </div>
+        <div class="form-group" style="grid-column: 1 / -1;">
+          <label>Venue / Location</label>
+          <input type="text" id="man-venue" placeholder="e.g. Civic Center, Lagos" />
+        </div>
+      </div>
+      <div class="wizard-nav">
+        <button class="btn-outline" onclick="nextManualStep(1)">← Back</button>
+        <button class="btn-gold" onclick="nextManualStep(3)">Next Step →</button>
+      </div>
+    </div>
+
+    <!-- STEP 3 -->
+    <div class="wizard-step" id="man-step-3">
+      <h3 style="font-size: 18px; color: #fff; margin-bottom: 20px;">3. Brand Aesthetics</h3>
+      <h4 style="font-size:12px; text-transform:uppercase; letter-spacing:1px; color:rgba(255,255,255,0.4); margin-bottom:12px;">Select Brand Theme</h4>
+      <div id="man-theme-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 16px;"></div>
+      
+      <div class="wizard-nav">
+        <button class="btn-outline" onclick="nextManualStep(2)">← Back</button>
+        <button class="btn-success" onclick="deployManualStrategy()" id="btn-deploy-manual">
+          🚀 Create Event Shell
+        </button>
+      </div>
+    </div>
+  </div>

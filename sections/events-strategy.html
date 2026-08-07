@@ -1,0 +1,85 @@
+  <!-- STAGE 2: FULL STRATEGY DASHBOARD -->
+  <div id="strategy-section">
+    <div class="card">
+      <div class="card-title" style="justify-content: space-between;">
+        <span>📊 Full Strategic Plan — <span id="strat-event-name" style="color:#fff; font-style:italic;"></span></span>
+      </div>
+
+      <div class="tabs">
+        <div class="tab active" onclick="switchTab('overview')">📋 Overview</div>
+        <div class="tab" onclick="switchTab('financials')">💰 Financials</div>
+        <div class="tab" onclick="switchTab('timeline')">📅 Timeline & Tasks</div>
+        <div class="tab" onclick="switchTab('content')">📣 Content Plan</div>
+        <div class="tab" onclick="switchTab('sponsorship')">🤝 Sponsorship</div>
+        <div class="tab" onclick="switchTab('risks')">⚠️ Risks</div>
+      </div>
+
+      <!-- OVERVIEW TAB -->
+      <div class="tab-panel active" id="panel-overview">
+        <div class="fin-summary" id="overview-cards"><!-- populated by JS --></div>
+        <div style="background: rgba(255,255,255,0.04); border-radius:12px; padding:20px; border: 1px solid rgba(255,255,255,0.08);">
+          <div style="font-size: 11px; text-transform:uppercase; letter-spacing:1px; color:rgba(255,255,255,0.4); margin-bottom:10px;">Strategic Direction</div>
+          <div id="overview-direction" style="font-size:14px; color:rgba(255,255,255,0.75); line-height:1.8;"></div>
+        </div>
+      </div>
+
+      <!-- FINANCIALS TAB -->
+      <div class="tab-panel" id="panel-financials">
+        <div class="fin-summary" id="fin-cards"><!-- populated by JS --></div>
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom:24px;">
+          <div>
+            <h4 style="font-size:12px; text-transform:uppercase; letter-spacing:1px; color:rgba(255,255,255,0.4); margin-bottom:12px;">Budget Breakdown</h4>
+            <table id="budget-table"><thead><tr><th>Category</th><th>Amount</th><th>%</th></tr></thead><tbody></tbody></table>
+          </div>
+          <div>
+            <h4 style="font-size:12px; text-transform:uppercase; letter-spacing:1px; color:rgba(255,255,255,0.4); margin-bottom:12px;">Revenue Streams</h4>
+            <table id="revenue-table"><thead><tr><th>Source</th><th>Target</th><th>Unit</th></tr></thead><tbody></tbody></table>
+          </div>
+        </div>
+        <h4 style="font-size:12px; text-transform:uppercase; letter-spacing:1px; color:rgba(255,255,255,0.4); margin-bottom:12px;">Revenue Projections</h4>
+        <div class="projections" id="projections"><!-- populated by JS --></div>
+      </div>
+
+      <!-- TIMELINE TAB -->
+      <div class="tab-panel" id="panel-timeline">
+        <div id="phases-container"><!-- populated by JS --></div>
+      </div>
+
+      <!-- CONTENT PLAN TAB -->
+      <div class="tab-panel" id="panel-content">
+        <div id="content-container"><!-- populated by JS --></div>
+      </div>
+
+      <!-- SPONSORSHIP TAB -->
+      <div class="tab-panel" id="panel-sponsorship">
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:16px;" id="tiers-container"><!-- populated by JS --></div>
+        <h4 style="font-size:12px; text-transform:uppercase; letter-spacing:1px; color:rgba(255,255,255,0.4); margin:24px 0 12px;">Suggested Target Sponsors</h4>
+        <table id="sponsors-table"><thead><tr><th>Target Sponsor</th><th>Type</th><th>Rationale</th></tr></thead><tbody></tbody></table>
+      </div>
+
+      <!-- RISKS TAB -->
+      <div class="tab-panel" id="panel-risks">
+        <div id="risks-container"><!-- populated by JS --></div>
+      </div>
+    </div>
+
+    <!-- REFINEMENT BAR -->
+    <div class="card">
+      <div class="card-title">🔄 Refine the Strategy</div>
+      <p style="font-size:13px; color:rgba(255,255,255,0.45); margin-bottom:16px;">Ask the AI to adjust any part of the plan. E.g. "Reduce phases to 2", "We lost a sponsor, adjust revenue by ₦150,000", "Add a VIP ticket tier at ₦5,000".</p>
+      <div class="refine-bar">
+        <input type="text" id="refine-input" placeholder="Tell the AI how to adjust the strategy..." />
+        <button class="btn-refine" onclick="refineStrategy()" id="btn-refine">✨ Refine</button>
+      </div>
+      <div class="refine-status" id="refine-status"></div>
+    </div>
+
+    <!-- DEPLOY -->
+    <div class="deploy-section">
+      <p>The strategy is ready. Deploying will save all phases, tasks, financial targets, and content schedule to Firestore under this event's ID.</p>
+      <button class="btn-success" onclick="deployStrategy()" id="btn-deploy">
+        🚀 Deploy This Strategy to the Hub
+      </button>
+    </div>
+  </div>
+

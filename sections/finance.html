@@ -1,0 +1,143 @@
+  <section class="page" id="page-revenue">
+    <div class="page-header"><div class="eyebrow">Financial Plan</div><h2>Revenue Strategy</h2><p>Entry to all stages is completely free. This is a church community event. Revenue flows through digital voting, sponsorships, church partner donations, and content.</p></div>
+    <div class="alert alert-blue"><span class="alert-icon">ℹ️</span><strong>No ticket sales. No selling activities.</strong> REFA Season 2 is open and free to all. Revenue is generated through community digital engagement and sponsorship partnerships.</div>
+    <div class="card">
+      <div class="card-title">Revenue Channels</div>
+      <div class="rev-row"><div><div class="rev-name">Online Voting (PRIMARY - ₦200/Vote)</div><div class="rev-desc">20,000 votes target at ₦200. Bundle packages drive volume. Parents + church networks mobilised per team.</div></div><div class="rev-amount">₦4,000,000</div></div>
+      <div class="rev-row"><div><div class="rev-name">Sponsorships</div><div class="rev-desc">Title, Gold, Silver and Supporter tiers. Target: 5+ sponsors from Christian businesses, schools, family brands.</div></div><div class="rev-amount">₦1,500,000</div></div>
+      <div class="rev-row"><div><div class="rev-name">Church Partner Donations</div><div class="rev-desc">Partner churches take a love offering or special collection on behalf of REFA during their services.</div></div><div class="rev-amount">₦500,000</div></div>
+      <div class="rev-row"><div><div class="rev-name">Diaspora Remote Engagement</div><div class="rev-desc">Paid WhatsApp or Zoom watch-party access for Nigerian diaspora who want to follow the event live.</div></div><div class="rev-amount">₦200,000</div></div>
+      <div class="rev-row"><div><div class="rev-name">Content Monetisation</div><div class="rev-desc">YouTube ad revenue, brand integrations in highlight videos, sponsored posts from REFA's growing platform.</div></div><div class="rev-amount">₦150,000+</div></div>
+      <div class="rev-total"><div class="label">Total Projected Revenue</div><div class="amount">₦6,350,000 &ndash; ₦7,000,000+</div></div>
+    </div>
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-title">Season 1 Budget Reference</div>
+        <div class="rev-row"><div><div class="rev-name">Season 1 Total Budget</div><div class="rev-desc">Baseline for Season 2 planning</div></div><div class="rev-amount">₦2,500,000</div></div>
+        <div class="alert alert-gold" style="margin-top:12px;"><span class="alert-icon">🎯</span>Season 2 revenue target covers the full budget AND generates surplus for REFA's ongoing mission.</div>
+      </div>
+      <div class="card">
+        <div class="card-title">Prize Structure</div>
+        <div class="rev-row"><div class="rev-name">1st Place</div><div class="rev-amount" style="background:#FEF9C3;">Trophy + Cash</div></div>
+        <div class="rev-row"><div class="rev-name">2nd Place</div><div class="rev-amount" style="background:#F1F5F9;">Trophy + Cash</div></div>
+        <div class="rev-row"><div class="rev-name">3rd Place</div><div class="rev-amount" style="background:#FFEDD5;">Trophy + Cash</div></div>
+        <div class="rev-row"><div class="rev-name">Consolation Awards</div><div class="rev-desc">All other contestants: participation certificates + gift packs</div></div>
+        <div class="rev-row"><div class="rev-name">Fan Favourite Award</div><div class="rev-desc">Contestant with highest total votes</div></div>
+        <div class="rev-row"><div class="rev-name">Best Mentor Award</div><div class="rev-desc">Voted by contestants</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FINANCE DASHBOARD -->
+  <section class="page" id="page-finance">
+    <div class="page-header">
+      <div style="display:flex; justify-content:space-between; align-items:flex-end;">
+        <div>
+          <div class="eyebrow">Financial Tracking</div>
+          <h2>Live Finance Dashboard</h2>
+          <p>Track real-time vote revenue, sponsorships, and expenses.</p>
+        </div>
+        <div>
+          <button class="btn-preview" onclick="document.getElementById('finance-modal').style.display='flex'">➕ Log Transaction</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid-4" style="margin-bottom:28px;">
+      <div class="stat-card" style="border-top: 4px solid #10b981;">
+        <div class="label">Total Revenue</div>
+        <div class="value" id="fin-total-revenue">₦0</div>
+        <div class="sub">Voting + Sponsorships</div>
+      </div>
+      <div class="stat-card" style="border-top: 4px solid #ef4444;">
+        <div class="label">Total Expenses</div>
+        <div class="value" id="fin-total-expenses">₦0</div>
+        <div class="sub">Operational costs</div>
+      </div>
+      <div class="stat-card" style="border-top: 4px solid #3b82f6;">
+        <div class="label">Net Profit</div>
+        <div class="value" id="fin-net-profit">₦0</div>
+        <div class="sub">Current standing</div>
+      </div>
+      <div class="stat-card" style="border-top: 4px solid #f59e0b;">
+        <div class="label">Target Progress</div>
+        <div class="value" id="fin-target-pct">0%</div>
+        <div class="sub">of ₦4,000,000 goal</div>
+      </div>
+    </div>
+
+    <div class="card" style="padding: 0; overflow: hidden;">
+      <div style="padding: 20px; border-bottom: 1px solid rgba(255,255,255,0.05);">
+        <h3 style="margin: 0; font-family: 'Playfair Display', serif; font-size: 20px;">Ledger</h3>
+      </div>
+      <div style="overflow-x: auto;">
+        <table style="width: 100%; border-collapse: collapse; text-align: left;">
+          <thead style="background: rgba(255,255,255,0.02); border-bottom: 1px solid rgba(255,255,255,0.05);">
+            <tr>
+              <th style="padding: 16px; font-size: 12px; color: rgba(255,255,255,0.5); text-transform: uppercase;">Date</th>
+              <th style="padding: 16px; font-size: 12px; color: rgba(255,255,255,0.5); text-transform: uppercase;">Type</th>
+              <th style="padding: 16px; font-size: 12px; color: rgba(255,255,255,0.5); text-transform: uppercase;">Description</th>
+              <th style="padding: 16px; font-size: 12px; color: rgba(255,255,255,0.5); text-transform: uppercase; text-align: right;">Amount</th>
+            </tr>
+          </thead>
+          <tbody id="finance-ledger-body">
+            <!-- Populated by JS -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- TRANSACTION MODAL -->
+    <div class="modal-overlay" id="finance-modal" style="display:none; align-items:center; justify-content:center; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.8); z-index:1000;">
+      <div class="modal-container" style="background:#1e293b; padding:24px; border-radius:12px; width:100%; max-width:400px; position:relative;">
+        <button class="modal-close" onclick="document.getElementById('finance-modal').style.display='none'" style="position:absolute; right:16px; top:16px; background:none; border:none; color:white; font-size:20px; cursor:pointer;">&times;</button>
+        <h3 style="margin-top:0; color:white; font-family:'Playfair Display', serif;">Log Transaction</h3>
+        
+        <div style="margin-bottom:16px;">
+          <label style="display:block; color:rgba(255,255,255,0.7); font-size:12px; margin-bottom:4px;">Type</label>
+          <select id="fin-type" style="width:100%; padding:10px; border-radius:6px; background:rgba(0,0,0,0.3); border:1px solid rgba(255,255,255,0.1); color:white;">
+            <option value="income">Income (Revenue / Sponsorship)</option>
+            <option value="expense">Expense (Cost / Purchase)</option>
+          </select>
+        </div>
+        
+        <div style="margin-bottom:16px;">
+          <label style="display:block; color:rgba(255,255,255,0.7); font-size:12px; margin-bottom:4px;">Description</label>
+          <input type="text" id="fin-desc" placeholder="e.g. Stage Lighting Deposit" style="width:100%; padding:10px; border-radius:6px; background:rgba(0,0,0,0.3); border:1px solid rgba(255,255,255,0.1); color:white;">
+        </div>
+        
+        <div style="margin-bottom:24px;">
+          <label style="display:block; color:rgba(255,255,255,0.7); font-size:12px; margin-bottom:4px;">Amount (₦)</label>
+          <input type="number" id="fin-amount" placeholder="50000" style="width:100%; padding:10px; border-radius:6px; background:rgba(0,0,0,0.3); border:1px solid rgba(255,255,255,0.1); color:white;">
+        </div>
+        
+        <button onclick="logFinanceTransaction()" style="width:100%; padding:12px; border-radius:6px; background:var(--brand-primary); border:none; color:white; font-weight:bold; cursor:pointer;">Save Transaction</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- TEAMS -->
+  <section class="page" id="page-teams">
+    <div class="page-header">
+      <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+        <div>
+          <div class="eyebrow">Competition Structure</div>
+          <h2>Team Structure</h2>
+          <p>10 teams of 10 contestants, each led by a mentor. Team identity creates fan loyalty &mdash; and fan loyalty drives votes.</p>
+        </div>
+        <button onclick="openAddTeamModal()" id="btn-add-team" class="cd-btn" style="background:#08172E; color:#D4AF37; padding:10px 18px; font-size:13px; border-radius:8px; border:1px solid #D4AF37; font-weight:bold; cursor:pointer; display:inline-flex; align-items:center; gap:6px;">
+          ➕ Add New Team
+        </button>
+      </div>
+    </div>
+    <div class="card" style="margin-bottom:28px;">
+      <div class="card-title" style="display:flex; justify-content:space-between; align-items:center;">
+        <span>The Teams Directory</span>
+        <span id="teams-count-badge" style="font-size:12px; background:#F1F5F9; color:#475569; padding:4px 10px; border-radius:12px;">10 Active Teams</span>
+      </div>
+      <div class="team-grid" id="teams-grid"></div>
+    </div>
+    <div class="grid-2" id="teams-info-container">
+      <!-- Dynamically populated by JS based on activeEvent.teamsInfo -->
+    </div>
+  </section>

@@ -1,0 +1,165 @@
+  <section class="page" id="page-runsheet">
+    <div class="page-header">
+      <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+        <div>
+          <div class="eyebrow">Live Operations</div>
+          <h2>Event Day Live Run Sheet</h2>
+          <p>Real-time MC cue system and stage coordination. Changes sync globally.</p>
+        </div>
+        <div id="runsheet-status" style="background:rgba(212,175,55,0.15); color:#D4AF37; font-size:12px; font-weight:700; padding:6px 12px; border-radius:20px;">
+          ● Live Sync
+        </div>
+      </div>
+    </div>
+    
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 20px; background: rgba(0,0,0,0.2); padding: 16px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05);">
+      <div>
+        <div style="font-size: 11px; color: rgba(255,255,255,0.5); text-transform: uppercase; font-weight: 700; letter-spacing: 1px; margin-bottom: 4px;">Running Time</div>
+        <div id="rs-clock" style="font-family: 'Inter', monospace; font-size: 24px; font-weight: 800; color: #fff;">00:00:00</div>
+      </div>
+      <div>
+        <button id="btn-toggle-live-mode" onclick="toggleRunsheetLiveMode()" style="background: var(--brand-primary, #7c3aed); color: #fff; border: none; padding: 10px 16px; border-radius: 8px; font-weight: 700; cursor: pointer;">Enable Live Mode</button>
+      </div>
+    </div>
+
+    <div class="card" style="padding: 0; overflow: hidden;">
+      <div style="overflow-x: auto;">
+        <table style="width: 100%; border-collapse: collapse; text-align: left;">
+          <thead style="background: rgba(255,255,255,0.02); border-bottom: 1px solid rgba(255,255,255,0.05);">
+            <tr>
+              <th style="padding: 16px; font-size: 12px; color: rgba(255,255,255,0.5); text-transform: uppercase;">Time</th>
+              <th style="padding: 16px; font-size: 12px; color: rgba(255,255,255,0.5); text-transform: uppercase;">Segment</th>
+              <th style="padding: 16px; font-size: 12px; color: rgba(255,255,255,0.5); text-transform: uppercase;">MC Script / Notes</th>
+              <th style="padding: 16px; font-size: 12px; color: rgba(255,255,255,0.5); text-transform: uppercase;">Crew</th>
+              <th style="padding: 16px; font-size: 12px; color: rgba(255,255,255,0.5); text-transform: uppercase; text-align: right;">Status</th>
+            </tr>
+          </thead>
+          <tbody id="runsheet-body">
+            <!-- Populated by JS -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- KEY OPERATIONAL SYSTEMS PAGE -->
+  <section class="page" id="page-operations">
+    <div class="page-header">
+      <div class="eyebrow">Production Execution</div>
+      <h2>Key Operational Systems &amp; Staff Roles</h2>
+      <p>Clear role definitions, headcount requirements, deployment stations, and duty directives to run a seamless, professional production.</p>
+    </div>
+
+    <div class="alert alert-blue">
+      <span class="alert-icon">🧭</span>
+      <strong>Production Principle:</strong> Every team member has a single primary deployment zone during live events. No cross-station confusion.
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="icon">👥</span> Operational Roles &amp; Staff Deployment Directives</div>
+      <div style="overflow-x:auto;">
+        <table>
+          <thead>
+            <tr>
+              <th>Role Base &amp; Title</th>
+              <th>Staff Count</th>
+              <th>Station / Location</th>
+              <th>Duty Directives &amp; Key Responsibilities</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Stage Manager</strong></td>
+              <td><span style="background:var(--gold-pale);padding:2px 8px;border-radius:4px;font-weight:700;color:var(--navy);">1 Lead</span></td>
+              <td>Stage Wings &amp; Backstage</td>
+              <td>Directs contestant stage entry/exit; queues Emcee running order; oversees stage props, podium timers, and live judge score sheet handoffs.</td>
+            </tr>
+            <tr>
+              <td><strong>Social Media Managers</strong></td>
+              <td><span style="background:var(--gold-pale);padding:2px 8px;border-radius:4px;font-weight:700;color:var(--navy);">2 Persons</span></td>
+              <td>Media Desk &amp; Mobile Audience</td>
+              <td>Executes real-time Instagram/TikTok stories, live updates every 30 mins, audience reaction clips, hashtag monitoring, and instant result posts.</td>
+            </tr>
+            <tr>
+              <td><strong>Videographers / Photographers</strong></td>
+              <td><span style="background:var(--gold-pale);padding:2px 8px;border-radius:4px;font-weight:700;color:var(--navy);">2 Persons</span></td>
+              <td>Center Aisle &amp; Stage Front</td>
+              <td>Operates multi-camera HD video recording of recitations, judge remarks, contestant facial expressions, red carpet entrance, and crowd reactions.</td>
+            </tr>
+            <tr>
+              <td><strong>Registration &amp; Check-in Leads</strong></td>
+              <td><span style="background:var(--gold-pale);padding:2px 8px;border-radius:4px;font-weight:700;color:var(--navy);">2 Persons</span></td>
+              <td>Auditorium Lobby Entrance</td>
+              <td>Manages contestant registration, issues name badges &amp; team tags, distributes Parent Voting Starter Packs, and verifies parent WhatsApp group joins.</td>
+            </tr>
+            <tr>
+              <td><strong>Voting System Coordinator</strong></td>
+              <td><span style="background:var(--gold-pale);padding:2px 8px;border-radius:4px;font-weight:700;color:var(--navy);">1 Lead</span></td>
+              <td>Control Booth / Ops Desk</td>
+              <td>Monitors 3rd-party online voting portal dashboard in real-time, runs anti-fraud checks, tallies cumulative scores, and hands sealed leaderboard to Emcee.</td>
+            </tr>
+            <tr>
+              <td><strong>Sponsorship &amp; Guest Liaison</strong></td>
+              <td><span style="background:var(--gold-pale);padding:2px 8px;border-radius:4px;font-weight:700;color:var(--navy);">1 Lead</span></td>
+              <td>VIP Seating &amp; Entrance</td>
+              <td>Receives VIP guests, partner pastors, and corporate sponsors; escorts them to reserved VIP tables; ensures sponsor banners are properly mounted.</td>
+            </tr>
+            <tr>
+              <td><strong>Contestant Welfare &amp; Chaperones</strong></td>
+              <td><span style="background:var(--gold-pale);padding:2px 8px;border-radius:4px;font-weight:700;color:var(--navy);">3 Persons</span></td>
+              <td>Contestant Holding Room</td>
+              <td>Manages 100 contestants in holding hall; organizes team lineup 2 rounds before appearance; provides water, encouragement, and quiet preparation space.</td>
+            </tr>
+            <tr>
+              <td><strong>MC / Host &amp; Co-Host</strong></td>
+              <td><span style="background:var(--gold-pale);padding:2px 8px;border-radius:4px;font-weight:700;color:var(--navy);">2 Persons</span></td>
+              <td>Main Stage Podium</td>
+              <td>Drives event momentum, introduces contestants &amp; mentors, delivers sponsor acknowledgments, reads live voting leaderboards, and keeps time.</td>
+            </tr>
+            <tr>
+              <td><strong>Sound &amp; Lighting Technicians</strong></td>
+              <td><span style="background:var(--gold-pale);padding:2px 8px;border-radius:4px;font-weight:700;color:var(--navy);">2 Engineers</span></td>
+              <td>A/V Control Console</td>
+              <td>Manages podium microphones, ambient lighting, countdown timer display on main screens, audio playback for team entrances, and live stream feed.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-title"><span class="icon">📍</span> Event Day Deployment Map</div>
+        <div class="info-item" style="margin-bottom:10px;">
+          <h4>1. Auditorium Lobby (Entrance)</h4>
+          <p>Registration Desk (2 Leads) · Photo Backdrop Station · Parent Supporter Card Distribution.</p>
+        </div>
+        <div class="info-item" style="margin-bottom:10px;">
+          <h4>2. Main Auditorium Sanctuary</h4>
+          <p>VIP Sponsor Tables (1 Liaison) · Family Seating Corners (Team Banners) · Stage Front Photographers (2 Camera Ops).</p>
+        </div>
+        <div class="info-item" style="margin-bottom:10px;">
+          <h4>3. Stage &amp; Wings</h4>
+          <p>Podium MCs (2 Hosts) · Judges Table (3 Judges) · Stage Manager (1 Wing Lead).</p>
+        </div>
+        <div class="info-item">
+          <h4>4. Control Booth &amp; Holding Room</h4>
+          <p>Voting &amp; Live Stream Console (1 Coordinator + A/V Techs) · Contestant Holding Room (3 Chaperones).</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title"><span class="icon">📲</span> Communication Systems &amp; Channels</div>
+        <div class="info-item" style="margin-bottom:10px;">
+          <h4>Team Mentor WhatsApp Groups</h4>
+          <p>10 separate groups (1 per team). Mentor is admin. Used for weekly coaching schedules, voting link broadcasts, and parent updates.</p>
+        </div>
+        <div class="info-item" style="margin-bottom:10px;">
+          <h4>REFA Master Operations Broadcast</h4>
+          <p>Broadcast list containing all 100 contestants and parents for urgent official announcements and stage arrival times.</p>
+        </div>
+        <div class="info-item"><h4>Shared Media Cloud (Drive)</h4><p>Centralized Google Drive folder for Videographers, Photographers, and Social Media Leads to drop raw footage for instant editing.</p></div>
+      </div>
+    </div>
+  </section>
+

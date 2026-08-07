@@ -1,0 +1,167 @@
+  <section class="page active" id="page-dashboard">
+    <div class="page-header">
+      <div class="eyebrow">Management Hub</div>
+      <h2><span id="dash-event-name">REFA Season 2</span> &mdash; <span id="dash-event-tagline">The Word League</span></h2>
+      <p style="color:var(--brand-primary);font-weight:600;"><strong id="dash-tagline-bold">The Word League</strong> transforms standard Bible quizzing into a high-stakes, team-based championship.</p>
+      <p>Central command for all team leads, mentors, coordinators and content managers. Track progress, manage tasks, and stay aligned across every phase.</p>
+    </div>
+    <div class="grid-4" style="margin-bottom:28px;">
+      <div class="stat-card"><div class="label">Event Theme</div><div class="value" style="font-size:18px;line-height:1.3;" id="stat-theme">Words That Last</div><div class="sub">Official Theme</div></div>
+      <div class="stat-card"><div class="label">Target Contestants</div><div class="value" id="stat-contestants">100</div><div class="sub" id="stat-teams-sub">10 teams x 10 members</div></div>
+      <div class="stat-card"><div class="label">Vote Rate</div><div class="value" id="stat-vote-rate">₦200</div><div class="sub">Primary Revenue Engine</div></div>
+      <div class="stat-card"><div class="label">Grand Final</div><div class="value" id="stat-final-date">Sep 6</div><div class="sub" id="stat-venue" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Church Auditorium</div></div>
+    </div>
+    <div class="grid-2">
+      <div class="card"><div class="card-title">Overall Task Progress</div><div id="dashboard-progress-list"></div></div>
+      <div class="card">
+        <div class="card-title">Current Phase</div>
+        <div class="tl-item active-phase" style="margin-bottom:12px;">
+          <div class="tl-date" id="cp-date"></div>
+          <div class="tl-title" id="cp-title"></div>
+          <div class="tl-desc" id="cp-desc"></div>
+        </div>
+        <hr class="divider" style="margin:16px 0"/>
+        <div class="card-title" style="margin-bottom:12px;">Season Goals</div>
+        <div style="display:flex;flex-direction:column;gap:8px;" id="goals-list"></div>
+      </div>
+    </div>
+
+    <!-- GRAPHICAL PRODUCTION KITS SECTION -->
+    <div class="card">
+      <div class="card-title"><span class="icon">✨</span> Ready Production Kits &amp; Execution Tools</div>
+      <p style="font-size:13px;color:var(--text-muted);margin-bottom:16px;">Interactive graphical toolkits prepared for immediate deployment across schools, parents, sponsors, and social media.</p>
+      
+      <div class="kit-grid" id="dynamic-kit-grid"></div>
+
+    <div class="card">
+      <div class="card-title">Stage Snapshot</div>
+      <div style="overflow-x:auto;">
+        <table>
+          <thead><tr><th>Stage</th><th>Date</th><th>Theme</th><th>Status</th></tr></thead>
+          <tbody id="stage-snapshot-body">
+            <!-- Dynamically populated by JS based on activeEvent.stagesSnapshot -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div id="urgent-alert-container"></div>
+  </section>
+
+  <!-- TIMELINE -->
+  <section class="page" id="page-timeline">
+    <div class="page-header"><div class="eyebrow">Season Calendar</div><h2>Full Season Timeline</h2><p>Every phase of the competition from pre-season to the Grand Final, with key milestones and content windows mapped.</p></div>
+    <div class="card">
+      <div class="timeline" id="timeline-container">
+        <!-- Dynamically populated by JS based on activeEvent.phases -->
+      </div>
+    </div>
+  </section>
+
+  <!-- TASKS -->
+  <section class="page" id="page-tasks">
+    <div class="page-header">
+      <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+        <div>
+          <div class="eyebrow">Execution Tracker</div>
+          <h2>Phase Tasks</h2>
+          <p>Check off tasks as your team completes them. Tasks sync globally in real-time for all team members via Cloud Firestore.</p>
+        </div>
+        <div id="db-status-badge" style="background:#065F46; color:#D1FAE5; font-size:12px; font-weight:600; padding:6px 12px; border-radius:20px; display:inline-flex; align-items:center; gap:6px;">
+          <span style="width:8px; height:8px; background:#10B981; border-radius:50%; display:inline-block;"></span> Global DB Syncing
+        </div>
+      </div>
+    </div>
+    <div id="task-list-container"></div>
+  </section>
+
+  <!-- VOTING -->
+  <section class="page" id="page-voting">
+    <div class="page-header">
+      <div class="eyebrow">Revenue Engine</div>
+      <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+        <div>
+          <h2>Voting System (<span id="voting-page-title">₦200</span> / Vote)</h2>
+          <p>Online voting is the primary revenue channel. Voting opens one week after the audition &mdash; giving audiences time to know contestants before spending.</p>
+        </div>
+        <div style="background: rgba(255,255,255,0.05); padding: 12px 20px; border-radius: 8px; border: 1px solid var(--border-color); display: flex; align-items: center; gap: 12px;">
+          <img src="img/quinsty-logo.png" alt="Quinsty Logo" style="height: 36px; object-fit: contain;">
+          <div>
+            <div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px;">Official Voting Partner</div>
+            <div style="font-weight: 700; color: white;">Quinsty</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="alert alert-gold"><span class="alert-icon">💡</span><strong>Key Insight:</strong> Cold strangers do not spend money. Warmed-up fans do. Six days of daily contestant content before voting opens means every vote is an emotional investment.</div>
+    <div class="card">
+      <div class="card-title">Voting Round Calendar</div>
+      <table>
+        <thead><tr><th>Period</th><th>Status</th><th>Strategic Purpose</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Aug 1</strong> &mdash; Audition Day</td><td><span class="vote-status vote-wait">CLOSED</span></td><td>Announce contestants; let the moment breathe</td></tr>
+          <tr><td><strong>Aug 2&ndash;6</strong> &mdash; Profile Week</td><td><span class="vote-status vote-wait">CLOSED</span></td><td>Daily content builds emotional investment</td></tr>
+          <tr><td><strong>Aug 7&ndash;9</strong> &mdash; Round 1</td><td><span class="vote-status vote-open">OPEN</span></td><td>Fans know contestants and want to back them</td></tr>
+          <tr><td><strong>Aug 9 midnight</strong></td><td><span class="vote-status vote-close">CLOSES</span></td><td>Leaderboard revealed live at Stage 1 for drama</td></tr>
+          <tr><td><strong>Aug 10&ndash;16</strong> &mdash; Round 2</td><td><span class="vote-status vote-open">OPEN</span></td><td>Post-Stage 1 hype drives fresh vote surge</td></tr>
+          <tr><td><strong>Aug 16 midnight</strong></td><td><span class="vote-status vote-close">CLOSES</span></td><td>Second leaderboard revealed live at Stage 2</td></tr>
+          <tr><td><strong>Aug 17 &ndash; Sep 4</strong> &mdash; Final Round</td><td><span class="vote-status vote-open">OPEN</span></td><td>Longest window; parents and fans go all-out</td></tr>
+          <tr><td><strong>Sep 5 midnight</strong></td><td><span class="vote-status vote-close">CLOSES</span></td><td>Final count sealed before Grand Final</td></tr>
+          <tr><td><strong>Sep 6</strong> &mdash; Grand Final</td><td><span class="vote-status" style="background:#FEF3C7;color:#92400E;">RESULTS LIVE</span></td><td>Fan Favourite winner announced at awards ceremony</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-title" style="justify-content: space-between;">
+          Vote Pricing
+          <div style="font-size: 12px; font-weight: normal;">Base Price: <input type="number" id="base-vote-price" value="200" oninput="updateVotePricing()" style="width: 70px; padding: 4px; border-radius: 4px; border: 1px solid #ccc;"></div>
+        </div>
+        <div class="rev-row"><div><div class="rev-name">Single Vote</div><div class="rev-desc">Standard rate per vote</div></div><div class="rev-amount" id="price-1">₦200</div></div>
+        <div class="rev-row"><div><div class="rev-name">10 Vote Bundle</div><div class="rev-desc" id="desc-10">Save ₦400</div></div><div class="rev-amount" id="price-10">₦1,600</div></div>
+        <div class="rev-row"><div><div class="rev-name">50 Vote Pack</div><div class="rev-desc" id="desc-50">Save ₦3,000</div></div><div class="rev-amount" id="price-50">₦7,000</div></div>
+        <div class="rev-row"><div><div class="rev-name">100 Vote Pack</div><div class="rev-desc" id="desc-100">Save ₦7,000 (Super Supporter)</div></div><div class="rev-amount" id="price-100">₦13,000</div></div>
+      </div>
+      <div class="card">
+        <div class="card-title">Fraud Prevention &amp; Target</div>
+        <div class="info-item"><ul><li>Voters provide name + phone number</li><li>Max 50 votes per phone per transaction</li><li>IP address tracking enabled</li><li>OTP phone verification before voting</li><li>Anomalous bulk votes flagged for review</li><li>Voting coordinator checks dashboard daily</li></ul></div>
+        <div class="alert alert-blue" style="margin-top:12px;" id="target-alert"><span class="alert-icon">📊</span>Target: <strong>20,000 total votes × ₦200</strong> = <strong>₦4,000,000 minimum</strong></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Scoring Breakdown</div>
+      <div class="score-row"><div class="score-label">Scripture Accuracy</div><div class="score-bar-wrap"><div class="score-bar"><div class="score-bar-fill" style="width:50%"></div></div></div><div class="score-pct">50%</div></div>
+      <div class="score-row"><div class="score-label">Speed / Timing</div><div class="score-bar-wrap"><div class="score-bar"><div class="score-bar-fill" style="width:20%"></div></div></div><div class="score-pct">20%</div></div>
+      <div class="score-row"><div class="score-label">Expression and Delivery</div><div class="score-bar-wrap"><div class="score-bar"><div class="score-bar-fill" style="width:10%"></div></div></div><div class="score-pct">10%</div></div>
+      <div class="score-row"><div class="score-label" style="color:var(--gold);font-weight:700;">Audience Vote Score</div><div class="score-bar-wrap"><div class="score-bar"><div class="score-bar-fill" style="width:20%"></div></div></div><div class="score-pct">20%</div></div>
+      <p style="font-size:12px;color:var(--text-muted);margin-top:12px;">Grand Final: Audience vote weight increases to 25%</p>
+    </div>
+  </section>
+
+  <!-- PARENTS -->
+  <section class="page" id="page-parents">
+    <div class="page-header"><div class="eyebrow">Community Engine</div><h2>Parent Participation Strategy</h2><p>Parents are not spectators &mdash; they are campaign managers, content contributors, and the primary vote mobilisers. Integrate them from Day 1.</p></div>
+    <div class="alert alert-green"><span class="alert-icon">💡</span>A motivated parent with 200 WhatsApp contacts, converting at 10%, generates 20 votes x <strong id="parent-calc-rate">₦200</strong> = <strong id="parent-calc-total">₦4,000 per parent</strong>. With 100 parents: <strong id="parent-calc-grand">₦400,000 from parents alone</strong>.</div>
+    <div class="info-grid" style="margin-bottom:24px;">
+      <div class="info-item"><h4>WhatsApp Groups Per Team</h4><p>10 groups, mentor as admin, all parents added Audition Day. Voting links, schedules, content to share, team morale.</p></div>
+      <div class="info-item"><h4>"Families Behind the Word" Series</h4><p>30-sec parent video: "My child is competing because..." Family devotion photo + quote. Published daily Profile Week. Highest organic reach.</p></div>
+      <div class="info-item"><h4>Reserved Family Corner at Events</h4><p>Dedicated seating with team-colour banners. Parent Supporter Card on arrival. Photo station at branded backdrop. Stage introduction by team name.</p></div>
+      <div class="info-item"><h4>Voting Starter Pack</h4><p>Printed QR code card + voting link. WhatsApp message templates. Challenge card: "Can your family get 100 votes before Stage 1?" Top-voting parent gets a stage shoutout.</p></div>
+      <div class="info-item"><h4>Parent Awards at Grand Final</h4><p>Most Supportive Family. Faithful Presence Award (all 3 stages attended). Community Champion Award. Nominated before the Final to drive attendance.</p></div>
+      <div class="info-item"><h4>Parent Testimony Moment</h4><p>2-minute segment before Grand Final results. 2-3 parents, 30 seconds each. Prompt: "What has REFA done for my child?" Emotional peak of the evening.</p></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Parent Communication Calendar</div>
+      <div class="comm-row"><div class="comm-date">Aug 1 Audition</div><div class="comm-msg">Welcome parents in person. Explain voting. Distribute QR code cards. Add to team WhatsApp groups immediately after results.</div></div>
+      <div class="comm-row"><div class="comm-date">Aug 2</div><div class="comm-msg">"Your child has been accepted! They have been placed on [Team Name]. Welcome to The Word League family."</div></div>
+      <div class="comm-row"><div class="comm-date">Aug 5</div><div class="comm-msg">Send "How to Vote" step-by-step guide with screenshots. Include the voting link and QR code again. Make it foolproof.</div></div>
+      <div class="comm-row"><div class="comm-date">Aug 7</div><div class="comm-msg">"VOTING IS NOW LIVE! Here is the link. Forward this to 10 people in your contacts right now. Every vote counts!"</div></div>
+      <div class="comm-row"><div class="comm-date">Aug 8</div><div class="comm-msg">"Who is leading the leaderboard? Find out TOMORROW at Stage 1! Vote before midnight tonight."</div></div>
+      <div class="comm-row"><div class="comm-date">Aug 9 Stage 1</div><div class="comm-msg">Reserved seat reminder. Photo station notice. Arrival time. "Wear your team colour today!"</div></div>
+      <div class="comm-row"><div class="comm-date">Aug 10</div><div class="comm-msg">Share direct link to their child's Stage 1 highlight clip. "Share this with everyone who supported you!"</div></div>
+      <div class="comm-row"><div class="comm-date">Aug 14</div><div class="comm-msg">"Round 2 voting opens in 2 days. Rally your network again. Every vote gets your child closer to the Final!"</div></div>
+      <div class="comm-row"><div class="comm-date">Aug 16 Stage 2</div><div class="comm-msg">Stage 2 reminder, reserved seats, arrival time. Voting Round 2 closing reminder.</div></div>
+      <div class="comm-row"><div class="comm-date">Sep 1</div><div class="comm-msg">"5 days left to vote! The Final Round closes Sep 5 midnight. Share the link everywhere. This is the championship push."</div></div>
+      <div class="comm-row"><div class="comm-date">Sep 5</div><div class="comm-msg">"LAST CHANCE &mdash; Voting closes TONIGHT at midnight. Thank you for every vote, every share, every prayer."</div></div>
+      <div class="comm-row"><div class="comm-date">Sep 6 Final</div><div class="comm-msg">Arrival time. Reserved seats. Dress code. Awards preview. Photo station hours. Post-event fellowship details.</div></div>
+    </div>
+  </section>
