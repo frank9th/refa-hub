@@ -41,6 +41,16 @@ async function getShowtimeConfig() {
     if (_configCache && (now - _configCacheTs) < CONFIG_CACHE_TTL) {
         return _configCache;
     }
+    // Check environment variables first (higher priority for deployment/security)
+    if (process.env.SHOWTIME_API_URL) {
+        _configCache = {
+            apiUrl: process.env.SHOWTIME_API_URL,
+            apiKey: process.env.SHOWTIME_API_KEY || '',
+            signingSecret: process.env.SHOWTIME_SIGNING_SECRET || process.env.SHOWTIME_WEBHOOK_SECRET || '',
+        };
+        _configCacheTs = now;
+        return _configCache;
+    }
     const configSnap = await db.collection('rafa_config').doc('showtime').get();
     if (!configSnap.exists) return null;
     _configCache = configSnap.data();

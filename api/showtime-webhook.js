@@ -49,7 +49,7 @@ export default async function handler(req, res) {
         const configRef = db.collection('events').doc(eventId).collection('showtime_channel').doc('config');
 
         // Fast path: verify secret from env var — avoids 1 Firestore read per webhook event
-        const envSecret = process.env.SHOWTIME_WEBHOOK_SECRET;
+        const envSecret = process.env.SHOWTIME_WEBHOOK_SECRET || process.env.SHOWTIME_SIGNING_SECRET;
         if (envSecret) {
             if (secretHeader !== envSecret) {
                 return res.status(401).json({ error: 'Unauthorized webhook' });
