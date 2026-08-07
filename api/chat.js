@@ -2,7 +2,7 @@
 // Context-Aware Floating AI Agent Backend
 // Vercel Serverless Function (Node.js)
 
-const { ai, AI_MODEL } = require('./ai-config');
+const { generateWithFallback } = require('./ai-config');
 
 const SYSTEM_PROMPT = `You are the AI Event Strategist for this event. 
 You act as a world-class strategic consultant. The user is a member of the event management team.
@@ -25,10 +25,6 @@ module.exports = async (req, res) => {
   }
 
   try {
-    if (!ai) {
-      return res.status(500).json({ error: 'AI backend is not configured on this local server. Please restart your node server with a GEMINI_API_KEY environment variable (e.g. $env:GEMINI_API_KEY="your-key"; node server.js).' });
-    }
-
     const { message, history = [], eventContext, focusedContext, currentViewName } = req.body;
 
     if (!message) {
@@ -61,13 +57,9 @@ ${JSON.stringify(focusedContext || {}, null, 2)}
       { role: 'user', parts: [{ text: message }] }
     ];
 
-    const response = await ai.models.generateContent({
-      model: AI_MODEL,
-      contents: formattedContents,
-      config: {
-        systemInstruction: dynamicSystemPrompt,
-        temperature: 0.7
-      }
+    const response = await generateWithFallback(formattedContents, {
+      systemInstruction: dynamicSystemPrompt,
+      temperature: 0.7
     });
 
     return res.status(200).json({ success: true, text: response.text });

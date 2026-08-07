@@ -1,8 +1,111 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
+
+    // ── HELPER FUNCTIONS ────────────────────────────────────────────────────
+    // Check if the request carries a valid Firebase session (Anonymous or signed-in)
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    // ── PUBLIC READ-ONLY COLLECTIONS ────────────────────────────────────────
+    // Leaderboard & contestant info are publicly readable (fans, parents, voters)
+    match /events/{eventId}/contestants/{doc} {
+      allow read: if true;
+      allow write: if isAuthenticated();
+    }
+    match /events/{eventId}/showtime_leaderboard/{doc} {
+      allow read: if true;
+      allow write: if isAuthenticated();
+    }
+    match /events/{eventId}/showtime_members/{doc} {
+      allow read: if true;
+      allow write: if isAuthenticated();
+    }
+    match /events/{eventId}/showtime_notices/{doc} {
+      allow read: if true;
+      allow write: if isAuthenticated();
+    }
+
+    // Events collection: anyone can read event metadata (for registration, leaderboard pages)
+    match /events/{eventId} {
+      allow read: if true;
+      allow write: if isAuthenticated();
+    }
+
+    // Showtime public sub-collections (read for public vote/ticket pages)
+    match /events/{eventId}/showtime_channel/{doc} {
+      allow read: if true;
+      allow write: if isAuthenticated();
+    }
+    match /events/{eventId}/showtime_tickets/{doc} {
+      allow read: if true;
+      allow write: if isAuthenticated();
+    }
+    match /events/{eventId}/showtime_orders/{doc} {
+      allow read: if isAuthenticated();
+      allow write: if isAuthenticated();
+    }
+    match /events/{eventId}/showtime_activity/{doc} {
+      allow read: if isAuthenticated();
+      allow write: if isAuthenticated();
+    }
+
+    // ── DASHBOARD & OPERATIONAL COLLECTIONS ────────────────────────────────
+    // Public READ allows instant dashboard rendering before auth handshakes.
+    // WRITE requires an authenticated session (transparent anonymous auth).
+    match /events/{eventId}/tasks/{doc} {
+      allow read: if true;
+      allow write: if isAuthenticated();
+    }
+    match /events/{eventId}/teams/{doc} {
+      allow read: if true;
+      allow write: if isAuthenticated();
+    }
+    match /events/{eventId}/finance/{doc} {
+      allow read: if true;
+      allow write: if isAuthenticated();
+    }
+    match /events/{eventId}/runsheet/{doc} {
+      allow read: if true;
+      allow write: if isAuthenticated();
+    }
+    match /events/{eventId}/content_schedule/{doc} {
+      allow read: if true;
+      allow write: if isAuthenticated();
+    }
+    match /events/{eventId}/media_uploads/{doc} {
+      allow read: if true;
+      allow write: if isAuthenticated();
+    }
+
+    // ── PASS KEYS — SENSITIVE ───────────────────────────────────────────────
+    match /passkeys/{keyId} {
+      allow read: if isAuthenticated();
+      allow write: if isAuthenticated();
+    }
+
+    // ── USER SESSIONS ───────────────────────────────────────────────────────
+    match /user_sessions/{doc} {
+      allow read, write: if isAuthenticated();
+    }
+
+    // ── APP CONFIG ──────────────────────────────────────────────────────────
+    match /rafa_config/{doc} {
+      allow read: if true;
+      allow write: if isAuthenticated();
+    }
+
+    // ── CONTEST COLLECTION (showtime sync mirror) ───────────────────────────
+    match /Contest/{channelId}/Contestants/{doc} {
+      allow read: if true;
+      allow write: if isAuthenticated();
+    }
+
+    // ── CATCH-ALL: DENY UNAUTHENTICATED WRITES ─────────────────────────────
     match /{document=**} {
-      allow read, write: if true;
+      allow read: if true;
+      allow write: if isAuthenticated();
     }
   }
 }

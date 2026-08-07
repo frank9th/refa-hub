@@ -11,12 +11,19 @@ let currentFilter = 'all';
 let selectedContestantForVote = null;
 let selectedVotePackage = { votes: 10, amount: 2000 };
 
-window.addEventListener('firebase-ready', async () => {
+const initLeaderboard = async () => {
   const urlParams = new URLSearchParams(window.location.search);
-  const eventId = urlParams.get('event') || 'hit-the-mic-s3';
+  const eventId = urlParams.get('event');
   
   // Optional pre-select contestant from URL (e.g. from contestant portal copy link)
   const voteTargetId = urlParams.get('vote');
+
+  if (!eventId) {
+    console.warn('[Leaderboard] No event ID in URL. Cannot load leaderboard.');
+    const list = document.getElementById('leaderboard-list');
+    if (list) list.innerHTML = '<div style="text-align:center;padding:40px;color:rgba(255,255,255,0.4);">No event specified. Please use a valid leaderboard link.</div>';
+    return;
+  }
   
   if (window.REFA_FIREBASE) {
     activeEvent = await window.REFA_FIREBASE.getEvent(eventId);
@@ -32,15 +39,23 @@ window.addEventListener('firebase-ready', async () => {
           renderLeaderboard();
           
           // Auto-open modal if URL param exists and modal isn't already open
-          if (voteTargetId && document.getElementById('vote-modal').style.display !== 'flex') {
-            const target = contestants.find(c => c.id === voteTargetId);
+          if (voteTargetId && !selectedContestantForVote) {
+            const target = contestants.find(c => c.id === voteTargetId || c.contestantCode === voteTargetId);
             if (target) openVoteModal(target.id);
           }
         });
       }
+    } else {
+      console.error('[Leaderboard] Event not found:', eventId);
     }
   }
-});
+};
+
+if (window.REFA_FIREBASE) {
+  initLeaderboard();
+} else {
+  window.addEventListener('firebase-ready', initLeaderboard);
+}
 
 function populateCategoryTabs() {
   if (!activeEvent || !activeEvent.categories) return;
@@ -155,40 +170,77 @@ function selectPackage(el, votes, amount) {
   document.getElementById('btn-process-vote').textContent = `Pay ₦${amount.toLocaleString()} via Paystack`;
 }
 
+/**
+ * Called by the Paystack payment success callback with a real payment reference.
+ * Only after confirmed payment does the vote count update in Firestore.
+ * @param {string} paymentReference - The Paystack transaction reference.
+ */
+async function creditVotesAfterPayment(paymentReference) {
+  if (!selectedContestantForVote || !paymentReference) return;
+
+  const currentVotes = selectedContestantForVote.publicVotes || 0;
+  const newTotal = currentVotes + selectedVotePackage.votes;
+
+  if (window.REFA_FIREBASE && window.REFA_FIREBASE.updateContestantInDb) {
+    await window.REFA_FIREBASE.updateContestantInDb(selectedContestantForVote.id, {
+      publicVotes: newTotal,
+      lastVoteRef: paymentReference,
+      lastVoteAt: new Date().toISOString()
+    });
+  }
+}
+
 function processVotePayment() {
   if (!selectedContestantForVote) return;
-  
+
   const btn = document.getElementById('btn-process-vote');
   const originalText = btn.textContent;
-  
-  btn.disabled = true;
-  btn.textContent = '⌛ Processing...';
-  
-  // Simulate network/Paystack delay
-  setTimeout(async () => {
-    const currentVotes = selectedContestantForVote.publicVotes || 0;
-    const newTotal = currentVotes + selectedVotePackage.votes;
-    
-    if (window.REFA_FIREBASE && window.REFA_FIREBASE.updateContestantInDb) {
-      await window.REFA_FIREBASE.updateContestantInDb(selectedContestantForVote.id, {
-        publicVotes: newTotal
-      });
-    } else {
-      console.warn("Firestore not connected. UI will not update permanently.");
-    }
-    
-    btn.disabled = false;
-    btn.textContent = '✅ Payment Successful!';
-    btn.style.background = '#10b981';
-    
-    // Auto close modal
+  const amount = selectedVotePackage.amount;
+  const votes = selectedVotePackage.votes;
+
+  // Guard: do not write votes without real Paystack payment
+  if (typeof PaystackPop === 'undefined') {
+    // Paystack SDK not loaded — show a clear message, no silent DB write
+    btn.disabled = true;
+    btn.textContent = '⚠️ Payment gateway unavailable';
     setTimeout(() => {
-      closeVoteModal();
-      btn.style.background = '';
+      btn.disabled = false;
       btn.textContent = originalText;
-    }, 1500);
-    
-  }, 1200);
+    }, 3000);
+    return;
+  }
+
+  const handler = PaystackPop.setup({
+    key: window.PAYSTACK_PUBLIC_KEY || 'pk_test_placeholder',
+    email: document.getElementById('vm-phone')?.value?.trim()
+      ? document.getElementById('vm-phone').value.trim() + '@votes.refa'
+      : 'voter@refa-hub.com',
+    amount: amount * 100, // Paystack uses kobo
+    currency: 'NGN',
+    ref: 'vote_' + selectedContestantForVote.id + '_' + Date.now(),
+    metadata: {
+      contestantId: selectedContestantForVote.id,
+      votes: votes
+    },
+    callback: async function(response) {
+      // Payment verified — now safe to credit votes
+      await creditVotesAfterPayment(response.reference);
+      btn.textContent = '✅ Payment Successful!';
+      btn.style.background = '#10b981';
+      setTimeout(() => {
+        closeVoteModal();
+        btn.style.background = '';
+        btn.textContent = originalText;
+      }, 1500);
+    },
+    onClose: function() {
+      btn.disabled = false;
+      btn.textContent = originalText;
+    }
+  });
+
+  btn.disabled = true;
+  handler.openIframe();
 }
 
 window.filterLeaderboard = filterLeaderboard;

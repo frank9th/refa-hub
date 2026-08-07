@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quinsty Channel Hub — Showtime Command Centre</title>
+  <meta name="description" content="Quinsty Channel Hub — Real-time Showtime event command centre.">
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    /* — RESET & VARIABLES — */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    :root {
+      --bg-dark: #07090e;
+      --bg-panel: #0d111a;
+      --bg-card: #131824;
+      --bg-card-hover: #1a2030;
+      
+      --accent-gold: #f59e0b;
+      --accent-gold-light: #fbbf24;
+      --accent-gold-glow: rgba(245, 158, 11, 0.25);
+      --accent-blue: #3b82f6;
+      --accent-emerald: #10b981;
+      --accent-rose: #f43f5e;
+      
+      --border-subtle: rgba(255, 255, 255, 0.08);
+      --border-bright: rgba(255, 255, 255, 0.16);
+      
+      --text-main: #f3f4f6;
+      --text-muted: #9ca3af;
+      --text-soft: #6b7280;
+      
+      --font-display: 'Outfit', system-ui, sans-serif;
+      --font-body: 'Plus Jakarta Sans', system-ui, sans-serif;
+      --ease: cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    html, body {
+      height: 100%;
+      overflow: hidden;
+      background: var(--bg-dark);
+      color: var(--text-main);
+      font-family: var(--font-body);
+      font-size: 14px;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* — MESH BACKGROUND GRADIENTS — */
+    body::before {
+      content: '';
+      position: fixed; inset: 0; pointer-events: none; z-index: 0;
+      background:
+        radial-gradient(ellipse 900px 600px at 15% -10%, rgba(245, 158, 11, 0.08) 0%, transparent 60%),
+        radial-gradient(ellipse 800px 500px at 85% 110%, rgba(59, 130, 246, 0.08) 0%, transparent 60%),
+        radial-gradient(ellipse 600px 400px at 50% 50%, rgba(16, 185, 129, 0.03) 0%, transparent 70%);
+    }
+
+    /* — SCROLLBAR — */
+    ::-webkit-scrollbar { width: 5px; height: 5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.15); border-radius: 99px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.3); }
+
+    /* — BUTTONS — */
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+      padding: 10px 18px; border-radius: 10px; font-family: var(--font-body);
+      font-size: 13px; font-weight: 600; cursor: pointer; border: 1px solid transparent;
+      transition: all 0.2s var(--ease); text-decoration: none; outline: none;
+    }
+    .btn-gold {
+      background: linear-gradient(135deg, var(--accent-gold), #d97706);
+      color: #000; box-shadow: 0 4px 16px var(--accent-gold-glow);
+    }
+    .btn-gold:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(245, 158, 11, 0.4); }
+    .btn-ghost {
+      background: rgba(255, 255, 255, 0.05); color: var(--text-main);
+      border-color: var(--border-subtle);
+    }
+    .btn-ghost:hover { background: rgba(255, 255, 255, 0.1); border-color: var(--border-bright); }
+    .btn-sm { padding: 6px 12px; font-size: 12px; border-radius: 7px; }
+
+    /* — BADGES & PILLS — */
+    .badge {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 3px 9px; border-radius: 20px; font-size: 11px; font-weight: 600;
+      letter-spacing: 0.02em; text-transform: uppercase;
+    }
+    .badge-emerald { background: rgba(16, 185, 129, 0.12); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.25); }
+    .badge-amber { background: rgba(245, 158, 11, 0.12); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.25); }
+    .badge-blue { background: rgba(59, 130, 246, 0.12); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.25); }
+
+    .cpill {
+      font-family: monospace; font-size: 12px; font-weight: 700;
+      color: var(--accent-gold-light); background: rgba(245, 158, 11, 0.1);
+      padding: 3px 8px; border-radius: 6px; border: 1px solid rgba(245, 158, 11, 0.2);
+    }
+
+    /* — SETUP SCREENS — */
+    .screen {
+      position: fixed; inset: 0; z-index: 1000;
+      display: flex; align-items: center; justify-content: center; padding: 24px;
+      background: rgba(7, 9, 14, 0.96); backdrop-filter: blur(20px);
+      transition: opacity 0.3s var(--ease), visibility 0.3s var(--ease);
+    }
+    .screen.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+
+    .screen-card {
+      position: relative; overflow: hidden;
+      background: var(--bg-panel); border: 1px solid var(--border-bright);
+      border-radius: 20px; padding: 36px; width: 100%; max-width: 480px;
+      box-shadow: 0 24px 60px rgba(0,0,0,0.8), 0 0 0 1px rgba(245,158,11,0.1);
+    }
+    .screen-card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+      background: linear-gradient(90deg, transparent, var(--accent-gold), var(--accent-gold-light), transparent);
+    }
+    .screen-title { font-family: var(--font-display); font-size: 26px; font-weight: 700; margin-bottom: 8px; }
+    .screen-desc { color: var(--text-muted); font-size: 13px; margin-bottom: 24px; }
+    .form-group { margin-bottom: 18px; text-align: left; }
+    .form-group label { display: block; font-size: 12px; font-weight: 600; color: var(--text-muted); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.05em; }
+    .form-group input, .form-group textarea, .form-group select {
+      width: 100%; padding: 12px 14px; font-family: var(--font-body); font-size: 14px;
+      color: var(--text-main); background: var(--bg-card); border: 1px solid var(--border-subtle);
+      border-radius: 10px; outline: none; transition: all 0.2s var(--ease);
+    }
+    .form-group input:focus, .form-group textarea:focus {
+      border-color: var(--accent-gold); box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.15); background: var(--bg-card-hover);
+    }
+
+    /* — MAIN DASHBOARD SHELL — */
+    .shell {
+      position: relative; z-index: 10;
+      display: grid; grid-template-rows: 64px 1fr;
+      grid-template-columns: 280px 1fr;
+      height: 100vh; width: 100vw;
+    }
+
+    /* — TOPBAR — */
+    .topbar {
+      grid-column: 1 / -1;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 24px; background: rgba(13, 17, 26, 0.85);
+      backdrop-filter: blur(12px); border-bottom: 1px solid var(--border-subtle);
+    }
+    .topbar-left { display: flex; align-items: center; gap: 16px; }
+    .topbar-brand { display: flex; align-items: center; gap: 10px; font-family: var(--font-display); font-size: 18px; font-weight: 700; }
+    .topbar-brand-mark {
+      width: 32px; height: 32px; border-radius: 8px;
+      background: linear-gradient(135deg, var(--accent-gold), #d97706);
+      color: #000; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 16px;
+    }
+    .topbar-right { display: flex; align-items: center; gap: 16px; }
+
+    .status-pill {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 600;
+      background: rgba(16, 185, 129, 0.1); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.25);
+    }
+    .status-dot { width: 8px; height: 8px; border-radius: 50%; background: #34d399; box-shadow: 0 0 8px #34d399; }
+
+    /* — SIDEBAR — */
+    .sidebar {
+      background: var(--bg-panel); border-right: 1px solid var(--border-subtle);
+      padding: 20px; display: flex; flex-direction: column; gap: 20px; overflow-y: auto;
+    }
+    .sb-card {
+      background: var(--bg-card); border: 1px solid var(--border-subtle);
+      border-radius: 14px; padding: 18px;
+    }
+    .sb-hero-name { font-family: var(--font-display); font-size: 16px; font-weight: 700; color: var(--accent-gold-light); margin-bottom: 4px; }
+    .sb-hero-slug { font-size: 12px; color: var(--text-muted); margin-bottom: 12px; }
+    
+    .wallet-val { font-family: var(--font-display); font-size: 28px; font-weight: 700; color: var(--text-main); }
+    .wallet-lbl { font-size: 11px; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.05em; margin-bottom: 2px; }
+
+    /* — MAIN PANEL & TABS — */
+    .main-panel {
+      display: flex; flex-direction: column; overflow: hidden; background: transparent;
+    }
+    .tab-nav {
+      display: flex; gap: 8px; padding: 16px 24px 0;
+      border-bottom: 1px solid var(--border-subtle); background: rgba(13, 17, 26, 0.4);
+    }
+    .tab-btn {
+      padding: 12px 18px; font-family: var(--font-display); font-size: 14px; font-weight: 600;
+      color: var(--text-muted); border-bottom: 2px solid transparent; cursor: pointer;
+      transition: all 0.2s var(--ease); display: flex; align-items: center; gap: 8px;
+    }
+    .tab-btn:hover { color: var(--text-main); }
+    .tab-btn.active { color: var(--accent-gold-light); border-bottom-color: var(--accent-gold); }
+    .tab-cnt {
+      background: rgba(255, 255, 255, 0.1); color: var(--text-main);
+      padding: 2px 7px; border-radius: 10px; font-size: 11px; font-weight: 700;
+    }
+
+    .tab-panels { flex: 1; overflow-y: auto; padding: 24px; }
+    .tab-panel { display: none; animation: fadeIn 0.25s var(--ease); }
+    .tab-panel.active { display: block; }
+
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* — KPI GRID — */
+    .kpi-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-bottom: 24px;
+    }
+    .kpi-card {
+      background: var(--bg-card); border: 1px solid var(--border-subtle);
+      border-radius: 16px; padding: 20px; position: relative; overflow: hidden;
+      transition: all 0.25s var(--ease);
+    }
+    .kpi-card:hover { border-color: var(--border-bright); transform: translateY(-2px); background: var(--bg-card-hover); }
+    .kpi-icon { font-size: 24px; margin-bottom: 12px; display: inline-block; }
+    .kpi-val { font-family: var(--font-display); font-size: 32px; font-weight: 700; line-height: 1; margin-bottom: 6px; }
+    .kpi-lbl { font-size: 12px; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.05em; }
+
+    /* — TABLES — */
+    .glass-card {
+      background: var(--bg-card); border: 1px solid var(--border-subtle);
+      border-radius: 16px; overflow: hidden; margin-bottom: 24px;
+    }
+    .card-header {
+      padding: 20px 24px; border-bottom: 1px solid var(--border-subtle);
+      display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;
+    }
+    .card-title { font-family: var(--font-display); font-size: 20px; font-weight: 700; }
+
+    table.dt { width: 100%; border-collapse: collapse; text-align: left; }
+    table.dt th {
+      background: rgba(0, 0, 0, 0.2); color: var(--text-muted);
+      font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;
+      padding: 14px 24px; border-bottom: 1px solid var(--border-subtle);
+    }
+    table.dt td {
+      padding: 16px 24px; border-bottom: 1px solid var(--border-subtle);
+      font-size: 14px; color: var(--text-main);
+    }
+    table.dt tr:last-child td { border-bottom: none; }
+    table.dt tr:hover td { background: rgba(255, 255, 255, 0.02); }
+
+    /* — LEADERBOARD PODIUM — */
+    .lb-row {
+      display: flex; align-items: center; gap: 16px; padding: 14px 20px;
+      background: var(--bg-card); border: 1px solid var(--border-subtle);
+      border-radius: 12px; margin-bottom: 10px; transition: all 0.2s var(--ease);
+    }
+    .lb-row:hover { border-color: var(--accent-gold); background: var(--bg-card-hover); }
+    .lb-rank {
+      width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center;
+      justify-content: center; font-family: var(--font-display); font-weight: 800; font-size: 14px;
+    }
+    .lb-rank.r1 { background: linear-gradient(135deg, #f59e0b, #d97706); color: #000; }
+    .lb-rank.r2 { background: linear-gradient(135deg, #9ca3af, #4b5563); color: #fff; }
+    .lb-rank.r3 { background: linear-gradient(135deg, #b45309, #78350f); color: #fff; }
+    .lb-rank.rn { background: rgba(255, 255, 255, 0.08); color: var(--text-muted); }
+
+    .lb-info { flex: 1; }
+    .lb-name { font-weight: 600; color: var(--text-main); }
+    .lb-bar-wrap { width: 140px; height: 8px; background: rgba(255,255,255,0.06); border-radius: 4px; overflow: hidden; }
+    .lb-bar { height: 100%; background: linear-gradient(90deg, var(--accent-gold), var(--accent-gold-light)); border-radius: 4px; }
+    .lb-votes { font-family: var(--font-display); font-size: 18px; font-weight: 700; color: var(--accent-gold-light); }
+
+    .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px; }
+
+    @media (max-width: 900px) {
+      .shell { grid-template-columns: 1fr; grid-template-rows: 64px auto 1fr; }
+      .sidebar { border-right: none; border-bottom: 1px solid var(--border-subtle); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- SETUP SCREEN 1: API CONFIG -->
+  <div id="screenSettings" class="screen">
+    <div class="screen-card">
+      <div class="screen-title">Connect Showtime API</div>
+      <p class="screen-desc">Establish secure real-time connection with Showtime cloud production API.</p>
+      <form id="configForm">
+        <div class="form-group">
+          <label>Showtime Production API URL</label>
+          <input type="url" id="cfgUrl" required value="https://showtime-app-puoebusfva-ew.a.run.app">
+        </div>
+        <div class="form-group">
+          <label>API Key / Secret Token</label>
+          <input type="password" id="cfgKey" required value="default-insecure-task-token-please-change-in-env">
+        </div>
+        <button type="submit" id="btnSaveCfg" class="btn btn-gold" style="width:100%;">Connect &amp; Continue →</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- SETUP SCREEN 2: CHANNEL WIZARD -->
+  <div id="screenWizard" class="screen hidden">
+    <div class="screen-card">
+      <div class="screen-title">Sync Showtime Channel</div>
+      <p class="screen-desc">Configure a live connection to the Quinsty Showtime API for your workspace.</p>
+      <form id="createChannelForm">
+        <div class="form-group" style="display:none;">
+          <label>Event Name</label>
+          <input type="text" id="wizName" readonly value="">
+        </div>
+        <div class="form-group">
+          <label>Season</label>
+          <input type="text" id="wizSeason" value="2026">
+        </div>
+        <div class="form-group">
+          <label>URL Slug</label>
+          <input type="text" id="wizSlug" required value="">
+        </div>
+        <div style="display:flex; gap:12px; margin-top:20px;">
+          <button type="button" class="btn btn-ghost" onclick="goToSettings()">← Back</button>
+          <button type="submit" id="btnCreateChannel" class="btn btn-gold" style="flex:1;">⚡ Sync Event Channel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MAIN DASHBOARD SHELL -->
+  <div class="shell" id="mainDashboard">
+
+    <!-- TOPBAR -->
+    <header class="topbar">
+      <div class="topbar-left">
+        <div class="topbar-brand">
+          <div class="topbar-brand-mark">Q</div>
+          <span>Quinsty <span style="font-weight:400; color:var(--text-muted); font-size:14px;">Channel Hub</span></span>
+        </div>
+      </div>
+      <div class="topbar-right">
+        <div class="status-pill">
+          <div class="status-dot"></div>
+          <span id="topWhText">🟢 Connected to Showtime API</span>
+        </div>
+        <a href="https://qtv.ng/verify-contestants/" target="_blank" class="btn btn-ghost btn-sm">🔍 Verify Paper Forms</a>
+        <a href="https://qtv.ng/add-contestant/3/" target="_blank" class="btn btn-gold btn-sm">+ Add Contestant</a>
+      </div>
+    </header>
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+      
+      <!-- Live Channel Card -->
+      <div class="sb-card">
+        <div style="font-size:11px; text-transform:uppercase; color:var(--text-muted); letter-spacing:0.05em; margin-bottom:4px;">Active Event Channel</div>
+        <div class="sb-hero-name" id="sbChannelName">Resolving Workspace...</div>
+        <div class="sb-hero-slug" id="sbChannelSlug">Waiting for Showtime sync</div>
+        <a id="sbLiveLink" href="#" target="_blank" class="btn btn-ghost btn-sm" style="width:100%; pointer-events:none; opacity:0.5; margin-bottom:8px;">
+          🔗 Open Live Page ↗
+        </a>
+        <button onclick="window.killConnection()" class="btn btn-ghost btn-sm" style="width:100%; color:var(--accent-red); border-color:rgba(239,68,68,0.2);">
+          ⚠️ Kill &amp; Reconnect
+        </button>
+      </div>
+
+      <!-- Wallet -->
+      <div class="sb-card">
+        <div class="wallet-lbl">Channel Wallet Balance</div>
+        <div class="wallet-val" id="sbWallet">₦0</div>
+        <div style="font-size:11px; color:var(--accent-emerald); margin-top:4px;">✓ Real-time Webhook Push Active</div>
+      </div>
+
+      <!-- Settings Form -->
+      <div class="sb-card">
+        <div style="font-size:12px; font-weight:700; color:var(--text-main); margin-bottom:12px;">⚙ API Settings</div>
+        <form id="settingsForm">
+          <div class="form-group" style="margin-bottom:10px;">
+            <label>Showtime API URL</label>
+            <input type="url" id="settingApiUrl" value="https://showtime-app-puoebusfva-ew.a.run.app">
+          </div>
+          <div class="form-group" style="margin-bottom:12px;">
+            <label>API Key</label>
+            <input type="password" id="settingApiKey" value="default-insecure-task-token-please-change-in-env">
+          </div>
+          <button type="submit" class="btn btn-ghost btn-sm" style="width:100%;">Save Settings</button>
+          <div id="settingsMsg" style="display:none; color:var(--accent-emerald); font-size:11px; text-align:center; margin-top:6px;">✓ Settings Saved</div>
+        </form>
+      </div>
+
+    </aside>
+
+    <!-- MAIN CONTENT PANEL -->
+    <main class="main-panel">
+
+      <!-- CONNECTION ERROR ALERT BANNER -->
+      <div id="connectionErrorBanner" style="display:none; padding:16px 24px 0 24px;"></div>
+
+      <!-- NAVIGATION TABS -->
+      <nav class="tab-nav">
+        <div class="tab-btn active" data-target="tab-overview">Overview</div>
+        <div class="tab-btn" data-target="tab-members">Members &amp; Contestants <span class="tab-cnt" id="cntMembers">0</span></div>
+        <div class="tab-btn" data-target="tab-leaderboard">Live Leaderboard</div>
+        <div class="tab-btn" data-target="tab-tickets">Tickets &amp; Revenue</div>
+        <div class="tab-btn" data-target="tab-notices">Broadcast Notices</div>
+        <div class="tab-btn" data-target="tab-activity">Webhook Activity</div>
+      </nav>
+
+      <!-- TAB PANELS -->
+      <div class="tab-panels">
+
+        <!-- ── OVERVIEW TAB ─────────────────────── -->
+        <div id="tab-overview" class="tab-panel active">
+          
+          <div class="kpi-grid">
+            <div class="kpi-card">
+              <div class="kpi-icon">🎯</div>
+              <div class="kpi-val" id="kpiTarget">0</div>
+              <div class="kpi-lbl">Target Goal</div>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-icon">👥</div>
+              <div class="kpi-val" id="kpiReg" style="color:var(--accent-gold-light);">0</div>
+              <div class="kpi-lbl">Registered (<span id="kpiRemaining">0</span> remaining)</div>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-icon">🎫</div>
+              <div class="kpi-val" id="kpiTickets">0</div>
+              <div class="kpi-lbl">Active Ticket Types</div>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-icon">🗳️</div>
+              <div class="kpi-val" id="kpiVotes" style="color:var(--accent-blue);">0</div>
+              <div class="kpi-lbl">Total Votes Cast</div>
+            </div>
+          </div>
+
+          <div class="grid-2">
+            
+            <!-- Progress Card -->
+            <div class="glass-card" style="padding:24px;">
+              <div class="card-title" style="margin-bottom:16px;">Registration Goal Progress</div>
+              <div style="display:flex; align-items:center; gap:24px;">
+                <svg width="110" height="110" viewBox="0 0 120 120">
+                  <circle cx="60" cy="60" r="50" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="10"/>
+                  <circle id="progressRing" cx="60" cy="60" r="50" fill="none"
+                    stroke="var(--accent-gold)" stroke-width="10" stroke-linecap="round"
+                    stroke-dasharray="314.2" stroke-dashoffset="314.2"
+                    style="transition:stroke-dashoffset 1s var(--ease); transform:rotate(-90deg); transform-origin:50% 50%"/>
+                  <text x="60" y="58" font-family="'Outfit',sans-serif" font-size="22" font-weight="700" fill="#fff" text-anchor="middle" id="ringPct">0%</text>
+                  <text x="60" y="74" font-family="sans-serif" font-size="10" fill="#9ca3af" text-anchor="middle">achieved</text>
+                </svg>
+                <div>
+                  <div style="font-size:24px; font-weight:700; font-family:var(--font-display);" id="ringReg">0</div>
+                  <div style="font-size:12px; color:var(--text-muted); margin-bottom:12px;">Registered out of <span id="ringTarget">0</span> physical forms</div>
+                  <a href="https://qtv.ng/verify-contestants/" target="_blank" class="btn btn-gold btn-sm">
+                    🔍 Cross-Reference Forms
+                  </a>
+                </div>
+              </div>
+            </div>
+
+            <!-- Top 3 Live Podium -->
+            <div class="glass-card" style="padding:24px;">
+              <div class="card-title" style="margin-bottom:16px;">🏆 Top Contestants (Live)</div>
+              <div id="overviewLb">
+                <div style="color:var(--text-muted); text-align:center; padding:20px 0;">Listening for live votes…</div>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+
+        <!-- ── MEMBERS TAB ───────────────────────── -->
+        <div id="tab-members" class="tab-panel">
+          <div class="glass-card">
+            
+            <div class="card-header">
+              <div class="card-title">👥 Contestants &amp; Participants</div>
+              <div style="display:flex; gap:10px;">
+                <a href="https://qtv.ng/add-contestant/3/" target="_blank" class="btn btn-gold btn-sm">+ Add Contestant</a>
+                <a href="https://qtv.ng/verify-contestants/" target="_blank" class="btn btn-ghost btn-sm">🔍 Verify Paper Forms</a>
+              </div>
+            </div>
+
+            <div style="padding: 16px 24px; border-bottom: 1px solid var(--border-subtle);">
+              <input
+                type="text"
+                id="searchMemberInput"
+                placeholder="🔍 Search contestants by Name, Code (e.g. 101, 102...), or Phone Number..."
+                oninput="window.filterHubMembers()"
+                style="width:100%; padding:12px 16px; border-radius:10px; border:1px solid var(--border-subtle); background:var(--bg-dark); color:#fff; font-size:14px; outline:none;"
+              />
+            </div>
+
+            <table class="dt">
+              <thead>
+                <tr>
+                  <th style="width:90px;">Code</th>
+                  <th>Participant Name</th>
+                  <th>Phone Number</th>
+                  <th>Votes</th>
+                  <th>Status</th>
+                  <th style="width:120px;">Action</th>
+                </tr>
+              </thead>
+              <tbody id="membersTbody">
+                <tr><td colspan="6" style="text-align:center; padding:3rem; color:var(--text-muted);">Loading real-time contestant database…</td></tr>
+              </tbody>
+            </table>
+
+          </div>
+        </div>
+
+        <!-- ── LEADERBOARD TAB ───────────────────── -->
+        <div id="tab-leaderboard" class="tab-panel">
+          <div class="glass-card" style="padding:24px;">
+            <div class="card-title" style="margin-bottom:20px;">🏆 Live Voting Leaderboard</div>
+            <div id="fullLb">
+              <div style="color:var(--text-muted); text-align:center; padding:3rem;">No votes recorded yet.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── TICKETS TAB ───────────────────────── -->
+        <div id="tab-tickets" class="tab-panel">
+          <div class="glass-card">
+            <div class="card-header">
+              <div class="card-title">🎫 Active Ticket Types</div>
+            </div>
+            <table class="dt">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Ticket Category</th>
+                  <th>Price</th>
+                  <th>Type</th>
+                </tr>
+              </thead>
+              <tbody id="ticketsTbody">
+                <tr><td colspan="4" style="text-align:center; padding:3rem; color:var(--text-muted);">Listening for ticket types…</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- ── NOTICES TAB ───────────────────────── -->
+        <div id="tab-notices" class="tab-panel">
+          <div class="grid-2" style="align-items:start;">
+            
+            <div class="glass-card" style="padding:24px;">
+              <div class="card-title" style="margin-bottom:16px;">📣 Broadcast Notice</div>
+              <form id="noticeForm">
+                <div class="form-group">
+                  <label>Title</label>
+                  <input type="text" id="noticeTitle" required placeholder="e.g. Voting now live for REFA Season 2026!">
+                </div>
+                <div class="form-group">
+                  <label>Message Body</label>
+                  <textarea id="noticeBody" rows="4" required placeholder="Write message to contestants..."></textarea>
+                </div>
+                <button type="submit" class="btn btn-gold" style="width:100%;">Broadcast Notice</button>
+              </form>
+            </div>
+
+            <div class="glass-card" style="padding:24px;">
+              <div class="card-title" style="margin-bottom:16px;">📋 Broadcast History</div>
+              <div id="noticesList">
+                <div style="color:var(--text-muted); text-align:center; padding:2rem;">No notices broadcasted yet.</div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- ── ACTIVITY TAB ──────────────────────── -->
+        <div id="tab-activity" class="tab-panel">
+          <div class="glass-card" style="padding:24px;">
+            <div class="card-title" style="margin-bottom:16px;">📡 Live Webhook Activity Stream</div>
+            <div id="fullFeed">
+              <div style="color:var(--text-muted); text-align:center; padding:3rem;">No webhook activity events yet.</div>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /tab-panels -->
+
+    </main>
+  </div><!-- /shell -->
+
+  <!-- FIREBASE MODULES -->
+  <script type="module" src="js/firebase-init.js"></script>
+  <script type="module" src="js/event-config.js"></script>
+  <script type="module" src="js/channel-hub.js?v=6"></script>
+
+  <script>
+    function goToSettings(){
+      document.getElementById('screenWizard').classList.add('hidden');
+      document.getElementById('screenSettings').classList.remove('hidden');
+    }
+  </script>
+</body>
+</html>

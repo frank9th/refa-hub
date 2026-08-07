@@ -39,10 +39,31 @@ const PASSKEYS = [
     key: "REFA-GUEST-2026",
     role: "viewer",
     title: "Guest Visitor",
+    eventId: "refa-season2",
     maxUses: 100,
     currentUses: 0,
     active: true,
     allowedPages: ["dashboard"]
+  },
+  {
+    key: "HITMIC-ADMIN-2026",
+    role: "admin",
+    title: "Executive Admin",
+    eventId: "hit-the-mic-s3",
+    maxUses: 5,
+    currentUses: 0,
+    active: true,
+    allowedPages: ["dashboard", "tasks", "strategy", "voting", "sponsors", "letters", "accounts", "media", "studio"]
+  },
+  {
+    key: "HITMIC-TEAM-2026",
+    role: "ops",
+    title: "Operations & Mentor",
+    eventId: "hit-the-mic-s3",
+    maxUses: 30,
+    currentUses: 0,
+    active: true,
+    allowedPages: ["dashboard", "tasks", "voting", "strategy"]
   }
 ];
 
@@ -61,6 +82,7 @@ async function seedPasskeys() {
         maxUses: { integerValue: item.maxUses },
         currentUses: { integerValue: item.currentUses },
         active: { booleanValue: item.active },
+        eventId: { stringValue: item.eventId || "refa-season2" },
         allowedPages: {
           arrayValue: {
             values: item.allowedPages.map(p => ({ stringValue: p }))
@@ -72,7 +94,7 @@ async function seedPasskeys() {
     let retries = 3;
     while (retries > 0) {
       try {
-        const res = await fetch(`${docPath}?updateMask.fieldPaths=key&updateMask.fieldPaths=role&updateMask.fieldPaths=title&updateMask.fieldPaths=maxUses&updateMask.fieldPaths=currentUses&updateMask.fieldPaths=active&updateMask.fieldPaths=allowedPages`, {
+        const res = await fetch(`${docPath}?updateMask.fieldPaths=key&updateMask.fieldPaths=role&updateMask.fieldPaths=title&updateMask.fieldPaths=maxUses&updateMask.fieldPaths=currentUses&updateMask.fieldPaths=active&updateMask.fieldPaths=eventId&updateMask.fieldPaths=allowedPages`, {
           method: 'PATCH',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload)

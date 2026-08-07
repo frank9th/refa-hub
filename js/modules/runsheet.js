@@ -20,18 +20,19 @@ const DEFAULT_CUES = [
   { id: 'cue-10', time: '20:30', segment: 'Closing & Photos', note: 'Confetti drop. Stage open for photos.', crew: 'All Crew' }
 ];
 
-window.addEventListener('firebase-ready', async () => {
-  // Use a setInterval to check for active event from the main app.js state if it's set there,
-  // or just load it ourselves. Since app.js manages the dropdown, we'll hook into window.REFA_EVENTS.
-  
+const runRunsheetInit = () => {
   startClock();
-  
-  // Wait a beat for app.js to init the event
   setTimeout(() => {
     activeEvent = window.REFA_EVENTS ? window.REFA_EVENTS.getActiveEvent() : null;
     initRunsheet();
-  }, 1000);
-});
+  }, 300);
+};
+
+if (window.REFA_FIREBASE) {
+  runRunsheetInit();
+} else {
+  window.addEventListener('firebase-ready', runRunsheetInit);
+}
 
 function startClock() {
   setInterval(() => {

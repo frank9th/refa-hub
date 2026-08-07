@@ -20,9 +20,9 @@ const DEFAULT_CRITERIA = [
   { id: 'impact', label: 'Overall Impact', max: 10, desc: 'The "X-Factor" and memorable quality.' }
 ];
 
-window.addEventListener('firebase-ready', async () => {
+const initJudges = async () => {
   const urlParams = new URLSearchParams(window.location.search);
-  const eventId = urlParams.get('event') || 'hit-the-mic-s3';
+  const eventId = urlParams.get('event') ;
   
   if (window.REFA_FIREBASE) {
     activeEvent = await window.REFA_FIREBASE.getEvent(eventId);
@@ -32,7 +32,13 @@ window.addEventListener('firebase-ready', async () => {
       populateCategories();
     }
   }
-});
+};
+
+if (window.REFA_FIREBASE) {
+  initJudges();
+} else {
+  window.addEventListener('firebase-ready', initJudges);
+}
 
 function loginJudge() {
   const name = document.getElementById('judge-name').value.trim();

@@ -1,5 +1,6 @@
 {
   "version": 2,
+  "cleanUrls": true,
   "builds": [
     {
       "src": "api/**/*.js",
@@ -30,6 +31,34 @@
     {
       "src": "/api/(.*)",
       "dest": "/api/$1"
+    },
+    {
+      "src": "/command-hub/([^/]+)/register",
+      "dest": "/register.html?event=$1"
+    },
+    {
+      "src": "/command-hub/([^/]+)/portal",
+      "dest": "/contestant-portal.html?event=$1"
+    },
+    {
+      "src": "/command-hub/([^/]+)/judges",
+      "dest": "/judges.html?event=$1"
+    },
+    {
+      "src": "/command-hub/([^/]+)/leaderboard",
+      "dest": "/leaderboard.html?event=$1"
+    },
+    {
+      "src": "/command-hub/([^/]+)/channel",
+      "dest": "/channel-hub.html?event=$1"
+    },
+    {
+      "src": "/command-hub/([^/]+)",
+      "dest": "/index.html?event=$1"
+    },
+    {
+      "src": "/command-hub",
+      "dest": "/index.html"
     },
     {
       "src": "/(.*)",

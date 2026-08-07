@@ -2,7 +2,7 @@
 // Surgical refinement of specific sections of an existing strategy.
 // Vercel Serverless Function (Node.js)
 
-const { ai, AI_MODEL, extractJsonFromText } = require('./ai-config');
+const { generateWithFallback, extractJsonFromText } = require('./ai-config');
 
 const REFINE_SYSTEM_PROMPT = `You are a world-class event strategist updating a previously generated event strategy.
 
@@ -54,17 +54,11 @@ Apply this change surgically and return only the changed sections plus a summary
 `;
 
   try {
-    if (!ai) {
-      return res.status(500).json({ error: 'AI backend is not configured on this local server. Please restart your node server with a GEMINI_API_KEY environment variable.' });
-    }
-    const response = await ai.models.generateContent({
-      model: AI_MODEL,
-      contents: userPrompt,
-      config: {
-        systemInstruction: REFINE_SYSTEM_PROMPT,
-        temperature: 0.5,
-        responseMimeType: 'application/json',
-      }
+    const response = await generateWithFallback(userPrompt, {
+      systemInstruction: REFINE_SYSTEM_PROMPT,
+      temperature: 0.65,
+      responseMimeType: 'application/json',
+      maxOutputTokens: 8192,
     });
 
     const rawText = response.text.trim();

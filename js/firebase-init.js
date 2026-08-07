@@ -1,4 +1,5 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 import { 
   getFirestore, 
   enableIndexedDbPersistence, 
@@ -6,6 +7,9 @@ import {
   doc, 
   getDoc,
   getDocs,
+  query,
+  orderBy,
+  limit,
   onSnapshot, 
   setDoc, 
   updateDoc, 
@@ -27,6 +31,7 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
+const auth = getAuth(app);
 
 // Enable offline persistence
 enableIndexedDbPersistence(db).catch((err) => {
@@ -37,33 +42,174 @@ enableIndexedDbPersistence(db).catch((err) => {
   }
 });
 
+// Sign in anonymously so all Firestore writes are authenticated.
+// The app never requires the user to create an account — this is transparent.
+signInAnonymously(auth).catch((err) => {
+  console.warn("[Firebase Auth] Anonymous sign-in failed:", err.code);
+});
+
+/**
+ * Returns the Firestore path for a sub-collection of the active event.
+ * Throws if no active event has been resolved — no hardcoded fallback IDs.
+ */
 function getEventPath(subCol) {
   const event = window.REFA_EVENTS ? window.REFA_EVENTS.getActiveEvent() : null;
-  const eventId = event && event.id ? event.id : 'refa-season2';
-  return `events/${eventId}/${subCol}`;
+  if (!event || !event.id) {
+    throw new Error('[Firebase] getEventPath() called before an active event was resolved. Ensure initEvent() has completed.');
+  }
+  return `events/${event.id}/${subCol}`;
+}
+
+// --- EVENT CONFIG CACHE ---
+// Caches only the static event configuration document (name, dates, phases,
+// categories, settings). NOT used for live data (votes, tasks, contestants
+// etc.) — those already use efficient onSnapshot() real-time listeners.
+const _eventMemCache = new Map();          // Tier 1: in-memory (tab lifetime)
+const _LIST_CACHE_KEY = 'refa_events_list_cache';
+const EVENT_CACHE_TTL_MS = 15 * 60 * 1000; // 15 minutes
+
+function _eventCacheKey(id) { return `refa_event_cache_${id}`; }
+
+function _readEventCache(id) {
+  // 1. Memory first — zero cost
+  if (_eventMemCache.has(id)) return _eventMemCache.get(id);
+  // 2. sessionStorage — survives page-to-page navigation in same tab
+  try {
+    const raw = sessionStorage.getItem(_eventCacheKey(id));
+    if (!raw) return null;
+    const { data, ts } = JSON.parse(raw);
+    if (Date.now() - ts < EVENT_CACHE_TTL_MS) {
+      _eventMemCache.set(id, data); // warm memory tier
+      return data;
+    }
+    sessionStorage.removeItem(_eventCacheKey(id)); // stale — evict
+  } catch(e) {}
+  return null;
+}
+
+function _writeEventCache(id, data) {
+  _eventMemCache.set(id, data);
+  try {
+    sessionStorage.setItem(_eventCacheKey(id), JSON.stringify({ data, ts: Date.now() }));
+  } catch(e) {}
+}
+
+function _readListCache() {
+  if (_eventMemCache.has('__list__')) return _eventMemCache.get('__list__');
+  try {
+    const raw = sessionStorage.getItem(_LIST_CACHE_KEY);
+    if (!raw) return null;
+    const { data, ts } = JSON.parse(raw);
+    if (Date.now() - ts < EVENT_CACHE_TTL_MS) {
+      _eventMemCache.set('__list__', data);
+      return data;
+    }
+    sessionStorage.removeItem(_LIST_CACHE_KEY);
+  } catch(e) {}
+  return null;
+}
+
+function _writeListCache(data) {
+  _eventMemCache.set('__list__', data);
+  try {
+    sessionStorage.setItem(_LIST_CACHE_KEY, JSON.stringify({ data, ts: Date.now() }));
+  } catch(e) {}
+}
+
+/**
+ * Invalidate all cached data for a given event ID.
+ * Called automatically by saveEvent() after a successful Firestore write.
+ */
+function _invalidateEventCache(id) {
+  if (id) {
+    _eventMemCache.delete(id);
+    try { sessionStorage.removeItem(_eventCacheKey(id)); } catch(e) {}
+  }
+  // Always bust the list cache too — the event name/metadata may have changed
+  _eventMemCache.delete('__list__');
+  try { sessionStorage.removeItem(_LIST_CACHE_KEY); } catch(e) {}
 }
 
 // --- EVENTS CONFIG HELPERS ---
 async function getEvent(eventId) {
+  if (!eventId) {
+    console.error('[Firebase] getEvent() called with no eventId.');
+    return null;
+  }
+  // Serve from cache if fresh
+  const cached = _readEventCache(eventId);
+  if (cached) {
+    console.debug(`[Firebase] getEvent('${eventId}') served from cache.`);
+    return cached;
+  }
   try {
     const docRef = doc(db, "events", eventId);
     const docSnap = await getDoc(docRef);
     if (docSnap.exists()) {
-      return { id: docSnap.id, ...docSnap.data() };
+      const data = { id: docSnap.id, ...docSnap.data() };
+      _writeEventCache(eventId, data);
+      return data;
+    }
+    console.warn(`[Firebase] Event document '${eventId}' not found in Firestore.`);
+    return null;
+  } catch (err) {
+    console.error("[Firebase] Error getting event:", err);
+    return null;
+  }
+}
+
+/**
+ * Fetches the first available event from Firestore.
+ * Tries the list cache first to avoid a full collection scan.
+ */
+async function getFirstEvent() {
+  // Try list cache first — avoids a full collection scan
+  const cachedList = _readListCache();
+  if (cachedList && cachedList.length > 0) {
+    console.debug('[Firebase] getFirstEvent() served from list cache.');
+    return cachedList[0];
+  }
+  try {
+    const colRef = collection(db, "events");
+    const q = query(colRef, orderBy('createdAt', 'desc'), limit(1));
+    const snapshot = await getDocs(q);
+    if (!snapshot.empty) {
+      const data = { id: snapshot.docs[0].id, ...snapshot.docs[0].data() };
+      _writeEventCache(data.id, data);
+      return data;
+    }
+    // Fallback: unordered scan if no createdAt field exists
+    const fallbackSnap = await getDocs(colRef);
+    if (!fallbackSnap.empty) {
+      const data = { id: fallbackSnap.docs[0].id, ...fallbackSnap.docs[0].data() };
+      _writeEventCache(data.id, data);
+      return data;
     }
     return null;
   } catch (err) {
-    console.error("Error getting event:", err);
+    console.error('[Firebase] Error fetching first event:', err);
     return null;
   }
 }
 
 async function listEvents() {
+  // Serve from cache if fresh
+  const cached = _readListCache();
+  if (cached) {
+    console.debug('[Firebase] listEvents() served from cache.');
+    return cached;
+  }
   try {
     const colRef = collection(db, "events");
     const snapshot = await getDocs(colRef);
     const events = [];
-    snapshot.forEach(docSnap => events.push({ id: docSnap.id, ...docSnap.data() }));
+    snapshot.forEach(docSnap => {
+      const data = { id: docSnap.id, ...docSnap.data() };
+      events.push(data);
+      // Warm individual event caches while we have the data
+      _writeEventCache(data.id, data);
+    });
+    _writeListCache(events);
     return events;
   } catch (err) {
     console.error("Error listing events:", err);
@@ -80,9 +226,73 @@ async function saveEvent(eventData) {
       id: eventId,
       updatedAt: serverTimestamp()
     }, { merge: true });
+    // Invalidate cache so next read reflects the freshly saved data
+    _invalidateEventCache(eventId);
     return { success: true, id: eventId };
   } catch (err) {
     console.error("Error saving event:", err);
+    return { success: false, error: err.message };
+  }
+}
+
+async function seedPasskeysForEvent(eventId) {
+  try {
+    const year = new Date().getFullYear();
+    let prefix = eventId.split('-')[0].toUpperCase();
+    if (prefix.length < 3 && eventId.split('-').length > 1) {
+      prefix = (eventId.split('-')[0] + eventId.split('-')[1]).toUpperCase();
+    }
+    
+    const passkeys = [
+      {
+        key: `${prefix}-ADMIN-${year}`,
+        role: "admin",
+        title: "Executive Admin",
+        eventId: eventId,
+        maxUses: 5,
+        currentUses: 0,
+        active: true,
+        allowedPages: ["dashboard", "tasks", "strategy", "voting", "sponsors", "letters", "accounts", "media", "studio"]
+      },
+      {
+        key: `${prefix}-MEDIA-${year}`,
+        role: "media",
+        title: "Media & Studio Lead",
+        eventId: eventId,
+        maxUses: 15,
+        currentUses: 0,
+        active: true,
+        allowedPages: ["dashboard", "tasks", "media", "studio", "strategy"]
+      },
+      {
+        key: `${prefix}-TEAM-${year}`,
+        role: "ops",
+        title: "Operations & Mentor",
+        eventId: eventId,
+        maxUses: 30,
+        currentUses: 0,
+        active: true,
+        allowedPages: ["dashboard", "tasks", "voting", "strategy"]
+      },
+      {
+        key: `${prefix}-GUEST-${year}`,
+        role: "viewer",
+        title: "Guest Visitor",
+        eventId: eventId,
+        maxUses: 100,
+        currentUses: 0,
+        active: true,
+        allowedPages: ["dashboard"]
+      }
+    ];
+
+    for (const pk of passkeys) {
+      await setDoc(doc(db, "passkeys", pk.key), pk);
+    }
+    console.log(`[Firebase] Successfully seeded passkeys for event: ${eventId}`);
+    return { success: true, passkeys };
+  } catch (err) {
+    console.error("Error seeding passkeys:", err);
     return { success: false, error: err.message };
   }
 }
@@ -114,8 +324,9 @@ async function validatePassKey(name, keyInput, currentEventId) {
     }
 
     if (currentEventId) {
-      const keyEventId = data.eventId || 'refa-season-2';
-      if (keyEventId !== currentEventId) {
+      const keyEventId = data.eventId;
+      // Only enforce event restriction if the key has an eventId field set
+      if (keyEventId && keyEventId !== currentEventId) {
         return { success: false, message: 'This Pass Key is not authorized for the current event dashboard.' };
       }
     }
@@ -162,20 +373,7 @@ async function validatePassKey(name, keyInput, currentEventId) {
     };
   } catch (err) {
     console.error("PassKey validation error:", err);
-    // Offline local fallback if network error
-    const FALLBACK_KEYS = {
-      'REFA-ADMIN-2026': { key: 'REFA-ADMIN-2026', role: 'admin', title: 'Executive Admin', allowedPages: ["dashboard", "tasks", "strategy", "voting", "sponsors", "letters", "accounts", "media", "studio", "timeline", "countdown", "parents", "operations", "revenue", "teams", "social", "sponsorship"] },
-      'REFA-MEDIA-2026': { key: 'REFA-MEDIA-2026', role: 'media', title: 'Media & Studio Lead', allowedPages: ["dashboard", "tasks", "media", "studio", "strategy", "timeline", "countdown", "social"] },
-      'REFA-TEAM-2026': { key: 'REFA-TEAM-2026', role: 'ops', title: 'Operations & Mentor', allowedPages: ["dashboard", "tasks", "voting", "strategy", "timeline", "countdown", "parents", "teams"] },
-      'REFA-GUEST-2026': { key: 'REFA-GUEST-2026', role: 'viewer', title: 'Guest Visitor', allowedPages: ["dashboard", "timeline", "countdown"] }
-    };
-    if (FALLBACK_KEYS[cleanKey]) {
-      return {
-        success: true,
-        roleData: { ...FALLBACK_KEYS[cleanKey], memberName: name || 'Team Member' }
-      };
-    }
-    return { success: false, message: 'Database connection error and key not found locally.' };
+    return { success: false, message: 'Database connection error. Please check your connection and try again.' };
   }
 }
 
@@ -480,6 +678,7 @@ async function addFinanceTransaction(eventId, transactionData) {
 // Expose Firebase and methods to window for classic JS app
 window.REFA_FIREBASE = {
   db,
+  auth,
   collection,
   doc,
   onSnapshot,
@@ -487,8 +686,10 @@ window.REFA_FIREBASE = {
   updateDoc,
   deleteDoc,
   getEvent,
+  getFirstEvent,
   listEvents,
   saveEvent,
+  seedPasskeysForEvent,
   seedTasksIfEmpty,
   seedTeamsIfEmpty,
   subscribeToTasks,

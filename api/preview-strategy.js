@@ -2,7 +2,7 @@
 // Stage 1: Generate a lightweight strategic preview for user confirmation.
 // Vercel Serverless Function (Node.js)
 
-const { ai, AI_MODEL, extractJsonFromText } = require('./ai-config');
+const { generateWithFallback, extractJsonFromText } = require('./ai-config');
 
 const PREVIEW_SYSTEM_PROMPT = `You are a world-class event strategist and financial planner with deep experience in African events — competitions, talent shows, church programs, conferences, cultural festivals, and community events.
 
@@ -64,17 +64,10 @@ Generate a strategic preview for this event.
 `;
 
   try {
-    if (!ai) {
-      return res.status(500).json({ error: 'AI backend is not configured on this local server. Please restart your node server with a GEMINI_API_KEY environment variable.' });
-    }
-    const response = await ai.models.generateContent({
-      model: AI_MODEL,
-      contents: userPrompt,
-      config: {
-        systemInstruction: PREVIEW_SYSTEM_PROMPT,
-        temperature: 0.7,
-        responseMimeType: 'application/json',
-      }
+    const response = await generateWithFallback(userPrompt, {
+      systemInstruction: PREVIEW_SYSTEM_PROMPT,
+      temperature: 0.7,
+      responseMimeType: 'application/json',
     });
     console.log('Finish Reason:', response.candidates?.[0]?.finishReason);
     const rawText = response.text.trim();

@@ -343,7 +343,7 @@
   <div class="card" id="brief-section">
     <div class="card-title">📝 Tell the AI About Your Event</div>
     <div class="brief-form">
-      <textarea id="event-description" placeholder="e.g. A 3-phase inter-church Bible quiz for 200 youth, 10 teams competing across 8 weeks. Prize pool of ₦600,000. We need to raise money through voting and sponsorships. The event is in Warri, Delta State..."></textarea>
+      <textarea id="event-description" placeholder="e.g. A 3-phase talent competition for 200 youth, 10 teams competing across 8 weeks. Prize pool of ₦600,000. We need to raise money through voting and sponsorships. The event is in Lagos..."></textarea>
       <div class="form-grid">
         <div class="form-group">
           <label>📅 Start Date</label>
@@ -363,7 +363,7 @@
         </div>
         <div class="form-group" style="grid-column: 1 / -1;">
           <label>📍 Location / City</label>
-          <input type="text" id="location" placeholder="e.g. Warri, Delta State, Nigeria" />
+          <input type="text" id="location" placeholder="e.g. Civic Center, Lagos, Nigeria" />
         </div>
       </div>
       <button class="btn-ai" onclick="generatePreview()" id="btn-preview">
@@ -524,11 +524,12 @@
       <div class="form-grid">
         <div class="form-group">
           <label>Event Slug (ID)</label>
-          <input type="text" id="man-id" placeholder="e.g. refa-season-3" />
+          <input type="text" id="man-id" placeholder="e.g. talent-hunt-2027" />
+          <div class="helper-text">Lowercase, no spaces. Used for URLs (e.g. /vote?event=talent-hunt-2027)</div>
         </div>
         <div class="form-group">
           <label>Event Name</label>
-          <input type="text" id="man-name" placeholder="e.g. REFA Season 3" />
+          <input type="text" id="man-name" placeholder="e.g. Youth Talent Hunt" />
         </div>
         <div class="form-group">
           <label>Tagline</label>
@@ -591,18 +592,10 @@
     </div>
   </div>
 
-  <!-- EXISTING EVENTS LIST -->
-  <div id="events-list-section">
-    <div class="card">
-      <div class="card-title">🗂 Existing Events</div>
-      <div id="events-list-container">Loading...</div>
-    </div>
-  </div>
 </div>
 
 <script type="module" src="js/firebase-init.js"></script>
 <script src="js/event-config.js"></script>
-<script src="scripts/seed-event-refa2.js"></script>
 <script>
   // ─── STATE ─────────────────────────────────────────────────────
   let briefData = {};
@@ -913,6 +906,11 @@
       };
 
       await window.REFA_FIREBASE.saveEvent(eventConfig);
+      
+      // Auto-generate and save standard passkeys for this event
+      if (window.REFA_FIREBASE.seedPasskeysForEvent) {
+        await window.REFA_FIREBASE.seedPasskeysForEvent(eventId);
+      }
 
       // Set active event so collection paths resolve correctly
       window.REFA_EVENTS.setActiveEvent({ id: eventId });
@@ -1054,6 +1052,11 @@
       };
 
       await window.REFA_FIREBASE.saveEvent(eventConfig);
+      
+      // Auto-generate and save standard passkeys for this event
+      if (window.REFA_FIREBASE.seedPasskeysForEvent) {
+        await window.REFA_FIREBASE.seedPasskeysForEvent(eventId);
+      }
       window.REFA_EVENTS.setActiveEvent({ id: eventId });
 
       // Apply default tasks template for manual event
@@ -1117,36 +1120,6 @@
     return Number(n).toLocaleString('en-NG');
   }
 
-  // ─── ON LOAD: SHOW EXISTING EVENTS ────────────────────────────
-  window.addEventListener('firebase-ready', async () => {
-    if (window.seedRefa2Event) await window.seedRefa2Event();
-    loadExistingEvents();
-  });
-
-  async function loadExistingEvents() {
-    if (!window.REFA_FIREBASE) return;
-    const events = await window.REFA_FIREBASE.listEvents();
-    if (events.length === 0) return;
-    const section = document.getElementById('events-list-section');
-    const container = document.getElementById('events-list-container');
-    const themeColors = {
-      'royal-gold': '#D4AF37', 'crimson-glory': '#E63946', 'emerald-grace': '#10B981',
-      'midnight-steel': '#38BDF8', 'sunset-fire': '#F97316', 'violet-kingdom': '#8B5CF6'
-    };
-    container.innerHTML = events.map(ev => `
-      <div class="event-list-card">
-        <div>
-          <div class="event-list-name">
-            <span class="theme-dot" style="background:${themeColors[ev.theme] || '#888'};"></span>
-            ${ev.name || ev.id}
-          </div>
-          <div class="event-list-meta">${ev.orgName || ''} · ${ev.aiGenerated ? '🤖 AI Generated' : '📝 Manual'}</div>
-        </div>
-        <a href="index.html?event=${ev.id}" class="btn-gold" style="text-decoration:none; font-size:13px; padding:10px 18px;">Open Hub →</a>
-      </div>
-    `).join('');
-    section.style.display = 'block';
-  }
 
   // Allow pressing Enter on refine input
   document.addEventListener('DOMContentLoaded', () => {

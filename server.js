@@ -57,6 +57,21 @@ app.use(express.json());
 // Serve static files from the root directory
 app.use(express.static(__dirname));
 
+// ── Clean URL middleware ───────────────────────────────────────────────────────
+// Matches Vercel/Firebase cleanUrls behaviour locally:
+// /register → register.html, /events → events.html, etc.
+app.use((req, res, next) => {
+  // Only handle extensionless paths (skip /api/*, assets, etc.)
+  if (!req.path.includes('.') && req.path !== '/' && !req.path.startsWith('/api')) {
+    const htmlFile = path.join(__dirname, req.path + '.html');
+    if (fs.existsSync(htmlFile)) return res.sendFile(htmlFile);
+    // Also try index.html inside a matching directory
+    const dirIndex = path.join(__dirname, req.path, 'index.html');
+    if (fs.existsSync(dirIndex)) return res.sendFile(dirIndex);
+  }
+  next();
+});
+
 // Mount AI Handlers
 const chatHandler = require('./api/chat.js');
 const previewStrategyHandler = require('./api/preview-strategy.js');
@@ -91,6 +106,121 @@ app.post('/api/upload', upload.single('mediaFile'), (req, res) => {
     file: req.file.filename,
     uploader: uploaderName
   });
+});
+
+// API Endpoint: Proxy to Showtime backend (bypasses browser CORS)
+app.all('/api/showtime-proxy', async (req, res) => {
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Method not allowed' });
+  }
+  const { action, payload, apiUrl, apiKey } = req.body || {};
+  
+  if (!apiUrl) {
+    return res.status(400).json({ error: 'Missing apiUrl in request' });
+  }
+
+  let endpoint = apiUrl.replace(/\/$/, '');
+  
+  let method = 'POST';
+  if (action === 'createChannel') {
+    endpoint += '/api/v/chanel/create/';
+  } else if (action === 'updateMember') {
+    endpoint += `/api/v/chanel/${payload.pk}/contestant/update/`;
+    method = 'PUT';
+  } else if (action === 'updateChannel') {
+    endpoint += `/api/v/chanel/${payload.pk}/update/`;
+    method = 'PUT';
+  } else if (action === 'addMember') {
+    endpoint += `/api/v/chanel/${payload.pk}/add_contestant/`;
+  } else if (action === 'getChannel' || action === 'testConnection') {
+    endpoint += `/api/v/chanel/${payload?.pk || 3}/`;
+    method = 'GET';
+  } else if (action === 'fetchContestants') {
+    endpoint += `/api/v/chanel/${payload?.pk || 3}/contestant/`;
+    method = 'GET';
+  } else if (action === 'fetchTickets') {
+    endpoint += `/api/v/chanel/${payload?.pk || 3}/ticket/`;
+    method = 'GET';
+  } else if (action === 'verifyHandoff') {
+    endpoint += '/api/v/handoff/verify/';
+  } else if (action === 'findChannel') {
+    const params = new URLSearchParams();
+    if (payload.rafa_event_id) params.append('rafa_event_id', payload.rafa_event_id);
+    if (payload.slug) params.append('slug', payload.slug);
+    if (payload.name) params.append('name', payload.name);
+    endpoint += `/api/v/chanel/find/?${params.toString()}`;
+    method = 'GET';
+  } else if (action === 'testCustom') {
+    endpoint += payload.path;
+    method = 'GET';
+  } else {
+    return res.status(400).json({ error: `Unknown action: ${action}` });
+  }
+
+  // Abort the upstream request after 8 s so the client gets a clean error
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 8000);
+
+  try {
+    const fetchOptions = {
+      method,
+      signal: controller.signal,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Api-Key ${apiKey}`,
+        'X-Api-Key': apiKey
+      }
+    };
+    if (method === 'POST') {
+      fetchOptions.body = JSON.stringify(action === 'createChannel' ? payload : (payload.data || payload));
+    }
+
+    const showtimeRes = await fetch(endpoint, fetchOptions);
+    clearTimeout(timeoutId);
+
+    // If showtime doesn't return JSON for a 404/500, handle gracefully
+    const contentType = showtimeRes.headers.get('content-type');
+    let data;
+    if (contentType && contentType.includes('application/json')) {
+      data = await showtimeRes.json();
+    } else {
+      data = { text: await showtimeRes.text() };
+    }
+
+    if (!showtimeRes.ok) {
+      return res.status(showtimeRes.status).json(data);
+    }
+
+    return res.json(data);
+  } catch (err) {
+    clearTimeout(timeoutId);
+
+    // Classify the error so the client dashboard can show a clear message
+    const isTimeout = err.name === 'AbortError'
+      || (err.cause && err.cause.code === 'UND_ERR_CONNECT_TIMEOUT')
+      || (err.message && err.message.includes('Connect Timeout'));
+
+    const isNetworkError = !isTimeout && (
+      (err.cause && ['ECONNREFUSED', 'ENOTFOUND', 'ECONNRESET'].includes(err.cause.code))
+      || err.name === 'TypeError'
+    );
+
+    let friendlyMessage;
+    if (isTimeout) {
+      friendlyMessage = `Connection to Showtime API timed out after 8 seconds. The remote server at ${apiUrl} may be down or unreachable. Check the API URL in Settings and ensure the server is running.`;
+    } else if (isNetworkError) {
+      const code = err.cause?.code || 'NETWORK_ERROR';
+      friendlyMessage = `Could not reach Showtime API (${code}). The server at ${apiUrl} is unreachable. Check your network and the API URL in Settings.`;
+    } else {
+      friendlyMessage = err.message || 'Unexpected proxy error';
+    }
+
+    console.error('[Showtime Proxy] Error:', err.message, err.cause?.code || '');
+    return res.status(503).json({ error: friendlyMessage, code: err.cause?.code || err.name });
+  }
 });
 
 // API Endpoint: Get host network endpoints for Connection Guide

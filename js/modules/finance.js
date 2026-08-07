@@ -7,14 +7,20 @@
 let allTransactions = [];
 const FINANCIAL_TARGET = 4000000;
 
-window.addEventListener('firebase-ready', () => {
+const runFinanceInit = () => {
   if (window.REFA_EVENTS) {
     const activeEvent = window.REFA_EVENTS.getActiveEvent();
     if (activeEvent) {
       initFinance(activeEvent);
     }
   }
-});
+};
+
+if (window.REFA_FIREBASE) {
+  runFinanceInit();
+} else {
+  window.addEventListener('firebase-ready', runFinanceInit);
+}
 
 function initFinance(activeEvent) {
   if (!activeEvent || !activeEvent.id) return;

@@ -134,7 +134,9 @@ function initGlobalTaskSync() {
     subscribeToTasks((remoteChecked) => {
       Object.assign(checked, remoteChecked);
       save();
-      if (activeEvent) renderTasks(activeEvent);
+      // Always re-read the active event so we get the freshest phases (including fallback phases)
+      const currentEvent = window.REFA_EVENTS ? window.REFA_EVENTS.getActiveEvent() : null;
+      if (currentEvent) renderTasks(currentEvent);
       updateGlobalProgress();
       const badge = document.getElementById('db-status-badge');
       if (badge) {
@@ -195,12 +197,26 @@ async function populateEventUI() {
   if (accNameEl) accNameEl.textContent = event.orgName ? event.orgName.toUpperCase() : event.name.toUpperCase();
   if (accFooter) accFooter.textContent = `Official bank account for ${event.name} ("${event.tagline || 'Event'}"). Transferred funds are automatically tracked & acknowledged.`;
   
-  // Update sidebar portal links
-  const eventId = event.id || 'refa-season2';
-  document.querySelectorAll('#sidebar .nav-item[href]').forEach(a => {
-    const baseHref = a.getAttribute('href').split('?')[0];
-    a.href = `${baseHref}?event=${eventId}`;
-  });
+  // Update sidebar portal links with the active event id
+  const eventId = event.id;
+  if (eventId) {
+    document.querySelectorAll('#sidebar .nav-item[href]').forEach(a => {
+      const baseHref = a.getAttribute('href').split('?')[0];
+      a.href = `${baseHref}?event=${eventId}`;
+    });
+    // Stamp event into URL so refreshing stays on the right event.
+    // GUARD: only do this if the user is already on a non-root page,
+    // or already has an ?event= param — never auto-append to bare /
+    const url = new URL(window.location.href);
+    const isBaseUrl = (url.pathname === '/' || url.pathname === '/index' || url.pathname === '/index.html');
+    const alreadyHasEvent = url.searchParams.get('event');
+    if (!isBaseUrl || alreadyHasEvent) {
+      if (!alreadyHasEvent) {
+        url.searchParams.set('event', eventId);
+        window.history.replaceState({}, '', url.toString());
+      }
+    }
+  }
 
   if (statVoteRate && event.details) statVoteRate.textContent = `₦${event.details.votePrice || 200}`;
   
@@ -316,61 +332,154 @@ function renderDynamicUI(event) {
   if (typeof renderDashboardProgress === 'function') renderDashboardProgress();
 }
 
-async function populateEventSwitcher() {
-  if (!window.REFA_FIREBASE) return;
-  const events = await window.REFA_FIREBASE.listEvents();
-  const switcherContainer = document.getElementById('event-switcher-container');
-  const switcher = document.getElementById('event-switcher');
-  
-  if (!switcherContainer || !switcher) return;
-  
-  // Show switcher
-  switcherContainer.style.display = 'block';
-  
-  const currentEventId = window.REFA_EVENTS.getActiveEvent()?.id;
-  
-  switcher.innerHTML = events.map(ev => 
-    `<option value="${ev.id}" ${ev.id === currentEventId ? 'selected' : ''}>${ev.name || ev.id}</option>`
-  ).join('');
-}
+// populateEventSwitcher() removed — the event-switcher UI element no longer exists in index.html.
 
 async function initEvent() {
   const urlParams = new URLSearchParams(window.location.search);
-  const eventId = urlParams.get('event') || 'hit-the-mic-s3';
+  const urlEventId = urlParams.get('event');
 
-  // ── Auto-seed REFA Season 2 if it doesn't exist ─────────────────────────
-  if (window.seedRefa2Event && eventId === 'refa-season2') {
-    await window.seedRefa2Event();
+  // ── Gateway Gate ──────────────────────────────────────────────────────────
+  // On the base URL (no ?event= param), ALWAYS show the gateway search page.
+  // Never fall through to localStorage or Firestore auto-resolution here.
+  // The user must explicitly pick an event from the gateway.
+  const pathname = window.location.pathname;
+  const isBaseUrl = (pathname === '/' || pathname === '/index' || pathname === '/index.html' || pathname === '');
+
+  if (isBaseUrl && !urlEventId) {
+    // Show the gateway overlay, hide the auth overlay
+    const gateway = document.getElementById('gateway-overlay');
+    const authOverlay = document.getElementById('auth-lock-overlay');
+    if (authOverlay) authOverlay.style.display = 'none';
+    if (gateway) gateway.style.display = 'block';
+    // Still populate the gateway events grid so search works
+    if (typeof filterGatewayEvents === 'function') filterGatewayEvents();
+    return; // stop — do NOT load any event
   }
 
-  // ── Auto-seed HIT THE MIC Season 3 if it doesn't exist ──────────────────
-  if (window.seedHitMicS3Event && eventId === 'hit-the-mic-s3') {
-    await window.seedHitMicS3Event();
-    // Also seed the tasks sub-collection on first load
-    if (window.seedHitMicS3Tasks) {
-      await window.seedHitMicS3Tasks();
-    }
+  // ── Event Resolution (only runs when ?event= is present in URL) ──────────
+  // Priority: URL param → localStorage session (same event only) → error
+  let eventId = urlEventId;
+
+  // Only restore from localStorage if it matches a previously used event
+  // on THIS page — prevents cross-contamination from other event sessions.
+  if (!eventId) {
+    try {
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key && key.startsWith('refa_user_session_v1_')) {
+          eventId = key.replace('refa_user_session_v1_', '');
+          break;
+        }
+      }
+    } catch(e) {}
   }
 
-  const eventData = await window.REFA_FIREBASE.getEvent(eventId);
+  let eventData = null;
 
-  if (eventData) {
-    window.REFA_EVENTS.setActiveEvent(eventData);
-    populateEventUI();
-    populateEventSwitcher();
-  } else {
-    console.error('Event not found:', eventId);
-    alert('Event not found! Loading default.');
-    window.location.href = 'index.html?event=hit-the-mic-s3';
+  if (eventId) {
+    eventData = await window.REFA_FIREBASE.getEvent(eventId);
+  }
+
+  // No silent fallback to getFirstEvent() — if no event is found, send to gateway
+  if (!eventData) {
+    console.warn('[App] No event resolved. Redirecting to gateway.');
+    const gateway = document.getElementById('gateway-overlay');
+    const authOverlay = document.getElementById('auth-lock-overlay');
+    if (authOverlay) authOverlay.style.display = 'none';
+    if (gateway) gateway.style.display = 'block';
+    if (typeof filterGatewayEvents === 'function') filterGatewayEvents();
     return;
   }
 
+  window.REFA_EVENTS.setActiveEvent(eventData);
+
+  // Stamp event into URL for refresh persistence (only on non-base pages)
+  if (!urlEventId) {
+    const _u = new URL(window.location.href);
+    _u.searchParams.set('event', eventData.id);
+    window.history.replaceState({}, '', _u);
+  }
+
+  populateEventUI();
   initGlobalTaskSync();
+  // Load dashboard section so its DOM elements exist before render functions run
+  if (typeof window.loadSection === 'function') window.loadSection('dashboard');
 }
 
-window.addEventListener('firebase-ready', () => {
+let _cachedEventsList = null;
+let gatewaySearchSeq = 0;
+
+window.filterGatewayEvents = async function() {
+  const input = document.getElementById('gateway-search-input');
+  const grid = document.getElementById('gateway-events-grid');
+  if (!grid) return;
+  
+  const query = input ? input.value.toLowerCase().trim() : '';
+  
+  if (!query) {
+    grid.innerHTML = `
+      <div style="grid-column:1/-1; text-align:center; padding:60px 20px;">
+        <div style="width:12px; height:12px; background:#D4AF37; border-radius:50%; margin:0 auto 20px auto; box-shadow:0 0 10px #D4AF37; opacity:0.8;"></div>
+        <div style="font-size:14px; font-weight:600; color:#64748B; text-transform:uppercase; letter-spacing:1px;">Awaiting Query...</div>
+      </div>
+    `;
+    return;
+  }
+
+  if (!window.REFA_FIREBASE) return;
+
+  const currentSeq = ++gatewaySearchSeq;
+
+  if (!_cachedEventsList) {
+    _cachedEventsList = await window.REFA_FIREBASE.listEvents();
+  }
+  const events = _cachedEventsList || [];
+
+  const latestQuery = input ? input.value.toLowerCase().trim() : '';
+  if (currentSeq !== gatewaySearchSeq || !latestQuery) {
+    if (!latestQuery) {
+      grid.innerHTML = `
+        <div style="grid-column:1/-1; text-align:center; padding:60px 20px;">
+          <div style="width:12px; height:12px; background:#D4AF37; border-radius:50%; margin:0 auto 20px auto; box-shadow:0 0 10px #D4AF37; opacity:0.8;"></div>
+          <div style="font-size:14px; font-weight:600; color:#64748B; text-transform:uppercase; letter-spacing:1px;">Awaiting Query...</div>
+        </div>
+      `;
+    }
+    return;
+  }
+
+  const filtered = events.filter(e => 
+    (e.id && e.id.toLowerCase().includes(latestQuery)) || 
+    (e.name && e.name.toLowerCase().includes(latestQuery)) ||
+    (e.theme && e.theme.toLowerCase().includes(latestQuery))
+  );
+  
+  if (filtered.length === 0) {
+    grid.innerHTML = `
+      <div style="grid-column:1/-1; text-align:center; padding:60px 20px;">
+        <div style="width:12px; height:12px; background:#f87171; border-radius:50%; margin:0 auto 20px auto; box-shadow:0 0 10px #f87171; opacity:0.8;"></div>
+        <div style="font-size:14px; font-weight:600; color:#64748B; text-transform:uppercase; letter-spacing:1px;">No events match query...</div>
+      </div>
+    `;
+    return;
+  }
+  
+  grid.innerHTML = filtered.map(e => `
+    <div style="background:rgba(15,23,42,0.8); border:1px solid rgba(255,255,255,0.1); border-radius:16px; padding:24px; cursor:pointer; transition:all 0.2s;" onmouseover="this.style.borderColor='#D4AF37'; this.style.boxShadow='0 0 15px rgba(212,175,55,0.2)'" onmouseout="this.style.borderColor='rgba(255,255,255,0.1)'; this.style.boxShadow='none'" onclick="window.location.href='/index?event=${e.id}'">
+      <div style="font-size:12px; color:#D4AF37; margin-bottom:8px; font-weight:700; letter-spacing:1px; text-transform:uppercase;">${e.id}</div>
+      <div style="font-size:20px; font-weight:800; color:white; margin-bottom:12px;">${e.name || 'Unnamed Event'}</div>
+      <div style="font-size:14px; color:#94A3B8;">${e.theme ? 'Theme: ' + e.theme : 'No theme set'}</div>
+    </div>
+  `).join('');
+};
+
+if (window.REFA_FIREBASE) {
   initEvent();
-});
+} else {
+  window.addEventListener('firebase-ready', () => {
+    initEvent();
+  });
+}
 
 // --- AUTHENTICATION & ROLE-BASED ACCESS CONTROL (RBAC) ---
 function getAuthSessionKey() {
@@ -479,6 +588,8 @@ async function handlePassKeyLogin(event) {
   if (result.success && result.roleData) {
     setAuthSession(result.roleData);
     checkAuthSession();
+    // Ensure dashboard section is loaded so render functions have DOM elements to write into
+    if (typeof window.loadSection === 'function') window.loadSection('dashboard');
   } else {
     if (errEl) {
       errEl.textContent = result.message || 'Login failed. Invalid key or limit reached.';
@@ -1214,8 +1325,10 @@ function updateLetterBg() {
   const imgEl = document.getElementById('lh-bg-img');
   if (!imgEl) return;
 
-  const activeEvent = window.REFA_EVENTS && window.REFA_EVENTS.getActiveEvent() ? window.REFA_EVENTS.getActiveEvent().id : 'refa-season-2';
-  const prefix = (activeEvent && activeEvent !== 'refa-season-2') ? activeEvent + '-' : '';
+  const activeEventId = window.REFA_EVENTS && window.REFA_EVENTS.getActiveEvent()
+    ? window.REFA_EVENTS.getActiveEvent().id
+    : null;
+  const prefix = activeEventId ? activeEventId + '-' : '';
   const baseName = useSigned ? `img/${prefix}letterhead-signed` : `img/${prefix}letterhead`;
   
   const exts = ['.jpeg', '.jpg', '.png'];
@@ -2326,3 +2439,112 @@ async function renderDedicatedGallery() {
     `;
   }).join('');
 }
+
+// ── Section Load Hook ─────────────────────────────────────────────────────────
+// Called by router.js after lazy-injecting a section's HTML partial.
+// Each section must hydrate ONLY the elements that live in its own partial.
+// Cross-section element lookups (e.g. #sponsorship-tiers-container in studio.html)
+// will be null when the dashboard partial is active, so we gate them per-section.
+window._onSectionLoad = function(name) {
+  const activeEvent = window.REFA_EVENTS ? window.REFA_EVENTS.getActiveEvent() : null;
+  const parentSection = (window.SECTION_MAP && window.SECTION_MAP[name]) ? window.SECTION_MAP[name] : name;
+
+  switch (parentSection) {
+    case 'dashboard': {
+      // Repopulate all stat card elements (they live inside dashboard.html)
+      if (activeEvent) {
+        const _set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+        _set('dash-event-name', activeEvent.name);
+        _set('dash-event-tagline', activeEvent.tagline || 'Management Hub');
+        _set('dash-tagline-bold', activeEvent.name);
+        _set('stat-theme', activeEvent.tagline || 'Default Theme');
+        if (activeEvent.details) {
+          _set('stat-contestants', activeEvent.details.targetContestants || 100);
+          _set('stat-vote-rate', `₦${activeEvent.details.votePrice || 200}`);
+          _set('stat-venue', activeEvent.details.finalVenue || activeEvent.details.venue || 'TBD');
+        }
+        if (activeEvent.dates && activeEvent.dates.final) {
+          const d = new Date(activeEvent.dates.final);
+          _set('stat-final-date', isNaN(d.getTime()) ? activeEvent.dates.final : d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }));
+        }
+        // Stage snapshot (in dashboard.html)
+        const stageBody = document.getElementById('stage-snapshot-body');
+        if (stageBody && activeEvent.stagesSnapshot) {
+          stageBody.innerHTML = '';
+          activeEvent.stagesSnapshot.forEach(s => {
+            stageBody.innerHTML += `<tr><td><strong>${s.stage}</strong></td><td>${s.date}</td><td>${s.theme}</td><td><span class="phase-badge ${s.status}"><span class="dot"></span>${s.status.charAt(0).toUpperCase() + s.status.slice(1)}</span></td></tr>`;
+          });
+        }
+        // Timeline (in dashboard.html)
+        const timelineContainer = document.getElementById('timeline-container');
+        if (timelineContainer && activeEvent.phases) {
+          timelineContainer.innerHTML = '';
+          activeEvent.phases.forEach((p, index) => {
+            const statusClass = index === 0 ? 'done' : (index === 1 ? 'active-phase' : '');
+            timelineContainer.innerHTML += `<div class="tl-item ${statusClass}" style="cursor:pointer;" onclick="goToTask('${p.id}')"><div class="tl-date">${p.date}</div><div class="tl-title">${p.title}</div>${p.desc ? `<div class="tl-desc" style="margin-bottom:8px;font-size:14px;color:#555;">${p.desc}</div>` : ''}<div class="tl-desc" style="font-weight:500;color:#3b82f6;">Tasks: ${p.tasks.length} actions required.</div></div>`;
+          });
+        }
+        // Production kits (in dashboard.html)
+        const kitGrid = document.getElementById('dynamic-kit-grid');
+        if (kitGrid) {
+          kitGrid.innerHTML = '';
+          if (activeEvent.productionKits && Object.keys(activeEvent.productionKits).length > 0) {
+            Object.keys(activeEvent.productionKits).forEach(k => {
+              const kit = activeEvent.productionKits[k];
+              if (kit.cardHtml) kitGrid.innerHTML += kit.cardHtml;
+            });
+          } else {
+            kitGrid.innerHTML = '<div style="grid-column:1/-1;padding:20px;text-align:center;color:var(--text-muted)">No production kits configured for this event.</div>';
+          }
+        }
+      }
+      if (typeof renderDashboard === 'function') renderDashboard();
+      if (typeof renderDashboardProgress === 'function') renderDashboardProgress();
+      if (typeof renderTasks === 'function') renderTasks(activeEvent);
+      if (typeof updateGlobalProgress === 'function') updateGlobalProgress();
+      break;
+    }
+    case 'operations':
+      if (typeof renderTeams === 'function') renderTeams();
+      break;
+    case 'finance': {
+      // teams-info-container lives in finance.html
+      const teamsContainer = document.getElementById('teams-info-container');
+      if (teamsContainer && activeEvent && activeEvent.teamsInfo) {
+        teamsContainer.innerHTML = `<div class="card" style="grid-column:span 2;"><div class="card-title">${activeEvent.teamsInfo.title}</div><div class="info-item"><p style="color:#666;font-size:14px;margin-top:5px;line-height:1.5;">${activeEvent.teamsInfo.description}</p></div></div>`;
+      }
+      if (typeof renderTeams === 'function') renderTeams();
+      if (typeof renderDashboardProgress === 'function') renderDashboardProgress();
+      break;
+    }
+    case 'social':
+      if (typeof renderContentSchedule === 'function') renderContentSchedule();
+      if (typeof renderSocialTeam === 'function') renderSocialTeam();
+      break;
+    case 'studio': {
+      // sponsorship-tiers-container lives in studio.html
+      const sponsorshipContainer = document.getElementById('sponsorship-tiers-container');
+      if (sponsorshipContainer && activeEvent) {
+        sponsorshipContainer.innerHTML = '';
+        if (activeEvent.sponsorshipTiers) {
+          const colors = [
+            { border: 'var(--gold)', bg: 'var(--gold-pale)', title: 'var(--navy)', price: 'var(--gold)' },
+            { border: '#B45309', bg: '#FFFBEB', title: '#B45309', price: '#B45309' },
+            { border: '#6B7280', bg: '#F9FAFB', title: '#374151', price: '#374151' },
+            { border: '#9CA3AF', bg: '#FFFFFF', title: '#6B7280', price: '#6B7280' }
+          ];
+          activeEvent.sponsorshipTiers.forEach((t, i) => {
+            const c = colors[i % colors.length];
+            sponsorshipContainer.innerHTML += `<div class="sponsor-tier" style="border-color:${c.border};background:${c.bg};"><div class="tier-title" style="color:${c.title};">${t.tier}</div><div class="tier-price" style="color:${c.price};">&#8358;${(t.price || 0).toLocaleString()}</div><div style="font-size:12px;margin-bottom:8px;color:rgba(0,0,0,0.6);"><strong>Slots:</strong> ${t.slots} | <strong>Target:</strong> ${t.target}</div>${t.benefits.map(b => `<div class="tier-benefit" style="color:var(--navy);">${b}</div>`).join('')}</div>`;
+          });
+        } else {
+          sponsorshipContainer.innerHTML = '<div style="padding:20px;color:#666;">No sponsorship tiers defined for this event.</div>';
+        }
+      }
+      if (typeof updateLetterBg === 'function') updateLetterBg();
+      if (typeof updateAccountGenerator === 'function') updateAccountGenerator();
+      if (typeof editTemplate === 'function') editTemplate(null); // reset studio
+      break;
+    }
+  }
+};

@@ -2,7 +2,7 @@
 // Stage 2: Generate the full strategic plan using the confirmed preview as context.
 // Vercel Serverless Function (Node.js)
 
-const { ai, AI_MODEL, extractJsonFromText } = require('./ai-config');
+const { generateWithFallback, extractJsonFromText } = require('./ai-config');
 
 const FULL_STRATEGY_SYSTEM_PROMPT = `You are a world-class event strategist, financial planner, and marketing expert with deep experience in African events.
 
@@ -139,17 +139,11 @@ Now expand this approved preview into the complete, fully detailed event strateg
 `;
 
   try {
-    if (!ai) {
-      return res.status(500).json({ error: 'AI backend is not configured on this local server. Please restart your node server with a GEMINI_API_KEY environment variable.' });
-    }
-    const response = await ai.models.generateContent({
-      model: AI_MODEL,
-      contents: userPrompt,
-      config: {
-        systemInstruction: FULL_STRATEGY_SYSTEM_PROMPT,
-        temperature: 0.65,
-        responseMimeType: 'application/json',
-      }
+    const response = await generateWithFallback(userPrompt, {
+      systemInstruction: FULL_STRATEGY_SYSTEM_PROMPT,
+      temperature: 0.65,
+      responseMimeType: 'application/json',
+      maxOutputTokens: 8192,
     });
 
     const rawText = response.text.trim();

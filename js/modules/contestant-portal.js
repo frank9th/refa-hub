@@ -18,9 +18,15 @@ const JOURNEY_PHASES = [
   { id: 'grandfinal', label: 'Grand Final' }
 ];
 
-window.addEventListener('firebase-ready', async () => {
+const initContestantPortal = async () => {
   const urlParams = new URLSearchParams(window.location.search);
-  const eventId = urlParams.get('event') || 'hit-the-mic-s3';
+  const eventId = urlParams.get('event');
+
+  if (!eventId) {
+    console.error('[Contestant Portal] No event ID in URL. Add ?event=<id> to the page URL.');
+    alert('This portal link is invalid \u2014 no event was specified. Please use the link provided by your event organiser.');
+    return;
+  }
   
   if (window.REFA_FIREBASE) {
     activeEvent = await window.REFA_FIREBASE.getEvent(eventId);
@@ -28,9 +34,18 @@ window.addEventListener('firebase-ready', async () => {
       window.REFA_EVENTS.setActiveEvent(activeEvent);
       document.getElementById('nav-brand').textContent = activeEvent.name || 'Event Hub';
       checkSession();
+    } else {
+      console.error('[Contestant Portal] Event not found:', eventId);
     }
   }
-});
+};
+
+if (window.REFA_FIREBASE) {
+  initContestantPortal();
+} else {
+  window.addEventListener('firebase-ready', initContestantPortal);
+}
+
 
 function getSession() {
   try { return JSON.parse(sessionStorage.getItem(SESSION_KEY)); } 
