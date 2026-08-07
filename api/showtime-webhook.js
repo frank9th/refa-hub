@@ -1,9 +1,7 @@
 // /api/showtime-webhook.js
-import { ai, extractJsonFromText } from './ai-config.js'; // Might not be needed, just for consistency
-import { initializeApp, getApps, cert } from 'firebase-admin/app';
-import { getFirestore, FieldValue } from 'firebase-admin/firestore';
-import * as dotenv from 'dotenv';
-dotenv.config();
+require('dotenv').config();
+const { initializeApp, getApps, cert } = require('firebase-admin/app');
+const { getFirestore, FieldValue } = require('firebase-admin/firestore');
 
 // Ensure Firebase Admin is initialized
 if (!getApps().length) {
@@ -32,7 +30,7 @@ if (!getApps().length) {
 
 const db = getFirestore();
 
-export default async function handler(req, res) {
+module.exports = async function handler(req, res) {
     if (req.method !== 'POST') {
         return res.status(405).json({ error: 'Method not allowed' });
     }

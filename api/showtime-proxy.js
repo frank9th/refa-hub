@@ -1,8 +1,7 @@
 // /api/showtime-proxy.js
-import { initializeApp, getApps, cert } from 'firebase-admin/app';
-import { getFirestore } from 'firebase-admin/firestore';
-import * as dotenv from 'dotenv';
-dotenv.config();
+require('dotenv').config();
+const { initializeApp, getApps, cert } = require('firebase-admin/app');
+const { getFirestore } = require('firebase-admin/firestore');
 
 // Ensure Firebase Admin is initialized
 if (!getApps().length) {
@@ -110,7 +109,7 @@ async function proxyFetch(url, options, baseUrl) {
     }
 }
 
-export default async function handler(req, res) {
+module.exports = async function handler(req, res) {
     if (req.method === 'OPTIONS') {
         return res.status(200).end();
     }

@@ -70,8 +70,11 @@ async function loadSection(name) {
       return;
     }
 
-    const res = await fetch(`/sections/${fileName}.html`);
-    if (!res.ok) throw new Error(`Section not found: ${fileName}`);
+    let res = await fetch(`/sections/${fileName}.html`);
+    if (!res.ok) {
+      res = await fetch(`/sections/${fileName}`);
+    }
+    if (!res.ok) throw new Error(`Section not found: ${fileName} (status: ${res.status})`);
     const html = await res.text();
     _sectionCache[fileName] = html;
     container.innerHTML = html;

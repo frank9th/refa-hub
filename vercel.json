@@ -1,68 +1,34 @@
 {
   "version": 2,
   "cleanUrls": true,
-  "builds": [
+  "rewrites": [
     {
-      "src": "api/**/*.js",
-      "use": "@vercel/node"
+      "source": "/command-hub/:event/register",
+      "destination": "/register.html?event=:event"
     },
     {
-      "src": "*.html",
-      "use": "@vercel/static"
+      "source": "/command-hub/:event/portal",
+      "destination": "/contestant-portal.html?event=:event"
     },
     {
-      "src": "css/**",
-      "use": "@vercel/static"
+      "source": "/command-hub/:event/judges",
+      "destination": "/judges.html?event=:event"
     },
     {
-      "src": "js/**",
-      "use": "@vercel/static"
+      "source": "/command-hub/:event/leaderboard",
+      "destination": "/leaderboard.html?event=:event"
     },
     {
-      "src": "img/**",
-      "use": "@vercel/static"
+      "source": "/command-hub/:event/channel",
+      "destination": "/channel-hub.html?event=:event"
     },
     {
-      "src": "scripts/**",
-      "use": "@vercel/static"
-    }
-  ],
-  "routes": [
-    {
-      "src": "/api/(.*)",
-      "dest": "/api/$1"
+      "source": "/command-hub/:event",
+      "destination": "/index.html?event=:event"
     },
     {
-      "src": "/command-hub/([^/]+)/register",
-      "dest": "/register.html?event=$1"
-    },
-    {
-      "src": "/command-hub/([^/]+)/portal",
-      "dest": "/contestant-portal.html?event=$1"
-    },
-    {
-      "src": "/command-hub/([^/]+)/judges",
-      "dest": "/judges.html?event=$1"
-    },
-    {
-      "src": "/command-hub/([^/]+)/leaderboard",
-      "dest": "/leaderboard.html?event=$1"
-    },
-    {
-      "src": "/command-hub/([^/]+)/channel",
-      "dest": "/channel-hub.html?event=$1"
-    },
-    {
-      "src": "/command-hub/([^/]+)",
-      "dest": "/index.html?event=$1"
-    },
-    {
-      "src": "/command-hub",
-      "dest": "/index.html"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/$1"
+      "source": "/command-hub",
+      "destination": "/index.html"
     }
   ]
 }
